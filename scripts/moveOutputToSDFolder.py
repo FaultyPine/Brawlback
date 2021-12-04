@@ -1,7 +1,6 @@
 import os
 import shutil
 
-# stupid windows
 current_dir = os.getcwd() + "\\"
 
 SDFolder = current_dir + "SDCard\\Project+\\codes\\"
