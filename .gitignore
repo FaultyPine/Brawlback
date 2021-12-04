@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Ignore SDCard project+ build stuff
+SDCard/Project+
+
 out/
 build/
 cmake-build*/
