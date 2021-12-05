@@ -27,7 +27,7 @@ EXIPacket::EXIPacket(u8 EXICmd, void* source, u32 size) {
 }
 
 EXIPacket::~EXIPacket() {
-    
+    //free(this->source); // do I need to do this? Probably... or does other things take care of that mem for me?
 }
 
 void EXIPacket::Send() {

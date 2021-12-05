@@ -27,18 +27,18 @@ namespace FrameAdvance {
 }
 
 
-
-bool once = true;
-
 namespace FrameLogic {
 
     // called at the beginning of the game logic in a frame
     // a this point, inputs are populated for this frame
     void BeginFrame() {
+        
         gfPadSystem* padSystem = PAD_SYSTEM;
-        bool is_a_press = padSystem->pads[0].buttons.A;
-        //FrameAdvance::framesToAdvance = is_a_press ? 15 : 1;
-        if (is_a_press) {
+        bool is_b_press = padSystem->pads[0].buttons.B;
+        //FrameAdvance::framesToAdvance = is_b_press ? 15 : 1;
+
+        /*
+        if (is_b_press) {
             void* inputs = &padSystem->pads[0];
             u32 inputs_size = sizeof(gfPadGamecube);
             OSReport("Inputs size: %u\n", inputs_size);
@@ -46,10 +46,16 @@ namespace FrameLogic {
             EXIPacket inputPckt = EXIPacket(EXICommand::CMD_ONLINE_INPUTS, inputs, inputs_size);
             inputPckt.Send();
         }
-        else if (padSystem->pads[0].buttons.Z && once) {
+        */
+        
+        if (padSystem->pads[0].buttons.R) { // save state
             EXIPacket saveSavePckt = EXIPacket(EXICommand::CMD_CAPTURE_SAVESTATE, nullptr, 0);
             saveSavePckt.Send();
-            once = false;
+        }
+
+        if (padSystem->pads[0].buttons.L) { // load state
+            EXIPacket LoadSaveStatePckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, nullptr, 0);
+            LoadSaveStatePckt.Send();
         }
     }
 
