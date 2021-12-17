@@ -6,8 +6,11 @@
 #include "CLibs/cstring.h"
 #include "Wii/OS/OSInterrupt.h"
 
+EXIPacket::EXIPacket(u8 EXICmd) : EXIPacket(EXICmd, nullptr, 0) { }
 
-EXIPacket::EXIPacket(u8 EXICmd, void* source, u32 size) {    
+EXIPacket::EXIPacket(u8 EXICmd, void* source, u32 size) {
+    if (!source) size = 0; if (size <= 0) source = nullptr; //sanity checks
+
     // enough for the EXICmd byte + size of the packet
     u32 new_size = sizeof(EXICmd) + size;
 
@@ -27,7 +30,7 @@ EXIPacket::EXIPacket(u8 EXICmd, void* source, u32 size) {
 }
 
 EXIPacket::~EXIPacket() {
-    //free(this->source); // do I need to do this? Probably... or does other things take care of that mem for me?
+    free(this->source);
 }
 
 void EXIPacket::Send() {

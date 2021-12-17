@@ -1,17 +1,27 @@
 @echo off
+setlocal enabledelayedexpansion
 
-:: path to your cmake.exe
-set cmake_exe_path="C:\Program Files\CMake\bin\cmake.EXE"
+:: TODO: Put instructions for using this script here
 
-:: set target for this build. all means build everything, you can also specify a specific project
-set buildTarget=all
+clear
 
-:: cmake build - got this command from the console output of running cmake build from the command palette
-set cmakebuild=%cmake_exe_path% --build %CD%/build --config Debug --target %buildTarget% -j 14 --
-:: move build binaries into SD folder which can then be synced with VSDSync
-set pymovefiles=py scripts/moveOutputToSDFolder.py
-:: Sync SD folder in this project to the actual sd.raw by running VSDSync.exe
-set vsdsync=%CD%/scripts/VSDSync/VSDSync.exe
+if [%1]==[] (
+    call "build_dolphin.bat" && call "build_mod.bat"
+    GOTO:eof
+)
 
+:: iterate through cmd line arguments
+for %%x in (%*) do (
 
-%cmakebuild% && %pymovefiles% && %vsdsync%
+    if [%%x]==[sync] (
+        call "sync_dolphin_instances.bat"
+    )
+    if [%%x]==[dolphin] ( 
+        call "build_dolphin.bat"
+    ) 
+    if [%%x]==[mod] ( 
+        call "build_mod.bat"
+    )
+
+)
+
