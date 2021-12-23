@@ -5,13 +5,15 @@
 
 namespace Netplay {
 
-    void StartFindOpponent(bool isHost);
+    bool CheckShouldStartNetplay();
 
-    void CheckShouldStartNetplay();
-
+    void StartMatch();
     void EndMatch();
 
     int getLocalPlayerIdx();
+    GameSettings* getGameSettings();
+
+    extern int localPlayerIdx;
 }
 
 

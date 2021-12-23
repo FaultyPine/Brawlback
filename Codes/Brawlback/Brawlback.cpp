@@ -1,13 +1,85 @@
 #include "Brawlback.h"
 #include "Netplay.h"
 
+
+
+
+
+
+
+
+
+
+
+
+// called when someone selects a character on the CSS
+// r3 is "#ftSlot init [%d Color:%d Kind:%d] \n"
+// r4 is the player's slot (0-3)
+// r5 is the player character's color
+// r6 is the player's character id
+INJECTION("afterPlayerInit", 0x808277d0, R"(
+    SAVE_REGS
+    bl getPlayerCharData
+    RESTORE_REGS
+    crxor 4*cr1+eq,4*cr1+eq,4*cr1+eq
+)");
+extern "C" void getPlayerCharData(u32 s, int playerSlot, int playerColor, int playerCharKind) {
+    OSReport("getPlayerCharData: %u %u %u\n", playerSlot, playerColor, playerCharKind);
+    //Netplay::getGameSettings()->playerSettings[playerSlot].charID = playerCharKind;
+    //Netplay::getGameSettings()->playerSettings[playerSlot].charColor = playerColor;
+}
+
+
+// fill gamesettings struct with game info
+void fillOutGameSettings(GameSettings* settings) {
+    settings->randomSeed = DEFAULT_MT_RAND->seed;
+    settings->stageID = GM_GLOBAL_MODE_MELEE->stageID;
+
+    OSReport("Rand seed: %u\n", settings->randomSeed);
+    OSReport("stage id: %u\n", settings->stageID);
+
+    for (int i = 0; i < 4; i++) {
+        // character id and char color are set in the 'afterPlayerInit' injection
+        PlayerSettings* playerSettings = &settings->playerSettings[i];
+        /*playerSettings->nametag = {};
+        playerSettings->displayName = {};
+        playerSettings->controllerPort = 254;
+        playerSettings->connectCode = {};
+        playerSettings->charID = 0;
+        playerSettings->charColor = 0;*/
+        // PlayerType filled in later
+    }
+}
+
+
+// take gamesettings and apply it to our game
+void MergeGameSettingsIntoGame(GameSettings* settings) {
+    //DEFAULT_MT_RAND->seed = settings->randomSeed;
+    DEFAULT_MT_RAND->seed = 0x496ffd00; // hardcoded for testing
+    //GM_GLOBAL_MODE_MELEE->stageID = settings->stageID;
+    GM_GLOBAL_MODE_MELEE->stageID = 2;
+
+    
+    for (int i = 0; i < 4; i++) {
+        PlayerSettings* playerSettings = &settings->playerSettings[i];
+        if (playerSettings->playerType == PlayerType::PLAYERTYPE_LOCAL) {
+            OSReport("Local player index is %i\n", i);
+            Netplay::localPlayerIdx = i;
+            break;
+        }
+    }
+}
+
+
 namespace Match {
     bool isInMatch = false;
 
-    // on scene start
-    SIMPLE_INJECTION(startSceneMelee, 0x806cf154, "addi	r11, sp, 96") {
+    // on scene start (AFTER the start/[scMelee] function has run)
+
+    SIMPLE_INJECTION(startSceneMelee, 0x806d176c, "addi	sp, sp, 112") {
         OSReport("  ~~~~~~~~~~~~~~~~  Start Scene Melee  ~~~~~~~~~~~~~~~~  \n");
-        Netplay::CheckShouldStartNetplay();
+        //bool shouldNetplay = Netplay::CheckShouldStartNetplay();
+        Netplay::StartMatch(); // start netplay logic
         isInMatch = true;
     }
 
@@ -53,17 +125,15 @@ namespace FrameAdvance {
     gfPadGamecube* overrideInputs = nullptr;
 
     void InjectInputs(gfPadGamecube* pads, int localPlayer = -1) {        
-        for (int i = 0; i < 4; i++) { // overwrite each player's pads with past pad inputs
-            bool should_inject = localPlayer == -1 || i != localPlayer;
-            if (should_inject) {
+        for (int i = 0; i < 4; i++) { // overwrite player's pads with past pad inputs (unless it's local player)
+            if (localPlayer == -1 || i != localPlayer) {
                 PAD_SYSTEM->pads[i] = pads[i];
             }
         }
     }
 
-
     // for keeping track of the past few framedatas
-    vector<FrameData*> pastFrameDatas = {};
+    Queue<FrameData*> pastFrameDatas = Queue<FrameData*>();
     // this is at the very beginning of the main game logic loop. This should be a good place to inject inputs for
     // each fast-forwarded frame
     SIMPLE_INJECTION(controllerInjectionPoint, 0x80017354, "or r4, r19, r19") {
@@ -71,14 +141,20 @@ namespace FrameAdvance {
         if (framesToAdvance > 1) {
             u32 gameLogicFrame = GAME_FRAME->persistentFrameCounter;
             //OSReport("Current game logic frame (in loop): %u\n", gameLogicFrame);
-            for (int i = 0; i < pastFrameDatas.size(); i++) {
-                if (pastFrameDatas[i]->frame == gameLogicFrame) { // if the frame of the FrameData from the past matches with this current game logic loop frame, replace game inputs with those from that frame
-                    InjectInputs(pastFrameDatas[i]->pads);
+            if (!pastFrameDatas.empty()) {
+                auto node = pastFrameDatas.getNodeFront();
+                // iterate through our queue of past frame datas
+                while (node != nullptr) {
+                    if (node->data->frame == gameLogicFrame) { // if the frame of that FrameData in the queue is the same as the current one
+                        InjectInputs(node->data->pads); // inject inputs and break out
+                        break;
+                    }
+                    node = node->next_ptr;
                 }
             }
         }
         if (overrideInputs) {
-            InjectInputs(overrideInputs, Netplay::getLocalPlayerIdx());
+            InjectInputs(overrideInputs, Netplay::localPlayerIdx);
             free(overrideInputs);
             overrideInputs = nullptr;
         }
@@ -102,12 +178,12 @@ namespace FrameLogic {
             fData->frame = currentFrame;
             fData->randomSeed = 0; // tmp
             memcpy(fData->pads, PAD_SYSTEM->pads, sizeof(PAD_SYSTEM->pads));
-            fData->pads[0].buttons.UpDPad = 0; // get rid of load state input
+            fData->pads[0].buttons.UpDPad = 0; // get rid of load state input -- for testing
 
             if (FrameAdvance::pastFrameDatas.size() + 1 > MAX_ROLLBACK_FRAMES) {
-                FrameAdvance::pastFrameDatas.erase(0); // lol this pushes everything up. Would be neat to impl and use a deque so this is a little faster
+                FrameAdvance::pastFrameDatas.pop_front(true);
             }
-            FrameAdvance::pastFrameDatas.push(fData);
+            FrameAdvance::pastFrameDatas.push_back(fData); // tmp
 
             EXIPacket fDataPckt = EXIPacket(EXICommand::CMD_ONLINE_INPUTS, fData, sizeof(FrameData));
             fDataPckt.Send();
@@ -118,8 +194,6 @@ namespace FrameLogic {
 
 
         if (!shouldLoadStatePerFrame) shouldLoadStatePerFrame = isLoadStateButton;
-
-        // commenting out for now while im testing online input stuff
         
         // saving state each frame
         {
@@ -127,9 +201,8 @@ namespace FrameLogic {
             saveSavePckt.Send();
         }
         
-        
         if (shouldLoadStatePerFrame && currentFrame % 5 == 0) { // rollback and resimulate every 5 frames
-            PAD_SYSTEM->pads[0].buttons.UpDPad = 0; // get rid of load state input (so it doesn't infinitely make you do that same input)
+            PAD_SYSTEM->pads[0].buttons.UpDPad = 0; // get rid of load state input (so it doesn't infinitely make you do that same input) -- for testing
             EXIPacket LoadSaveStatePckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE);
             LoadSaveStatePckt.Send();
             FrameAdvance::TriggerFastForwardState(MAX_ROLLBACK_FRAMES);
@@ -154,10 +227,10 @@ namespace FrameLogic {
             swapByteOrder(&framedata->frame);
             swapByteOrder(&framedata->randomSeed);
 
-            OSReport("[Emu->Game] Opponents inputs:\n");
-            print_half(framedata->pads[0].buttons.bits);
+            //OSReport("[Emu->Game] Opponents inputs:\n");
+            //print_half(framedata->pads[0].buttons.bits);
 
-            OSReport("[Emu->Game] Frame: %u\n", framedata->frame);
+            //OSReport("[Emu->Game] Frame: %u\n", framedata->frame);
 
             FrameAdvance::overrideInputs = (gfPadGamecube*)malloc(sizeof(gfPadGamecube)*4);
             memcpy(FrameAdvance::overrideInputs, &framedata->pads[0], sizeof(gfPadGamecube)*4);

@@ -6,6 +6,9 @@
 #include "CLibs/cstring.h"
 #include "Wii/OS/OSInterrupt.h"
 
+EXICommand EXIPacket::getCmd() { return this->cmd; }
+
+EXIPacket::EXIPacket() : EXIPacket(EXICommand::CMD_UNKNOWN, nullptr, 0) { }
 EXIPacket::EXIPacket(u8 EXICmd) : EXIPacket(EXICmd, nullptr, 0) { }
 
 EXIPacket::EXIPacket(u8 EXICmd, void* source, u32 size) {
@@ -27,6 +30,7 @@ EXIPacket::EXIPacket(u8 EXICmd, void* source, u32 size) {
     // set our size/src ptr so the Send() function knows how much/what to send
     this->size = new_size;
     this->source = new_packet;
+    this->cmd = (EXICommand)EXICmd;
 }
 
 EXIPacket::~EXIPacket() {
@@ -35,6 +39,27 @@ EXIPacket::~EXIPacket() {
 
 void EXIPacket::Send() {
     _OSDisableInterrupts();
+
     writeEXI(this->source, this->size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
+
+    _OSEnableInterrupts();
+}
+
+u8* EXIPacket::Receive(u32 size) {
+    _OSDisableInterrupts();
+
+    u8* ret = (u8*)malloc(size+1);
+    readEXI(ret, size+1, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
+    this->cmd = (EXICommand)ret[0];
+
+    _OSEnableInterrupts();
+    return &ret[1];
+}
+void EXIPacket::Receive(u8* buf, u32 size) {
+    _OSDisableInterrupts();
+
+    readEXI(buf, size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
+    this->cmd = (EXICommand)buf[0];
+
     _OSEnableInterrupts();
 }

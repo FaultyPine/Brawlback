@@ -37,14 +37,20 @@ public:
     // EXICmd: EXICommand enum (implicit cast to byte)
     EXIPacket(u8 EXICmd, void* source, u32 size);
     EXIPacket(u8 EXICmd);
+    EXIPacket();
     ~EXIPacket();
 
     void Send();
+    u8* Receive(u32 size);
+    void Receive(u8* buf, u32 size);
+
+    EXICommand getCmd();
 
 private:
 
     u8* source = nullptr;
     u32 size = 0;
+    EXICommand cmd = EXICommand::CMD_UNKNOWN;
 
 };
 

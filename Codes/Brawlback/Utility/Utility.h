@@ -3,6 +3,7 @@
 #include "stddef.h"
 #include "CLibs/cstring.h"
 #include "Containers/vector.h"
+#include "Containers/Queue.h"
 
 
 vector<u8> uint16ToVector(u16 num);
