@@ -13,7 +13,8 @@ namespace Netplay {
     int getLocalPlayerIdx();
     GameSettings* getGameSettings();
 
-    extern int localPlayerIdx;
+    extern u8 localPlayerIdx;
+    extern const u8 localPlayerIdxInvalid;
 }
 
 

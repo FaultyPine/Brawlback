@@ -1,6 +1,13 @@
 #include "TestingUtils.h"
 
 
+// Fudge's thing
+
+/*
+INJECTION("forceVisMemPool", 0x80025dc8, R"(
+    cmpwi r3, 69
+)");
+*/
 
 
 // ============ Always loads falco ==================

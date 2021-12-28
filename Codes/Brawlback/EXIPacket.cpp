@@ -34,7 +34,9 @@ EXIPacket::EXIPacket(u8 EXICmd, void* source, u32 size) {
 }
 
 EXIPacket::~EXIPacket() {
-    free(this->source);
+    if (this->source) {
+        free(this->source);
+    }
 }
 
 void EXIPacket::Send() {
@@ -51,6 +53,8 @@ u8* EXIPacket::Receive(u32 size) {
     u8* ret = (u8*)malloc(size+1);
     readEXI(ret, size+1, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
     this->cmd = (EXICommand)ret[0];
+
+    this->source = ret;
 
     _OSEnableInterrupts();
     return &ret[1];

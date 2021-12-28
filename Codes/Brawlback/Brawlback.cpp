@@ -4,14 +4,6 @@
 
 
 
-
-
-
-
-
-
-
-
 // called when someone selects a character on the CSS
 // r3 is "#ftSlot init [%d Color:%d Kind:%d] \n"
 // r4 is the player's slot (0-3)
@@ -35,39 +27,30 @@ void fillOutGameSettings(GameSettings* settings) {
     settings->randomSeed = DEFAULT_MT_RAND->seed;
     settings->stageID = GM_GLOBAL_MODE_MELEE->stageID;
 
-    OSReport("Rand seed: %u\n", settings->randomSeed);
-    OSReport("stage id: %u\n", settings->stageID);
+    // brawl loads all players into the earliest slots.
+    // I.E. if players choose P1 and P3, they will get loaded into P1 and P2
+    // this means we can use the number of players in a match to iterate over
+    // players since we know they'll always be next to each other
 
-    for (int i = 0; i < 4; i++) {
-        // character id and char color are set in the 'afterPlayerInit' injection
-        PlayerSettings* playerSettings = &settings->playerSettings[i];
-        /*playerSettings->nametag = {};
-        playerSettings->displayName = {};
-        playerSettings->controllerPort = 254;
-        playerSettings->connectCode = {};
-        playerSettings->charID = 0;
-        playerSettings->charColor = 0;*/
-        // PlayerType filled in later
-    }
+    // TODO: replace this with some way to get the actual number of players in a match.
+    // unfortunately FIGHTER_MANAGER->getEntryCount() isn't filled out at this point in the game loading
+    // sequence. Gotta find another way to get it, or some better spot to grab the number of players
+    settings->numPlayers = 2;
+    OSReport("Num Players: %u\n", (unsigned int)settings->numPlayers);
 }
 
 
 // take gamesettings and apply it to our game
 void MergeGameSettingsIntoGame(GameSettings* settings) {
     //DEFAULT_MT_RAND->seed = settings->randomSeed;
-    DEFAULT_MT_RAND->seed = 0x496ffd00; // hardcoded for testing
+    DEFAULT_MT_RAND->seed = 0x496ffd00; // hardcoded for testing (arbitrary number)
+    //OTHER_MT_RAND->seed = 0x496ffd00;
+
     //GM_GLOBAL_MODE_MELEE->stageID = settings->stageID;
     GM_GLOBAL_MODE_MELEE->stageID = 2;
 
-    
-    for (int i = 0; i < 4; i++) {
-        PlayerSettings* playerSettings = &settings->playerSettings[i];
-        if (playerSettings->playerType == PlayerType::PLAYERTYPE_LOCAL) {
-            OSReport("Local player index is %i\n", i);
-            Netplay::localPlayerIdx = i;
-            break;
-        }
-    }
+    Netplay::localPlayerIdx = settings->localPlayerIdx;
+    OSReport("Local player index is %u\n", (unsigned int)Netplay::localPlayerIdx);
 }
 
 
@@ -97,11 +80,18 @@ namespace FrameAdvance {
 
     int framesToAdvance = 1;
 
+    int framesToStall = 0;
+
     // sets the number of frames of game logic to run every frame
     void TriggerFastForwardState(u8 numFramesToFF) {
         framesToAdvance = numFramesToFF;
     }
-    void EndFastForwardState() { framesToAdvance = 1; }
+    void ResetFrameAdvance() { framesToAdvance = 1; }
+    void StallFrames(u8 frames) {
+        OSReport("Stalling %u frames\n", (unsigned int)frames);
+        framesToAdvance = 0; 
+        framesToStall = frames; 
+    }
 
     // og instruction: cmplw r19, r24
     // # of frames to simulate is stored in r24
@@ -121,40 +111,47 @@ namespace FrameAdvance {
     }
 
 
-    // assign gfPadGamecube[4] to this if you want to override input for a single frame
-    gfPadGamecube* overrideInputs = nullptr;
+    // array of inputs for each player to get injected
+    PlayerFrameData* overrideInputs = nullptr;
 
-    void InjectInputs(gfPadGamecube* pads, int localPlayer = -1) {        
-        for (int i = 0; i < 4; i++) { // overwrite player's pads with past pad inputs (unless it's local player)
-            if (localPlayer == -1 || i != localPlayer) {
-                PAD_SYSTEM->pads[i] = pads[i];
-            }
-        }
+    void InjectInputsForPlayer(gfPadGamecube* pad, u8 playerIdx) {
+        memcpy(&PAD_SYSTEM->pads[playerIdx], pad, sizeof(gfPadGamecube));
     }
 
     // for keeping track of the past few framedatas
     Queue<FrameData*> pastFrameDatas = Queue<FrameData*>();
-    // this is at the very beginning of the main game logic loop. This should be a good place to inject inputs for
+
+    // this is at the very beginning of the main game logic loop (right before 'gameProc'). This should be a good place to inject inputs for
     // each fast-forwarded frame
     SIMPLE_INJECTION(controllerInjectionPoint, 0x80017354, "or r4, r19, r19") {
         // if we are currently resimulating
         if (framesToAdvance > 1) {
-            u32 gameLogicFrame = GAME_FRAME->persistentFrameCounter;
             //OSReport("Current game logic frame (in loop): %u\n", gameLogicFrame);
             if (!pastFrameDatas.empty()) {
+                u32 gameLogicFrame = GAME_FRAME->persistentFrameCounter;
                 auto node = pastFrameDatas.getNodeFront();
                 // iterate through our queue of past frame datas
                 while (node != nullptr) {
-                    if (node->data->frame == gameLogicFrame) { // if the frame of that FrameData in the queue is the same as the current one
-                        InjectInputs(node->data->pads); // inject inputs and break out
+                    //     frame should be same for all framedatas
+                    if (node->data->playerFrameDatas[0].frame == gameLogicFrame) { // if the frame of that FrameData in the queue is the same as the current one
+                        // inject inputs and break out
+                        PlayerFrameData* playerFrameDatas = node->data->playerFrameDatas;
+                        for (int i = 0; i < Netplay::getGameSettings()->numPlayers; i++) {
+                            PlayerFrameData* playerFrameData = &playerFrameDatas[i];
+                            InjectInputsForPlayer(&playerFrameData->pad, playerFrameData->playerIdx);
+                        }
                         break;
                     }
                     node = node->next_ptr;
                 }
             }
         }
-        if (overrideInputs) {
-            InjectInputs(overrideInputs, Netplay::localPlayerIdx);
+        /*should this be else if? Or just if? i think else if is right 
+        since we don't wanna inject other inputs during resimulation*/
+        else if (overrideInputs != nullptr) {
+            for (u8 i = 0; i < Netplay::getGameSettings()->numPlayers; i++) {
+                InjectInputsForPlayer(&overrideInputs[i].pad, overrideInputs[i].playerIdx);
+            }
             free(overrideInputs);
             overrideInputs = nullptr;
         }
@@ -167,76 +164,103 @@ namespace FrameLogic {
 
     bool shouldLoadStatePerFrame = false;
 
-
-    // writes out data to emulator
-    void WriteLogic() {
-        u32 currentFrame = GAME_FRAME->persistentFrameCounter; // or maybe use frameCounter here?
-        
-        // sending inputs + current game frame
-        {
-            FrameData* fData = (FrameData*)malloc(sizeof(FrameData));
-            fData->frame = currentFrame;
-            fData->randomSeed = 0; // tmp
-            memcpy(fData->pads, PAD_SYSTEM->pads, sizeof(PAD_SYSTEM->pads));
-            fData->pads[0].buttons.UpDPad = 0; // get rid of load state input -- for testing
-
-            if (FrameAdvance::pastFrameDatas.size() + 1 > MAX_ROLLBACK_FRAMES) {
-                FrameAdvance::pastFrameDatas.pop_front(true);
-            }
-            FrameAdvance::pastFrameDatas.push_back(fData); // tmp
-
-            EXIPacket fDataPckt = EXIPacket(EXICommand::CMD_ONLINE_INPUTS, fData, sizeof(FrameData));
-            fDataPckt.Send();
+    void ProcessFrameDataFromEmu(FrameData* framedata) {
+        // probably not necessary
+        // the "frame" of this framedata isn't used
+        for (u8 i = 0; i < Netplay::getGameSettings()->numPlayers; i++) {
+            PlayerFrameData* remotePlayerFrameData = &framedata->playerFrameDatas[i];
+            swapByteOrder(&remotePlayerFrameData->frame);
         }
         
-        
-        bool isLoadStateButton = PAD_SYSTEM->pads[0].buttons.UpDPad; // for testing
-
-
-        if (!shouldLoadStatePerFrame) shouldLoadStatePerFrame = isLoadStateButton;
-        
-        // saving state each frame
-        {
-            EXIPacket saveSavePckt = EXIPacket(EXICommand::CMD_CAPTURE_SAVESTATE);
-            saveSavePckt.Send();
+        if (FrameAdvance::overrideInputs != nullptr) {
+            OSReport("Override inputs already populated!\n");
+            free(FrameAdvance::overrideInputs);
+            FrameAdvance::overrideInputs = nullptr;
         }
-        
-        if (shouldLoadStatePerFrame && currentFrame % 5 == 0) { // rollback and resimulate every 5 frames
-            PAD_SYSTEM->pads[0].buttons.UpDPad = 0; // get rid of load state input (so it doesn't infinitely make you do that same input) -- for testing
-            EXIPacket LoadSaveStatePckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE);
-            LoadSaveStatePckt.Send();
-            FrameAdvance::TriggerFastForwardState(MAX_ROLLBACK_FRAMES);
-        }
-        
+        u8 numPlayers = Netplay::getGameSettings()->numPlayers;
+        FrameAdvance::overrideInputs = (PlayerFrameData*)malloc(sizeof(PlayerFrameData)*numPlayers);
+        memcpy(FrameAdvance::overrideInputs, &framedata->playerFrameDatas[0], sizeof(PlayerFrameData)*numPlayers);
 
+        // copy framedata into pastFrameDatas
+        FrameData* new_framedata = (FrameData*)malloc(sizeof(FrameData));
+        memcpy(new_framedata, framedata, sizeof(FrameData));
+        if (FrameAdvance::pastFrameDatas.size() + 1 > MAX_ROLLBACK_FRAMES) {
+            FrameAdvance::pastFrameDatas.pop_front(true);
+        }
+        FrameAdvance::pastFrameDatas.push_back(new_framedata);
     }
 
-    // reads in data from emulator
-    void ReadLogic() {
+    void ReadFrameData() {
         // game (us, right here) specifies how much memory to read in from emulator.
-
-        u32 read_data_size = sizeof(FrameData)+1;
+        
+        u32 read_data_size = sizeof(FrameData)+1; // FrameData + cmd byte
         u8* read_data = (u8*)malloc(read_data_size);
         readEXI(read_data, read_data_size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
 
         u8 cmd_byte = read_data[0];
         u8* data = &read_data[1];
-
-        if (cmd_byte == CMD_FRAMEDATA) {
-            FrameData* framedata = (FrameData*)data;
-            swapByteOrder(&framedata->frame);
-            swapByteOrder(&framedata->randomSeed);
-
-            //OSReport("[Emu->Game] Opponents inputs:\n");
-            //print_half(framedata->pads[0].buttons.bits);
-
-            //OSReport("[Emu->Game] Frame: %u\n", framedata->frame);
-
-            FrameAdvance::overrideInputs = (gfPadGamecube*)malloc(sizeof(gfPadGamecube)*4);
-            memcpy(FrameAdvance::overrideInputs, &framedata->pads[0], sizeof(gfPadGamecube)*4);
+        
+        switch (cmd_byte) {
+            case CMD_FRAMEDATA:
+                {
+                    // we've received inputs from the emulator here.
+                    // We don't care anything about what the inputs contain or anything about them.
+                    // the emulator takes care of the logic for when and how to send inputs, all we do here
+                    // is inject them into the game.
+                    FrameData* framedata = (FrameData*)data;
+                    ProcessFrameDataFromEmu(framedata);
+                }
+                break;
+            case CMD_STALL_FRAME:
+                {
+                    u8 framesToStall = *data;
+                    FrameAdvance::StallFrames((int)framesToStall);
+                }
+                break;
+            default:
+                //OSReport("Unknown dmaread cmd byte");
+                break;
         }
         free(read_data);
     }
+
+    void FrameDataLogic(u32 currentFrame) {
+        
+        // sending inputs + current game frame
+        {
+            u8 localPlayerIdx = Netplay::localPlayerIdx;
+            if (localPlayerIdx != Netplay::localPlayerIdxInvalid) {
+                PlayerFrameData* fData = (PlayerFrameData*)malloc(sizeof(PlayerFrameData));
+                fData->frame = currentFrame;
+                fData->playerIdx = localPlayerIdx;
+                memcpy(&fData->pad, &PAD_SYSTEM->pads[localPlayerIdx], sizeof(gfPadGamecube));
+
+                EXIPacket fDataPckt = EXIPacket(EXICommand::CMD_ONLINE_INPUTS, fData, sizeof(PlayerFrameData));
+                fDataPckt.Send();
+                free(fData);
+            }
+            else {
+                OSReport("Invalid player index! Can't send inputs to emulator!\n");
+            }
+        }
+        ReadFrameData();
+    }
+
+    void SaveStateLogic(u32 currentFrame) {        
+        bool shouldLoadState = PAD_SYSTEM->pads[0].buttons.UpDPad;
+        // saving state
+        {
+            EXIPacket saveSavePckt = EXIPacket(EXICommand::CMD_CAPTURE_SAVESTATE);
+            saveSavePckt.Send();
+        }
+        if (shouldLoadState) { // rollback and resimulate
+            EXIPacket LoadSaveStatePckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE);
+            LoadSaveStatePckt.Send();
+            FrameAdvance::TriggerFastForwardState(MAX_ROLLBACK_FRAMES);
+        }
+    }
+
+
 
     // called at the beginning of the game logic in a frame
     // a this point, inputs are populated for this frame
@@ -245,17 +269,23 @@ namespace FrameLogic {
         
         // this is the start of all our logic for each frame. Because EXI writes/reads are synchronous,
         // you can think of the control flow going like this
-        // this function -> write data to emulator through exi -> emulator processes data and possible queues up data
+        // this function -> write data to emulator through exi -> emulator processes data and possibly queues up data
         // to send back to the game -> send data to the game if there is any -> game processes that data -> repeat
 
-        if (Match::isInMatch) {
-            //OSReport("-----------------------------\n");
+        if (Match::isInMatch && Netplay::localPlayerIdx != Netplay::localPlayerIdxInvalid) {
 
-            // write data into dolphin
-            WriteLogic();
-            // dolphin then does some stuff with that data, and if it needs to, puts data into the dmaread queue,
-            // so we read in that data and deal with it here
-            ReadLogic();
+            u32 currentFrame = GAME_FRAME->persistentFrameCounter; // or maybe use frameCounter here?
+            OSReport("-- Begin Frame %u --\n", currentFrame);
+
+            s64 start = getTime();
+            FrameDataLogic(currentFrame);
+            //SaveStateLogic(currentFrame);
+            s64 end = getTime();
+
+            OSCalendarTime startTime = OSTimeToCalendarTime(start);
+            OSCalendarTime endTime = OSTimeToCalendarTime(end);
+            int diff = endTime.usec - startTime.usec;
+            OSReport("frame logic took %i microseconds\n", diff);
 
         }
         else { // not in a match
@@ -266,10 +296,19 @@ namespace FrameLogic {
     // called at the end of the game logic in a frame (rendering logic happens after this func in the frame)
     // at this point, I think its (maybe?) guarenteed that inputs are cleared out already
     void EndFrame() {
-        if (Match::isInMatch) {
+        if (Match::isInMatch && Netplay::localPlayerIdx != Netplay::localPlayerIdxInvalid) {
+            OSReport("-- End Frame --\n");
 
-            if (FrameAdvance::framesToAdvance > 1) {
-                FrameAdvance::EndFastForwardState();
+            if (FrameAdvance::framesToAdvance > 1) { // just resimulated, reset to normal
+                FrameAdvance::ResetFrameAdvance();
+            }
+            else if (FrameAdvance::framesToAdvance < 1) { // stalling frames
+                if (FrameAdvance::framesToStall > 0) {
+                    FrameAdvance::framesToStall -= 1;
+                }
+                else {
+                    FrameAdvance::ResetFrameAdvance(); // stalled for the specified # of frames, now reset to normal
+                }
             }
             
         }

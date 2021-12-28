@@ -9,13 +9,8 @@
 namespace Netplay {
     GameSettings gameSettings = GameSettings();
     GameSettings* getGameSettings() { return &gameSettings; }
-    int localPlayerIdx = -1;
-
-
-    void StartFindOpponent() {
-        EXIPacket findOpponentPckt = EXIPacket(EXICommand::CMD_FIND_OPPONENT);
-        findOpponentPckt.Send();
-    }
+    const u8 localPlayerIdxInvalid = 200;
+    u8 localPlayerIdx = localPlayerIdxInvalid;
 
     void StartMatch() {
         OSReport("Filling in game settings from game\n");
@@ -28,7 +23,8 @@ namespace Netplay {
         startMatchPckt.Send();
 
         // start emu netplay thread so it can start trying to find an opponent
-        StartFindOpponent();
+        EXIPacket findOpponentPckt = EXIPacket(EXICommand::CMD_FIND_OPPONENT);
+        findOpponentPckt.Send();
 
         u8 cmd_byte = EXICommand::CMD_UNKNOWN;
         size_t read_size = sizeof(GameSettings) + 1;
@@ -60,7 +56,7 @@ namespace Netplay {
     }
 
     void EndMatch() {
-
+        localPlayerIdx = localPlayerIdxInvalid;
     }
 
 }

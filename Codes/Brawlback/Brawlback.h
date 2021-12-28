@@ -12,6 +12,7 @@
 #include "Brawl/FT/ftManager.h"
 #include "Brawl/gmGlobalModeMelee.h"
 #include "Wii/mtRand.h"
+#include "Wii/OS/OSTime.h"
 #include "EXIPacket.h"
 #include "Utility/Utility.h"
 
@@ -19,14 +20,22 @@
 
 #define MAX_ROLLBACK_FRAMES 7
 
+#define MAX_REMOTE_PLAYERS 3
+#define MAX_NUM_PLAYERS 4
+
 #define NAMETAG_SIZE 8
 #define DISPLAY_NAME_SIZE 31
 #define CONNECT_CODE_SIZE 10
 
-struct FrameData {
+struct PlayerFrameData {
     u32 frame;
+    u8 playerIdx;
+    gfPadGamecube pad;
+};
+
+struct FrameData {
     u32 randomSeed;
-    gfPadGamecube pads[4];
+    PlayerFrameData playerFrameDatas[MAX_NUM_PLAYERS];
 }; //__attribute__((packed, aligned(4)));
 
 enum PlayerType : u8
@@ -48,9 +57,11 @@ struct PlayerSettings
 
 struct GameSettings
 {
+    u8 localPlayerIdx;
+    u8 numPlayers;
     u16 stageID;
     u32 randomSeed;
-    PlayerSettings playerSettings[4];
+    PlayerSettings playerSettings[MAX_NUM_PLAYERS];
 };
 
 

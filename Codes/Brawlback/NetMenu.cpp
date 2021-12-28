@@ -2,6 +2,9 @@
 #include "Netplay.h"
 
 // courtesey of Eon
+#define NETMENU_IMPL false
+
+#if NETMENU_IMPL
 
 // disable initial login attempt
 INJECTION("setToLoggedIn", 0x8014B5F8, R"(
@@ -35,6 +38,7 @@ SIMPLE_INJECTION(StartMatchingCallback, 0x8014aff8, "nop") {
     //setMatchingStatus(NetMatchMakingStatus::MatchingWaitShare);
 }
 
+#endif
 
 
 
