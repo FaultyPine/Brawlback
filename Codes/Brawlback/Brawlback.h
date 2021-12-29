@@ -23,6 +23,9 @@
 #define MAX_REMOTE_PLAYERS 3
 #define MAX_NUM_PLAYERS 4
 
+// how many frames to spread out a timesync over
+#define NUM_FRAMES_TO_SPREAD_TIMESYNC 10
+
 #define NAMETAG_SIZE 8
 #define DISPLAY_NAME_SIZE 31
 #define CONNECT_CODE_SIZE 10

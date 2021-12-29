@@ -78,20 +78,14 @@ namespace Match {
 
 namespace FrameAdvance {
 
+    // how many game logic frames we should simulate this frame
     int framesToAdvance = 1;
-
-    int framesToStall = 0;
 
     // sets the number of frames of game logic to run every frame
     void TriggerFastForwardState(u8 numFramesToFF) {
         framesToAdvance = numFramesToFF;
     }
     void ResetFrameAdvance() { framesToAdvance = 1; }
-    void StallFrames(u8 frames) {
-        OSReport("Stalling %u frames\n", (unsigned int)frames);
-        framesToAdvance = 0; 
-        framesToStall = frames; 
-    }
 
     // og instruction: cmplw r19, r24
     // # of frames to simulate is stored in r24
@@ -211,10 +205,9 @@ namespace FrameLogic {
                     ProcessFrameDataFromEmu(framedata);
                 }
                 break;
-            case CMD_STALL_FRAME:
+            case CMD_TIMESYNC:
                 {
-                    u8 framesToStall = *data;
-                    FrameAdvance::StallFrames((int)framesToStall);
+                    
                 }
                 break;
             default:
@@ -301,14 +294,6 @@ namespace FrameLogic {
 
             if (FrameAdvance::framesToAdvance > 1) { // just resimulated, reset to normal
                 FrameAdvance::ResetFrameAdvance();
-            }
-            else if (FrameAdvance::framesToAdvance < 1) { // stalling frames
-                if (FrameAdvance::framesToStall > 0) {
-                    FrameAdvance::framesToStall -= 1;
-                }
-                else {
-                    FrameAdvance::ResetFrameAdvance(); // stalled for the specified # of frames, now reset to normal
-                }
             }
             
         }

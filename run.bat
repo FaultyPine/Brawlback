@@ -11,6 +11,9 @@ if [%cmd%]==[two] (
     call "run_dolphin.bat"
     call "run_dolphin.bat" secondary
 )
+if [%cmd%]==[secondary] (
+    call "run_dolphin.bat" secondary
+)
 if [%cmd%]==[] (
     call "run_dolphin.bat"
 )
