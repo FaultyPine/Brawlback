@@ -65,6 +65,17 @@ class Queue
             --qsize;
         }
 
+        void clear() {
+            ListNode* old;
+            while(head != nullptr) {
+                old = head;
+                head = head->next_ptr;
+                delete old;
+            }
+            qsize = 0;
+            tail = nullptr;
+        }
+
         T const&    front() const {return head->data;}
         T const&    back()  const {return tail->data;}
         ListNode*    getNodeFront() const { return head; }

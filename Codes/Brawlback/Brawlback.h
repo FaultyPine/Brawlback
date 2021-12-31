@@ -67,6 +67,23 @@ struct GameSettings
     PlayerSettings playerSettings[MAX_NUM_PLAYERS];
 };
 
+struct PreserveBlock {
+    u32 address;
+    u32 length;
+};
+
+struct RollbackInfo {
+    bool isRollback;
+    u32 beginFrame; // frame we realized we have no remote inputs
+    u32 endFrame; // frame we received new remote inputs, and should now resim with those
+    PlayerFrameData predictedInputs;
+
+    bool pastFrameDataPopulated;
+    FrameData pastFrameDatas[MAX_ROLLBACK_FRAMES];
+
+    bool hasPreserveBlocks;
+    vector<PreserveBlock> preserveBlocks;
+};
 
 void fillOutGameSettings(GameSettings* settings);
 void MergeGameSettingsIntoGame(GameSettings* settings);

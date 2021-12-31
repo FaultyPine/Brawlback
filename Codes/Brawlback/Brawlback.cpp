@@ -118,33 +118,40 @@ namespace FrameAdvance {
     void InjectInputsForPlayer(gfPadGamecube* pad, u8 playerIdx) {
         memcpy(&PAD_SYSTEM->pads[playerIdx], pad, sizeof(gfPadGamecube));
     }
+    void InjectInputsForAllPlayers(PlayerFrameData* playerFrameDatas) {
+        for (int i = 0; i < Netplay::getGameSettings()->numPlayers; i++) {
+            PlayerFrameData* playerFrameData = &playerFrameDatas[i];
+            InjectInputsForPlayer(&playerFrameData->pad, playerFrameData->playerIdx);
+        }
+    }
 
     // for keeping track of the past few framedatas
     Queue<FrameData*> pastFrameDatas = Queue<FrameData*>();
+
+    void FindAndInjectInputsForResimFrame(u32 gameLogicFrame) {
+        auto node = pastFrameDatas.getNodeFront();
+        // iterate through our queue of past frame datas
+        while (node != nullptr) {
+            //     .frame should be same for all framedatas
+            if (node->data->playerFrameDatas[0].frame == gameLogicFrame) { // if the frame of that FrameData in the queue is the same as the current one
+                // inject inputs and break out
+                PlayerFrameData* playerFrameDatas = node->data->playerFrameDatas;
+                InjectInputsForAllPlayers(playerFrameDatas);
+                break;
+            }
+            node = node->next_ptr;
+        }
+    }
 
     // this is at the very beginning of the main game logic loop (right before 'gameProc'). This should be a good place to inject inputs for
     // each fast-forwarded frame
     SIMPLE_INJECTION(controllerInjectionPoint, 0x80017354, "or r4, r19, r19") {
         // if we are currently resimulating
         if (framesToAdvance > 1) {
-            //OSReport("Current game logic frame (in loop): %u\n", gameLogicFrame);
+            u32 gameLogicFrame = GAME_FRAME->persistentFrameCounter; // increments even during resim frames
+            OSReport("Current game logic frame (in loop): %u\n", gameLogicFrame);
             if (!pastFrameDatas.empty()) {
-                u32 gameLogicFrame = GAME_FRAME->persistentFrameCounter;
-                auto node = pastFrameDatas.getNodeFront();
-                // iterate through our queue of past frame datas
-                while (node != nullptr) {
-                    //     frame should be same for all framedatas
-                    if (node->data->playerFrameDatas[0].frame == gameLogicFrame) { // if the frame of that FrameData in the queue is the same as the current one
-                        // inject inputs and break out
-                        PlayerFrameData* playerFrameDatas = node->data->playerFrameDatas;
-                        for (int i = 0; i < Netplay::getGameSettings()->numPlayers; i++) {
-                            PlayerFrameData* playerFrameData = &playerFrameDatas[i];
-                            InjectInputsForPlayer(&playerFrameData->pad, playerFrameData->playerIdx);
-                        }
-                        break;
-                    }
-                    node = node->next_ptr;
-                }
+                FindAndInjectInputsForResimFrame(gameLogicFrame);
             }
         }
         /*should this be else if? Or just if? i think else if is right 
@@ -191,6 +198,32 @@ namespace FrameLogic {
         FrameAdvance::pastFrameDatas.push_back(new_framedata);
     }
 
+    void ProcessRollback(RollbackInfo* rollbackInfo) {
+        if (!rollbackInfo->pastFrameDataPopulated) {
+            OSReport("Past framedata not populated when trying to rollback gameside!\n");
+            return;
+        }
+
+        // number of frames to resim is the frame we received inputs again - the frame we began not receiving inputs
+        u32 numFramesToResimulate = rollbackInfo->endFrame - rollbackInfo->beginFrame;
+
+        FrameAdvance::pastFrameDatas.clear();
+        // populate pastFrameDatas for resim
+        for (int i = 0; i < numFramesToResimulate; i++) {
+            FrameData* pastFD = (FrameData*)malloc(sizeof(FrameData));
+            memcpy(pastFD, &rollbackInfo->pastFrameDatas[i], sizeof(FrameData));
+            FrameAdvance::pastFrameDatas.push_back(&rollbackInfo->pastFrameDatas[i]);
+        }
+        OSReport("Populated gameside pastFrameDatas. Num frames to resim: %u\n", numFramesToResimulate);
+
+        // load state
+        EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo));
+        stateReloadPckt.Send();
+
+
+        FrameAdvance::TriggerFastForwardState(numFramesToResimulate);
+    }
+
     void ReadFrameData() {
         // game (us, right here) specifies how much memory to read in from emulator.
         
@@ -212,6 +245,12 @@ namespace FrameLogic {
                     ProcessFrameDataFromEmu(framedata);
                 }
                 break;
+            case CMD_ROLLBACK:
+                {
+                    OSReport("Rollback gameside\n");
+                    RollbackInfo* rollbackInfo = (RollbackInfo*)data;
+                    ProcessRollback(rollbackInfo);
+                }
             case CMD_TIMESYNC:
                 {
                     // stall for one frame here
@@ -248,18 +287,9 @@ namespace FrameLogic {
         ReadFrameData();
     }
 
-    void SaveStateLogic(u32 currentFrame) {        
-        bool shouldLoadState = PAD_SYSTEM->pads[0].buttons.UpDPad;
-        // saving state
-        {
-            EXIPacket saveSavePckt = EXIPacket(EXICommand::CMD_CAPTURE_SAVESTATE);
-            saveSavePckt.Send();
-        }
-        if (shouldLoadState) { // rollback and resimulate
-            EXIPacket LoadSaveStatePckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE);
-            LoadSaveStatePckt.Send();
-            FrameAdvance::TriggerFastForwardState(MAX_ROLLBACK_FRAMES);
-        }
+    void SaveState(u32 currentFrame) {        
+        EXIPacket saveSavePckt = EXIPacket(EXICommand::CMD_CAPTURE_SAVESTATE, &currentFrame, sizeof(currentFrame));
+        saveSavePckt.Send();
     }
 
 
@@ -281,7 +311,7 @@ namespace FrameLogic {
 
             s64 start = getTime();
             FrameDataLogic(currentFrame);
-            //SaveStateLogic(currentFrame);
+            //SaveState(currentFrame);
             s64 end = getTime();
 
             OSCalendarTime startTime = OSTimeToCalendarTime(start);
