@@ -6,8 +6,8 @@ https://github.com/Fracture17/ProjectMCodes
 
 # Building
 
-First, make sure to include your SD card contents in `SDCard/Project+`. This folder is gitignored (since its really big), so you'll have to provide it yourself
-
+Firstly, the `pf` folder in p+/pm is way too big for git, so it's gitignored. You'll have to provide your own for testing
+those mods.  
 
 Next, there are some files that have hardcoded paths. Look for the comment `(CHANGEME)`.
 Change all the relevant path variables in the `.bat` scripts in this project's root directory.
