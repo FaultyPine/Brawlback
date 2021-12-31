@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectm>
+  <title>Official PM WiFi Addon</title>
+  <code>PMWF</code>
+  <version>3.6</version>
+  <minimumLauncherVersion>1.12</minimumLauncherVersion>
+  <minimumPMVersion>3.6</minimumPMVersion>
+  <files>
+    <file
+      source="sc_selcharacter.pac"
+      destination="sd:/projectm/pf/menu2/sc_selcharacter.pac"
+      md5="b02639ae6753b13f8daa40223817dd52" />              
+    <file
+      source="sc_selcharacter2.pac"
+      destination="sd:/projectm/pf/menu2/sc_selcharacter2.pac"
+      md5="114e14dfecdb73700f280dd8c1b84546" />
+    <file
+      source="mu_menumain.pac"
+      destination="sd:/projectm/pf/menu2/mu_menumain.pac"
+      md5="ba885e6745c6f5a2921819d3f0f60651" />
+    <file
+      source="RSBE01.gct"
+      destination="sd:/codes/RSBE01.gct"
+      md5="a04a02f5f1fa5762fa1ad513f61faa80" />
+    </files>  
+</projectm>

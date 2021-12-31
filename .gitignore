@@ -3,8 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Ignore SDCard project+ build stuff
-SDCard/Project+
+# Ignore pf folder for p+/pm since it's way too big for git to handle
+pf/
 
 out/
 build/

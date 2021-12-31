@@ -1,8 +1,9 @@
 @echo off
 
-:: launch either vBrawl or Project+
-set launcher="vBrawl.elf"
-::set launcher="Project+.elf"
+:: launchers
+::set launcher="vBrawl.elf"
+set launcher="Project+.elf"
+::set launcher="PM.elf"
 
 :: (CHANGEME) path to the built dolphin executable
 set dolphin_exe="C:\Users\gclar\Desktop\dolphin\Binary\x64\Dolphin.exe"
