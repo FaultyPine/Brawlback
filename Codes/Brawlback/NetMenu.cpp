@@ -43,7 +43,7 @@ SIMPLE_INJECTION(StartMatchingCallback, 0x8014aff8, "nop") {
 
 
 namespace NetReport {
-#define HOOK_NETREPORT true
+#define HOOK_NETREPORT false
 
 #if HOOK_NETREPORT
 // netReport/[muWifiInterface]

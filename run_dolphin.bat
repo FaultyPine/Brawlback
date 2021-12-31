@@ -1,5 +1,8 @@
 @echo off
 
+:: launch either vBrawl or Project+
+set launcher="vBrawl.elf"
+::set launcher="Project+.elf"
 
 :: (CHANGEME) path to the built dolphin executable
 set dolphin_exe="C:\Users\gclar\Desktop\dolphin\Binary\x64\Dolphin.exe"
@@ -12,7 +15,7 @@ if [%1]==[secondary] (
 
 set build_dir="%CD%/SDCard"
 
-set run_cmd=start /realtime "" "%dolphin_exe%" --exec "%build_dir%/boot.elf" -d
+set run_cmd=start /realtime "" "%dolphin_exe%" --exec "%build_dir%/%launcher%" -d
 
 echo ===================
 echo Starting dolphin...

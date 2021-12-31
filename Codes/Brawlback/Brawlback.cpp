@@ -1,6 +1,9 @@
 #include "Brawlback.h"
 #include "Netplay.h"
 
+STARTUP(startupNotif) {
+    OSReport("~~~~~~~~~~~~~~~~~~~~~~~~ Brawlback ~~~~~~~~~~~~~~~~~~~~~~~~\n");
+}
 
 
 
@@ -145,7 +148,7 @@ namespace FrameAdvance {
 
     // this is at the very beginning of the main game logic loop (right before 'gameProc'). This should be a good place to inject inputs for
     // each fast-forwarded frame
-    SIMPLE_INJECTION(controllerInjectionPoint, 0x80017354, "or r4, r19, r19") {
+    SIMPLE_INJECTION(resimPoint, 0x80017354, "or r4, r19, r19") {
         // if we are currently resimulating
         if (framesToAdvance > 1) {
             u32 gameLogicFrame = GAME_FRAME->persistentFrameCounter; // increments even during resim frames
@@ -188,14 +191,6 @@ namespace FrameLogic {
         u8 numPlayers = Netplay::getGameSettings()->numPlayers;
         FrameAdvance::overrideInputs = (PlayerFrameData*)malloc(sizeof(PlayerFrameData)*numPlayers);
         memcpy(FrameAdvance::overrideInputs, &framedata->playerFrameDatas[0], sizeof(PlayerFrameData)*numPlayers);
-
-        // copy framedata into pastFrameDatas
-        FrameData* new_framedata = (FrameData*)malloc(sizeof(FrameData));
-        memcpy(new_framedata, framedata, sizeof(FrameData));
-        if (FrameAdvance::pastFrameDatas.size() + 1 > MAX_ROLLBACK_FRAMES) {
-            FrameAdvance::pastFrameDatas.pop_front(true);
-        }
-        FrameAdvance::pastFrameDatas.push_back(new_framedata);
     }
 
     void ProcessRollback(RollbackInfo* rollbackInfo) {

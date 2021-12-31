@@ -35,5 +35,17 @@ struct gfPadGamecube {
 
 	//0x3C
 	controllerType type = GAMECUBE;
+
+    gfPadGamecube() {
+      buttons.bits = 0;
+      stickX = 0;
+      stickY = 0;
+      cStickX = 0;
+      cStickY = 0;
+      LTrigger = 0;
+      RTrigger = 0;
+      isNotConnected = 0;
+      type = GAMECUBE;
+  }
 }; //__attribute__((packed, aligned(4)));
 #pragma pack(pop)
