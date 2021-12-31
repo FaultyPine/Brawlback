@@ -85,7 +85,14 @@ namespace FrameAdvance {
     void TriggerFastForwardState(u8 numFramesToFF) {
         framesToAdvance = numFramesToFF;
     }
-    void ResetFrameAdvance() { framesToAdvance = 1; }
+    void StallOneFrame() { framesToAdvance = 0; }
+    void SkipOneFrame() { framesToAdvance = 2; }
+    void ResetFrameAdvance() { 
+        if (framesToAdvance != 1) {
+            OSReport("Resetting frameadvance to normal\n");
+            framesToAdvance = 1; 
+        }
+    }
 
     // og instruction: cmplw r19, r24
     // # of frames to simulate is stored in r24
@@ -207,7 +214,9 @@ namespace FrameLogic {
                 break;
             case CMD_TIMESYNC:
                 {
-                    
+                    // stall for one frame here
+                    FrameAdvance::StallOneFrame();
+                    OSReport("Gameside: stalling for one frame\n");
                 }
                 break;
             default:
@@ -292,9 +301,8 @@ namespace FrameLogic {
         if (Match::isInMatch && Netplay::localPlayerIdx != Netplay::localPlayerIdxInvalid) {
             OSReport("-- End Frame --\n");
 
-            if (FrameAdvance::framesToAdvance > 1) { // just resimulated, reset to normal
-                FrameAdvance::ResetFrameAdvance();
-            }
+            // just resimulated/stalled/skipped/whatever, reset to normal
+            FrameAdvance::ResetFrameAdvance();
             
         }
     }
