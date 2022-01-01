@@ -5,6 +5,7 @@
 
 # Ignore pf folder for p+/pm since it's way too big for git to handle
 pf/
+codes/
 
 out/
 build/
