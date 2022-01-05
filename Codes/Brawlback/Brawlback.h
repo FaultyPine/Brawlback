@@ -34,6 +34,17 @@ struct PlayerFrameData {
     u32 frame;
     u8 playerIdx;
     gfPadGamecube pad;
+
+    PlayerFrameData(u32 frame, u8 playerIdx) {
+        frame = frame;
+        playerIdx = playerIdx;
+        pad = gfPadGamecube();
+    }
+    PlayerFrameData() {
+        frame = 0;
+        playerIdx = 0;
+        pad = gfPadGamecube();
+    }
 };
 
 struct FrameData {
@@ -87,5 +98,8 @@ struct RollbackInfo {
 
 void fillOutGameSettings(GameSettings* settings);
 void MergeGameSettingsIntoGame(GameSettings* settings);
+namespace Match {
+    bool IsInMatch();
+}
 
 #endif

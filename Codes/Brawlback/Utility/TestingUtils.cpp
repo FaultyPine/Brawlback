@@ -1,9 +1,8 @@
 #include "TestingUtils.h"
-
-
-// Fudge's thing
+#include "../Brawlback.h"
 
 /*
+// Fudge's thing. (what does this do again?)
 INJECTION("forceVisMemPool", 0x80025dc8, R"(
     cmpwi r3, 69
 )");
