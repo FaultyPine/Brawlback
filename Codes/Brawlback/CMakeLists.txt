@@ -8,5 +8,6 @@ add_code(BRAWLBACK
     Utility/TestingUtils.cpp
     Netplay.cpp
     NetMenu.cpp
-    LoadStateFixes.cpp
+    Hacks/LoadStateFixes.cpp
+    Hacks/Rumble.cpp
 )

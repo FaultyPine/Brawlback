@@ -116,26 +116,3 @@ INJECTION("overrideThreadStallInj", 0x801e0bd0, R"(
 )");
 
 
-INJECTION("gfTaskSchedulerFix", 0x8002e66c, R"(
-    bl gfTaskSchedulerFixFunc
-    bne+ -0x90
-)");
-extern "C" void gfTaskSchedulerFixFunc() {
-    asm(R"(
-
-        cmpwi %0, 0x1
-        beq AFTER_BRANCH
-        
-        cmpwi r27, 0x0
-
-        AFTER_BRANCH:
-
-        blr
-    )"
-    :
-    : "r" (isLoadedState)
-    );
-}
-
-// hsd_padrumble inf loop
-INJECTION("rumbleInfLoopFix", 0x8002c4dc, "nop")

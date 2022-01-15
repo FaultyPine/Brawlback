@@ -6,6 +6,8 @@
 #include "Wii/EXI/EXI.h"
 #include "Memory.h"
 
+#include "Wii/OS/OSInterrupt.h"
+
 #include "Wii/PAD/PADStatus.h"
 #include "Brawl/GF/GameFrame.h"
 #include "Brawl/GF/gfPadSystem.h"
@@ -19,6 +21,7 @@
 
 
 #define MAX_ROLLBACK_FRAMES 7
+#define FRAME_DELAY 2
 
 #define MAX_REMOTE_PLAYERS 3
 #define MAX_NUM_PLAYERS 4
@@ -35,14 +38,14 @@ struct PlayerFrameData {
     u8 playerIdx;
     gfPadGamecube pad;
 
-    PlayerFrameData(u32 frame, u8 playerIdx) {
-        frame = frame;
-        playerIdx = playerIdx;
-        pad = gfPadGamecube();
-    }
     PlayerFrameData() {
         frame = 0;
         playerIdx = 0;
+        pad = gfPadGamecube();
+    }
+    PlayerFrameData(u32 frame, u8 playerIdx) {
+        frame = frame;
+        playerIdx = playerIdx;
         pad = gfPadGamecube();
     }
 };
@@ -50,6 +53,18 @@ struct PlayerFrameData {
 struct FrameData {
     u32 randomSeed;
     PlayerFrameData playerFrameDatas[MAX_NUM_PLAYERS];
+    FrameData() {
+        randomSeed = 0;
+        for (int i = 0; i < MAX_NUM_PLAYERS; i++) {
+            playerFrameDatas[i] = PlayerFrameData();
+        }
+    }
+    FrameData(u32 frame) {
+        randomSeed = 0;
+        for (u8 i = 0; i < MAX_NUM_PLAYERS; i++) {
+            playerFrameDatas[i] = PlayerFrameData(frame, i);
+        }
+    }
 }; //__attribute__((packed, aligned(4)));
 
 enum PlayerType : u8
@@ -87,7 +102,7 @@ struct RollbackInfo {
     bool isRollback;
     u32 beginFrame; // frame we realized we have no remote inputs
     u32 endFrame; // frame we received new remote inputs, and should now resim with those
-    PlayerFrameData predictedInputs;
+    FrameData predictedInputs;
 
     bool pastFrameDataPopulated;
     FrameData pastFrameDatas[MAX_ROLLBACK_FRAMES];
