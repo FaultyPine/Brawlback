@@ -3,6 +3,18 @@
 
 
 
+
+/*
+INJECTION("gfCreateModuleHook", 0x800266c4, R"(
+    SAVE_REGS
+    bl createModuleTest
+    RESTORE_REGS
+)");
+extern "C" void createModuleTest() {
+    
+}
+*/
+
 // hsd_padrumble inf loop
 //INJECTION("rumbleInfLoopFix", 0x8002c4dc, "nop")
 

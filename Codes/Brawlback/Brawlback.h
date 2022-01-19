@@ -26,27 +26,46 @@
 #define MAX_REMOTE_PLAYERS 3
 #define MAX_NUM_PLAYERS 4
 
-// how many frames to spread out a timesync over
-#define NUM_FRAMES_TO_SPREAD_TIMESYNC 10
 
 #define NAMETAG_SIZE 8
 #define DISPLAY_NAME_SIZE 31
 #define CONNECT_CODE_SIZE 10
 
+
+struct BrawlbackPad {
+    unsigned short buttons;
+    char stickX;
+    char stickY;
+    char cStickX;
+    char cStickY;
+    char LTrigger;
+    char RTrigger;
+
+    BrawlbackPad() {
+        buttons = 0;
+        stickX = 0;
+        stickY = 0;
+        cStickX = 0;
+        cStickY = 0;
+        LTrigger = 0;
+        RTrigger = 0;
+    }
+};
+
 struct PlayerFrameData {
     u32 frame;
     u8 playerIdx;
-    gfPadGamecube pad;
+    BrawlbackPad pad;
 
     PlayerFrameData() {
         frame = 0;
         playerIdx = 0;
-        pad = gfPadGamecube();
+        pad = BrawlbackPad();
     }
     PlayerFrameData(u32 frame, u8 playerIdx) {
         frame = frame;
         playerIdx = playerIdx;
-        pad = gfPadGamecube();
+        pad = BrawlbackPad();
     }
 };
 
@@ -115,6 +134,9 @@ void fillOutGameSettings(GameSettings* settings);
 void MergeGameSettingsIntoGame(GameSettings* settings);
 namespace Match {
     bool IsInMatch();
+}
+namespace FrameLogic {
+    void SaveState(u32 frame);
 }
 
 #endif
