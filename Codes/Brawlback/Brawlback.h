@@ -138,5 +138,8 @@ namespace Match {
 namespace FrameLogic {
     void SaveState(u32 frame);
 }
+namespace FrameAdvance {
+    int getFramesToAdvance();
+}
 
 #endif

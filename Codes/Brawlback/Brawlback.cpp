@@ -114,6 +114,7 @@ namespace FrameAdvance {
 
     // how many game logic frames we should simulate this frame
     int framesToAdvance = 1;
+    int getFramesToAdvance() { return framesToAdvance; }
 
     // sets the number of frames of game logic to run every frame
     void TriggerFastForwardState(u8 numFramesToFF) {
