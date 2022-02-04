@@ -118,7 +118,7 @@ struct PreserveBlock {
 };
 
 struct RollbackInfo {
-    bool isRollback;
+    bool isUsingPredictedInputs;
     u32 beginFrame; // frame we realized we have no remote inputs
     u32 endFrame; // frame we received new remote inputs, and should now resim with those
     FrameData predictedInputs;
@@ -128,6 +128,20 @@ struct RollbackInfo {
 
     bool hasPreserveBlocks;
     vector<PreserveBlock> preserveBlocks;
+
+    RollbackInfo() {
+        Reset();
+    }
+    void Reset() {
+        isUsingPredictedInputs = false;
+        beginFrame = 0;
+        endFrame = 0;
+        predictedInputs = FrameData();
+        pastFrameDataPopulated = false;
+        memset(pastFrameDatas, 0, sizeof(FrameData) * MAX_ROLLBACK_FRAMES);
+        hasPreserveBlocks = false;
+        preserveBlocks = {};
+    }
 };
 
 void fillOutGameSettings(GameSettings* settings);
