@@ -323,11 +323,11 @@ namespace FrameLogic {
 
         if (shouldRollback) {
 
-            //FrameAdvance::pastFrameDatas.clear();
+            FrameAdvance::pastFrameDatas.clear();
 
             // according to fudge, reallocating like this is better than just using clear
-            FrameAdvance::pastFrameDatas.reallocate(0);
-            FrameAdvance::pastFrameDatas.reallocate(1); 
+            //FrameAdvance::pastFrameDatas.reallocate(0);
+            //FrameAdvance::pastFrameDatas.reallocate(1); 
 
             if (rollbackInfo->pastFrameDataPopulated) {
                 // populate pastFrameDatas for resim
