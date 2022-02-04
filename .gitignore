@@ -6,8 +6,8 @@
 # Ignore pf folder for p+/pm since it's way too big for git to handle
 pf/
 # ignore built code files
-#SDCard/Project+/codes/*
-#SDCard/vBrawl/codes/*
+SDCard/Project+/codes/*
+SDCard/vBrawl/codes/*
 
 
 out/
