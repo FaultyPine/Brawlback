@@ -39,12 +39,20 @@ EXIPacket::~EXIPacket() {
     }
 }
 
-void EXIPacket::Send() {
+bool EXIPacket::Send() {
     _OSDisableInterrupts();
-
-    writeEXI(this->source, this->size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
+    bool success = false;
+    if (!this->source || this->size <= 0) {
+        OSReport("Invalid EXI packet source or size!\n");
+    }
+    else {
+        writeEXI(this->source, this->size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
+        success = true;
+    }
+    //OSReport("EXICmd: %u   Source: %p   Size: %u\n", this->cmd, this->source, this->size);
 
     _OSEnableInterrupts();
+    return success;
 }
 
 u8* EXIPacket::Receive(u32 size) {

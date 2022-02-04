@@ -47,10 +47,13 @@ class Queue
             }
             else {
                 ListNode* newTail = newNode;
-                if (tail == nullptr)
+                if (tail == nullptr) {
                     tail = newTail;
-                else
+                }
+                else {
                     tail->next_ptr = newTail;
+                    tail = newTail;
+                }
             }
             ++qsize;
         }

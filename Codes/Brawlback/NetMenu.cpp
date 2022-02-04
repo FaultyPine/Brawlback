@@ -2,7 +2,7 @@
 #include "Netplay.h"
 
 // courtesey of Eon
-#define NETMENU_IMPL false
+#define NETMENU_IMPL true
 
 #if NETMENU_IMPL
 

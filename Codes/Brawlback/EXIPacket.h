@@ -42,7 +42,7 @@ public:
     EXIPacket();
     ~EXIPacket();
 
-    void Send();
+    bool Send();
     u8* Receive(u32 size);
     void Receive(u8* buf, u32 size);
 

@@ -19,11 +19,11 @@ echo ==================================
 :: probably only really need to copy Dolphin.exe to sync here
 :: DSPTool.exe is a dev tool for dumping opcodes or something like that, and the updater obv isn't being used rn
 
-xcopy /y /q "%dolphin_main_dir%\Dolphin.exe" "%dolphin_secondary_dir%"
+xcopy /y /q "%dolphin_main_dir%\Dolphin.exe" "%dolphin_secondary_dir%\Dolphin.exe"*
 ::xcopy /y /q "%dolphin_main_dir%\DSPTool.exe" "%dolphin_secondary_dir%"
 
 :: copy sd.raw which contains our code mods
-xcopy /y /q "%dolphin_main_dir%\%sd_raw_rel_path%\sd.raw" "%dolphin_secondary_dir%\%sd_raw_rel_path%\sd.raw"
+xcopy /y /q "%dolphin_main_dir%\%sd_raw_rel_path%\sd.raw" "%dolphin_secondary_dir%\%sd_raw_rel_path%\sd.raw"*
 
 echo ==============================
 echo Synchronized dolphin instances
