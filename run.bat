@@ -1,6 +1,6 @@
 @echo off
 
-
+call "get_settings.bat"
 
 set cmd=%1
 

@@ -1,9 +1,10 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: TODO: Put instructions for using this script here
-
 clear
+
+
+call "get_settings.bat"
 
 if [%1]==[] (
     call "build_dolphin.bat" && call "build_mod.bat" && call "sync_dolphin_instances.bat"

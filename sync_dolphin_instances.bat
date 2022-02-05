@@ -1,12 +1,12 @@
 @echo off
 
-:: (CHANGEME)
-set dolphin_binaries_dir=C:\Users\gclar\Desktop\dolphin\Binary
+call "get_settings.bat"
+
 
 :: (Might not exist if building on other platform???)
-set dolphin_main_dir=%dolphin_binaries_dir%\x64
+set dolphin_main_dir=%DOLPHIN_BINARIES_DIR%\x64
 :: (MAKE SURE TO CREATE THIS)
-set dolphin_secondary_dir=%dolphin_binaries_dir%\Secondary
+set dolphin_secondary_dir=%DOLPHIN_BINARIES_DIR%\Secondary
 
 set sd_raw_rel_path=\User\Wii
 

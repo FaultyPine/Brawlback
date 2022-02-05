@@ -1,22 +1,22 @@
 @echo off
 
+call "get_settings.bat"
+
 :: launchers
 ::set launcher="vBrawl.elf"
-set launcher="Project+.elf"
+::set launcher="Project+.elf"
 ::set launcher="PM.elf"
 
-:: (CHANGEME) path to the built dolphin executable
-set dolphin_exe="C:\Users\gclar\Desktop\dolphin\Binary\x64\Dolphin.exe"
+set dolphin_exe=%DOLPHIN_EXE_PATH%
 
 :: if arg is secondary, run a seperate instance of dolphin
 if [%1]==[secondary] (
-    :: (CHANGEME) path to a second dolphin instance for debugging netplay
-    set dolphin_exe="C:\Users\gclar\Desktop\dolphin\Binary\Secondary\Dolphin.exe"
+    set dolphin_exe=%DOLPHIN_SECONDARY_EXE_PATH%
 )
 
 set build_dir="%CD%/SDCard"
 
-set run_cmd=start /realtime "" "%dolphin_exe%" --exec "%build_dir%/%launcher%" -d
+set run_cmd=start /realtime "" "%dolphin_exe%" --exec "%build_dir%/%LAUNCHER%" -d
 
 echo ===================
 echo Starting dolphin...
