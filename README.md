@@ -2,7 +2,7 @@
 Based off framework by Fracture and Fudgepop01  
 https://github.com/Fracture17/ProjectMCodes  
 
-
+This mod is to be used in conjunction with this [Brawlback dolphin fork](https://github.com/FaultyPine/dolphin).  
 
 # Building
 
