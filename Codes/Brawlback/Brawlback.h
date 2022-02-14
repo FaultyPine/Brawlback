@@ -128,20 +128,6 @@ struct RollbackInfo {
 
     bool hasPreserveBlocks;
     vector<PreserveBlock> preserveBlocks;
-
-    RollbackInfo() {
-        Reset();
-    }
-    void Reset() {
-        isUsingPredictedInputs = false;
-        beginFrame = 0;
-        endFrame = 0;
-        predictedInputs = FrameData();
-        pastFrameDataPopulated = false;
-        memset(pastFrameDatas, 0, sizeof(FrameData) * MAX_ROLLBACK_FRAMES);
-        hasPreserveBlocks = false;
-        preserveBlocks = {};
-    }
 };
 
 void fillOutGameSettings(GameSettings* settings);

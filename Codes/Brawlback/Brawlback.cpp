@@ -14,6 +14,21 @@ u32 getCurrentFrame() {
     return GAME_FRAME->persistentFrameCounter;
 }
 
+void printInputs(const BrawlbackPad& pad) {
+    OSReport(" -- Pad --\n");
+
+    OSReport("StickX: %i\n", (int)pad.stickX);
+    OSReport("StickY: %i\n", (int)pad.stickY);
+    OSReport("CStickX: %i\n", (int)pad.cStickX);
+    OSReport("CStickY: %i\n", (int)pad.cStickY);
+    OSReport("Buttons: ");
+    print_half(pad.buttons);
+    OSReport("LTrigger: %u    RTrigger %u\n", pad.LTrigger, pad.RTrigger);
+
+    OSReport(" ---------\n");
+
+}
+
 bool isInputsEqual(BrawlbackPad* p1, BrawlbackPad* p2) {
     #define TRIGGER_DEADZONE_THRESHOLD 44
     bool buttons = p1->buttons == p2->buttons;
@@ -68,7 +83,7 @@ void fillOutGameSettings(GameSettings* settings) {
 void MergeGameSettingsIntoGame(GameSettings* settings) {
     //DEFAULT_MT_RAND->seed = settings->randomSeed;
     DEFAULT_MT_RAND->seed = 0x496ffd00; // hardcoded for testing (arbitrary number)
-    //OTHER_MT_RAND->seed = 0x496ffd00;
+    OTHER_MT_RAND->seed = 0x496ffd00;
 
     //GM_GLOBAL_MODE_MELEE->stageID = settings->stageID;
     GM_GLOBAL_MODE_MELEE->stageID = 2;
@@ -168,7 +183,6 @@ namespace FrameAdvance {
     }
 
     // for keeping track of the past few framedatas
-    //Queue<FrameData*> pastFrameDatas = Queue<FrameData*>();
     vector<FrameData*> pastFrameDatas = {};
 
     void FindAndInjectInputsForResimFrame(u32 gameLogicFrame) {
@@ -262,6 +276,37 @@ namespace FrameLogic {
         }
     }
 
+    // takes RollbackInfo struct and performs logic that triggers the actual rollback/resimulation
+    void ExecuteRollback(RollbackInfo* rollbackInfo) {
+        int numFramesToResimulate = ((int)rollbackInfo->endFrame - (int)rollbackInfo->beginFrame);
+        FrameAdvance::pastFrameDatas.clear();
+
+        // according to fudge, reallocating like this is better than just using clear
+        //FrameAdvance::pastFrameDatas.reallocate(0);
+        //FrameAdvance::pastFrameDatas.reallocate(1); 
+
+        if (rollbackInfo->pastFrameDataPopulated) {
+            // populate pastFrameDatas for resim
+            for (int i = 0; i < MAX_ROLLBACK_FRAMES; i++) { // just naively copying all of em for now lol
+                FrameData* pastFD = (FrameData*)malloc(sizeof(FrameData));
+                memcpy(pastFD, &rollbackInfo->pastFrameDatas[i], sizeof(FrameData));
+                FrameAdvance::pastFrameDatas.push(pastFD);
+            }
+            OSReport("Populated gameside pastFrameDatas. Num frames to resim: %i\n", numFramesToResimulate);
+        }
+
+        // load state
+        EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo));
+        if (stateReloadPckt.Send()) {
+            // if we only need to resim 1 frame, leave it at that. Otherwise, resim an extra frame to get to where we were before
+            //numFramesToResimulate = numFramesToResimulate == 1 ? numFramesToResimulate : numFramesToResimulate + 1;
+            FrameAdvance::TriggerFastForwardState(numFramesToResimulate+1);
+        }
+    }
+
+    // takes in a RollbackInfo struct, and whether or not we should switch the endianness of the struct members
+    // and figures out if we should rollback or not, and does the rollback if so.
+    // if not, it will just inject remote inputs as usual
     void ProcessRollback(RollbackInfo* rollbackInfo, bool shouldSwitchEndian) {
         // number of frames to resim is the frame we received inputs again - the frame we began not receiving inputs
         if (shouldSwitchEndian) {
@@ -285,10 +330,6 @@ namespace FrameLogic {
         }
         #endif
         
-
-        // TODO (pine):
-        // move some or most of this logic out to dolphin
-
         bool shouldRollback = false;
         if (rollbackInfo->pastFrameDataPopulated) {
 
@@ -300,16 +341,18 @@ namespace FrameLogic {
                     PlayerFrameData* pastFramedata = &rollbackInfo->pastFrameDatas[i].playerFrameDatas[pIdx];
                     OSReport("Checking inputs frame %u\n", pastFramedata->frame);
 
+                    // check if remote inputs from the past don't match predicted inputs
                     if (!isInputsEqual(&predictedInput->pad, &pastFramedata->pad)) {
                         if (pastFramedata->frame == 0) {
                             OSReport("Blank past framedata! i = %u pIdx = %u\n", i, pIdx);
                             continue;
                         }
 
+                        // if inputs don't match, set the frame we should rollback to
                         rollbackInfo->beginFrame = pastFramedata->frame;
                         shouldRollback = true;
                         // since we changed the beginFrame, we also need to change how many frames to resim
-                        numFramesToResimulate = ((int)rollbackInfo->endFrame - (int)rollbackInfo->beginFrame);
+                        //numFramesToResimulate = ((int)rollbackInfo->endFrame - (int)rollbackInfo->beginFrame);
                         
                         OSReport("Predicted inputs don't match actual remote inputs on frame %i  pidx %u idx %i\n", rollbackInfo->beginFrame, pIdx, i);
                         break;
@@ -322,44 +365,24 @@ namespace FrameLogic {
 
 
         if (shouldRollback) {
-
-            FrameAdvance::pastFrameDatas.clear();
-
-            // according to fudge, reallocating like this is better than just using clear
-            //FrameAdvance::pastFrameDatas.reallocate(0);
-            //FrameAdvance::pastFrameDatas.reallocate(1); 
-
-            if (rollbackInfo->pastFrameDataPopulated) {
-                // populate pastFrameDatas for resim
-                for (int i = 0; i < MAX_ROLLBACK_FRAMES; i++) { // just naively copy all of em for now lol
-                    FrameData* pastFD = (FrameData*)malloc(sizeof(FrameData));
-                    memcpy(pastFD, &rollbackInfo->pastFrameDatas[i], sizeof(FrameData));
-                    FrameAdvance::pastFrameDatas.push(pastFD);
-                }
-                OSReport("Populated gameside pastFrameDatas. Num frames to resim: %i\n", numFramesToResimulate);
-            }
-
-            // load state
-            EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo));
-            if (stateReloadPckt.Send()) {
-                // if we only need to resim 1 frame, leave it at that. Otherwise, resim an extra frame to get to where we were before
-                //numFramesToResimulate = numFramesToResimulate == 1 ? numFramesToResimulate : numFramesToResimulate + 1;
-                FrameAdvance::TriggerFastForwardState(numFramesToResimulate+1);
-            }
-
+            ExecuteRollback(rollbackInfo);
         }
         else {
+            // if we don't need to rollback, that means actual remote inputs match predicted inputs
+            // in that case, we still need to inject inputs for the remote player
             OSReport("No need to rollback! Predicted inputs match actual inputs\n");
             u32 frame = getCurrentFrame();
             bool found = false;
             for (int pIdx = 0; pIdx < Netplay::getGameSettings()->numPlayers; pIdx++) {
-                if (pIdx == Netplay::localPlayerIdx) continue;
+                if (pIdx == Netplay::localPlayerIdx) continue; // don't inject for local player
 
                 for (int i = 0; i < MAX_ROLLBACK_FRAMES; i++) {
+                    // inject inputs for this frame
                     if (rollbackInfo->pastFrameDatas[i].playerFrameDatas[pIdx].frame == frame) {
                         found = true;
-                        OSReport("did not rollback - injecting inputs for frame %u\n", frame);
-                        ProcessFrameDataFromEmu(&rollbackInfo->pastFrameDatas[i]);
+                        OSReport("injecting inputs for frame %u\n", frame);
+                        FrameData* pastFrameDataToInject = &rollbackInfo->pastFrameDatas[i];
+                        ProcessFrameDataFromEmu(pastFrameDataToInject);
                     }
                 }
 
@@ -510,18 +533,16 @@ namespace FrameLogic {
             #else
                 #if ROLLBACK_IMPL
                 //bool shouldRollback = PAD_SYSTEM->pads[0].buttons.A || PAD_SYSTEM->pads[1].buttons.A;
-                //bool shouldRollback = percentChance(10);
-                static int r = randi(11)+10; // 10-20
-                bool shouldRollback = currentFrame % r == 0; 
-                const int numFramesToRollback = randi(MAX_ROLLBACK_FRAMES)+1;
-
+                bool shouldRollback = currentFrame % 20 == 0; 
+                const int numFramesToRollback = MAX_ROLLBACK_FRAMES;
 
                 if (shouldRollback && currentFrame > 250) {
-                    RollbackInfo rollbackInfo = RollbackInfo();
-                    OSReport("numframestorollback %i\n", numFramesToRollback);
+                    RollbackInfo rollbackInfo;
                     rollbackInfo.beginFrame = getCurrentFrame() - numFramesToRollback;
                     rollbackInfo.endFrame = getCurrentFrame();
+                    OSReport("numframestorollback %i  beginFrame: %u    endFrame: %u\n", numFramesToRollback, rollbackInfo.beginFrame, rollbackInfo.endFrame);
                     rollbackInfo.hasPreserveBlocks = false;
+                    rollbackInfo.pastFrameDataPopulated = false;
                     EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, &rollbackInfo, sizeof(RollbackInfo));
                     if (stateReloadPckt.Send()) {
                         FrameAdvance::TriggerFastForwardState(numFramesToRollback  +1);
