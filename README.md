@@ -31,12 +31,12 @@ To be able to execute the above steps on macos you will need to get a couple thi
   - After installation is complete make sure that you can `$ echo $DEVKITPPC` on a **new** terminal and theres an actual path.
 - Setup an SDCard
   - Run `$ sh build_sdcard_osx.sh` to make a new sd card.
-- Setup builds
+- Building:
   - `$ (cd build && cmake ..)`
   - `$ sh build_mod.sh`
  
-
-Make sure to add `SDCARD/vBrawl.elf` on Dolphin's paths and set Brawl as the default ISO. 
-Also set Brawlback on SLOT B on the dolphin configuration.
+- Testing:
+  Make sure to add `SDCARD/vBrawl.elf` on Dolphin's paths and set Brawl as the default ISO. 
+  Also set Brawlback on SLOT B on the dolphin configuration.
 
 That's it you are set. You should now be able to run the compiled codes from Dolphin by running `vBrawl.elf` on Dolphin.
