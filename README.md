@@ -24,7 +24,7 @@ That should be it, if you're trying to get this building and something isn't wor
 
 ## MacOSX Requirements
 
-To be able to execute the above steps on macos you will need to get a couple things set up first:
+To be able to execute the above steps on macos you will need to get a couple things set up first (ignore mingw from the above steps though):
 - Install DEVKITPRO/DEVKITCPP: https://devkitpro.org/wiki/Getting_Started
   - Follow steps for macos and then run `$ sudo dkp-pacman -S wii-dev`
   - Install devkitPPC and optionally devkitPPC-gdb for advanced debugging
