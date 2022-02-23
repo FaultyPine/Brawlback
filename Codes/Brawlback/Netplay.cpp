@@ -1,5 +1,5 @@
 #include "Netplay.h"
-
+#include "GmGlobalModeMelee.h"
 
 
 
@@ -57,6 +57,7 @@ namespace Netplay {
 
     void EndMatch() {
         localPlayerIdx = localPlayerIdxInvalid;
+        GMMelee::ResetMatchChoicesPopulated();
     }
 
 }
