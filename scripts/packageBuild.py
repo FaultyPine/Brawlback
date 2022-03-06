@@ -7,6 +7,9 @@ if not dolphin_dir:
     print("Invalid args")
     quit()
 
+# copy P+ launcher elf into dolphin folder
+pplus_launcher_elf = sys.argv[2] + "/Project+.elf"
+shutil.copy(pplus_launcher_elf, dolphin_dir)
 
 print("Zipping " + dolphin_dir)
 root_dir = dolphin_dir[ : dolphin_dir.rfind("\\")]
