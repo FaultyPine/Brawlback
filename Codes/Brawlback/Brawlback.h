@@ -20,8 +20,10 @@
 
 
 
+#define NETPLAY_IMPL 1
+#define ROLLBACK_IMPL 1
+
 #define MAX_ROLLBACK_FRAMES 7
-#define FRAME_DELAY 2
 
 #define MAX_REMOTE_PLAYERS 3
 #define MAX_NUM_PLAYERS 4
@@ -31,6 +33,19 @@
 #define DISPLAY_NAME_SIZE 31
 #define CONNECT_CODE_SIZE 10
 
+#define getGfSceneManager ((void* (*)()) 0x8002d018)
+#define setNextSeq ((void (*)(void* gfSceneManager, const char* name, int unk)) 0x8002d640)
+#define setNextScene ((void (*)(void* gfSceneManager, const char* name, int unk)) 0x8002d5ac)
+
+#define changeNextScene ((void (*)(void* gfSceneManager)) 0x8002d020)
+#define setupMelee ((void (*)(void* unk1, u32 unk2)) 0x806dce94)
+
+// r3 - 0x90ff42e0
+#define setNextSqVsMelee ((void (*)(void* unk1)) 0x806dcaf0)
+// r3 - 0x90ff3e40
+#define setNextSqNetAnyOkiraku ((void (*)(void* unk1)) 0x806f2320)
+
+u32 getCurrentFrame();
 
 struct BrawlbackPad {
     unsigned short buttons;
@@ -132,9 +147,7 @@ struct RollbackInfo {
 
 void fillOutGameSettings(GameSettings* settings);
 void MergeGameSettingsIntoGame(GameSettings* settings);
-namespace Match {
-    bool IsInMatch();
-}
+
 namespace FrameLogic {
     void SaveState(u32 frame);
 }

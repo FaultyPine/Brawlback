@@ -1,4 +1,5 @@
 #include "GmGlobalModeMelee.h"
+#include "Netplay.h"
 
 // size is 0x320
 
@@ -27,7 +28,15 @@ namespace GMMelee {
     #define STAGE_ID_IDX 27
 
     SIMPLE_INJECTION(postSetupMelee, 0x806dd03c, "addi	sp, sp, 48") {
-        PopulateMatchSettings( {0x15, 0x29, -1, -1}, 0x1 );
+        _OSDisableInterrupts();
+        OSReport("postSetupMelee\n");
+
+        #if NETPLAY_IMPL
+        Netplay::StartMatching(); // start netplay logic
+        #endif
+
+        // falco, wolf, battlefield
+        //PopulateMatchSettings( {0x15, 0x29, -1, -1}, 0x1 );
 
         if (isMatchChoicesPopulated) {
             memcpy(GM_GLOBAL_MODE_MELEE, defaultGmGlobalModeMelee, 0x320);
@@ -38,6 +47,7 @@ namespace GMMelee {
             melee[STAGE_ID_IDX] = stageChoice;
         }
 
+        _OSEnableInterrupts();
     }
 
 

@@ -1,8 +1,6 @@
 #include "Brawlback.h"
 #include "Netplay.h"
-
-#define NETPLAY_IMPL 1
-#define ROLLBACK_IMPL 1
+#include "GmGlobalModeMelee.h"
 
 
 
@@ -39,15 +37,15 @@ bool isInputsEqual(BrawlbackPad* p1, BrawlbackPad* p2) {
     return buttons && (trigger_deadzones || triggers) && analogSticks && cSticks;
 }
 
-BrawlbackPad GamePadToBrawlbackPad(const gfPadGamecube& pad) {
+BrawlbackPad GamePadToBrawlbackPad(const gfPadGamecube* pad) {
     BrawlbackPad ret;
-    ret.buttons = pad.buttons.bits;
-    ret.cStickX = pad.cStickX;
-    ret.cStickY = pad.cStickY;
-    ret.stickX = pad.stickX;
-    ret.stickY = pad.stickY;
-    ret.LTrigger = pad.LTrigger;
-    ret.RTrigger = pad.RTrigger;
+    ret.buttons = pad->buttons.bits;
+    ret.cStickX = pad->cStickX;
+    ret.cStickY = pad->cStickY;
+    ret.stickX = pad->stickX;
+    ret.stickY = pad->stickY;
+    ret.LTrigger = pad->LTrigger;
+    ret.RTrigger = pad->RTrigger;
     return ret;
 }
 void InjectBrawlbackPadToGame(const BrawlbackPad& pad, u8 playerIdx) {
@@ -66,6 +64,17 @@ void fillOutGameSettings(GameSettings* settings) {
     settings->randomSeed = DEFAULT_MT_RAND->seed;
     settings->stageID = GM_GLOBAL_MODE_MELEE->stageID;
 
+
+    #define P1_CHAR_ID_IDX 152
+    #define P2_CHAR_ID_IDX 244
+
+    u8 p1_id = *(((u8*)GM_GLOBAL_MODE_MELEE)+P1_CHAR_ID_IDX);
+    OSReport("P1 pre-override char id: %u\n", (unsigned int)p1_id);
+    
+    u8 p2_id = *(((u8*)GM_GLOBAL_MODE_MELEE)+P2_CHAR_ID_IDX);
+    OSReport("P2 pre-override char id: %u\n", (unsigned int)p2_id);
+
+
     // brawl loads all players into the earliest slots.
     // I.E. if players choose P1 and P3, they will get loaded into P1 and P2
     // this means we can use the number of players in a match to iterate over
@@ -76,6 +85,14 @@ void fillOutGameSettings(GameSettings* settings) {
     // sequence. Gotta find another way to get it, or some better spot to grab the number of players
     settings->numPlayers = 2;
     OSReport("Num Players: %u\n", (unsigned int)settings->numPlayers);
+
+    PlayerSettings playerSettings[settings->numPlayers];
+    playerSettings[0].charID = p1_id;
+    playerSettings[1].charID = p2_id;
+    
+    for (int i = 0; i < settings->numPlayers; i++) {
+        settings->playerSettings[i] = playerSettings[i];
+    }
 }
 
 
@@ -86,16 +103,21 @@ void MergeGameSettingsIntoGame(GameSettings* settings) {
     OTHER_MT_RAND->seed = 0x496ffd00;
 
     //GM_GLOBAL_MODE_MELEE->stageID = settings->stageID;
-    GM_GLOBAL_MODE_MELEE->stageID = 2;
+    //GM_GLOBAL_MODE_MELEE->stageID = 2;
 
     Netplay::localPlayerIdx = settings->localPlayerIdx;
     OSReport("Local player index is %u\n", (unsigned int)Netplay::localPlayerIdx);
+
+    u8 p1_char = settings->playerSettings[0].charID;
+    u8 p2_char = settings->playerSettings[1].charID;
+    OSReport("P1 char: %u  P2 char: %u\n", (unsigned int)p1_char, (unsigned int)p2_char);
+    OSReport("Stage id: %u\n", (unsigned int)settings->stageID);
+
+    GMMelee::PopulateMatchSettings( {p1_char, p2_char, -1, -1}, settings->stageID );
 }
 
 
 namespace Match {
-    bool isInMatch = false;
-    bool IsInMatch() { return isInMatch; }
 
 
     // on scene start (AFTER the start/[scMelee] function has run)
@@ -105,9 +127,9 @@ namespace Match {
         OSReport("  ~~~~~~~~~~~~~~~~  Start Scene Melee  ~~~~~~~~~~~~~~~~  \n");
         //bool shouldNetplay = Netplay::CheckShouldStartNetplay();
         #if NETPLAY_IMPL
-        Netplay::StartMatch(); // start netplay logic
+        //Netplay::StartMatching(); // start netplay logic
         #endif
-        isInMatch = true;
+        Netplay::SetIsInMatch(true);
         _OSEnableInterrupts();
     }
 
@@ -118,7 +140,7 @@ namespace Match {
         #if NETPLAY_IMPL
         Netplay::EndMatch();
         #endif
-        isInMatch = false;
+        Netplay::SetIsInMatch(false);
         _OSEnableInterrupts();
     }
 
@@ -163,6 +185,7 @@ namespace FrameAdvance {
         cmplw r19, r24
     )");
     extern "C" void handleFrameAdvance() {
+        //if (framesToAdvance == 1) return; // if we don't need to do anything special, let the game use it's own frame advance
         asm("mr r24, %0"
             :
             : "r" (framesToAdvance)
@@ -469,7 +492,8 @@ namespace FrameLogic {
             PlayerFrameData* fData = (PlayerFrameData*)malloc(sizeof(PlayerFrameData));
             fData->frame = currentFrame;
             fData->playerIdx = localPlayerIdx;
-            fData->pad = GamePadToBrawlbackPad(PAD_SYSTEM->pads[localPlayerIdx]);
+            // hardcoded grabbing inputs from P1 controller
+            fData->pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[localPlayerIdx]);
             //memcpy(&fData->pad, &PAD_SYSTEM->pads[localPlayerIdx], sizeof(gfPadGamecube));
 
             // sending inputs + current game frame
@@ -510,8 +534,11 @@ namespace FrameLogic {
         // this function -> write data to emulator through exi -> emulator processes data and possibly queues up data
         // to send back to the game -> send data to the game if there is any -> game processes that data -> repeat
 
-        if (Match::isInMatch) {
+        if (Netplay::IsInMatch()) {
             _OSDisableInterrupts();
+
+            // lol
+            DEFAULT_MT_RAND->seed = 0x496ffd00;
 
             u32 currentFrame = getCurrentFrame();
             OSReport("------ Frame %u ------\n", currentFrame);
@@ -562,7 +589,7 @@ namespace FrameLogic {
     // called at the end of the game logic in a frame (rendering logic happens after this func in the frame)
     // at this point, I think its (maybe?) guarenteed that inputs are cleared out already
     void EndFrame() {
-        if (Match::isInMatch) {
+        if (Netplay::IsInMatch()) {
             _OSDisableInterrupts();
 
             //OSReport("------ End Frame ------\n");
