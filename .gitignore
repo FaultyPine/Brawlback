@@ -9,6 +9,7 @@ pf/
 SDCard/Project+/codes/*
 SDCard/vBrawl/codes/*
 
+*.zip
 
 out/
 build/
