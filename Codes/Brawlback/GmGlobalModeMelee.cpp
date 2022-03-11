@@ -31,7 +31,7 @@ namespace GMMelee {
         _OSDisableInterrupts();
         OSReport("postSetupMelee\n");
 
-        #if NETPLAY_IMPL
+        #ifdef NETPLAY_IMPL
         Netplay::StartMatching(); // start netplay logic
         #endif
 

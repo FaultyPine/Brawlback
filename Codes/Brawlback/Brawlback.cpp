@@ -126,7 +126,7 @@ namespace Match {
         _OSDisableInterrupts();
         OSReport("  ~~~~~~~~~~~~~~~~  Start Scene Melee  ~~~~~~~~~~~~~~~~  \n");
         //bool shouldNetplay = Netplay::CheckShouldStartNetplay();
-        #if NETPLAY_IMPL
+        #ifdef NETPLAY_IMPL
         //Netplay::StartMatching(); // start netplay logic
         #endif
         Netplay::SetIsInMatch(true);
@@ -137,7 +137,7 @@ namespace Match {
     SIMPLE_INJECTION(exitSceneMelee, 0x806d4844, "li r4, 0x0") {
         _OSDisableInterrupts();
         OSReport("  ~~~~~~~~~~~~~~~~  Exit Scene Melee  ~~~~~~~~~~~~~~~~  \n");
-        #if NETPLAY_IMPL
+        #ifdef NETPLAY_IMPL
         Netplay::EndMatch();
         #endif
         Netplay::SetIsInMatch(false);
@@ -247,6 +247,9 @@ namespace FrameAdvance {
             u32 gameLogicFrame = getCurrentFrame();
             if (!pastFrameDatas.empty()) {
                 FindAndInjectInputsForResimFrame(gameLogicFrame);
+            }
+            else {
+                OSReport("PastFrameDatas was empty!\n");
             }
             // during resim frames we need to save state since gamestate will be different on these frames than it was before
             FrameLogic::SaveState(gameLogicFrame);
@@ -421,6 +424,7 @@ namespace FrameLogic {
         // game (us, right here) specifies how much memory to read in from emulator.
         
         u8* cmd_byte_read = (u8*)malloc(1);
+        // read in one byte from emulator to see how to deal with the rest of the exi buffer
         readEXI(cmd_byte_read, 1, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
         u8 cmd_byte = cmd_byte_read[0];
         free(cmd_byte_read);
@@ -469,7 +473,7 @@ namespace FrameLogic {
                     break;
                 case CMD_ROLLBACK:
                     {
-                        #if ROLLBACK_IMPL
+                        #ifdef ROLLBACK_IMPL
                         //OSReport("Rollback gameside\n");
                         RollbackInfo* rollbackInfo = (RollbackInfo*)data;
                         ProcessRollback(rollbackInfo, true);
@@ -492,7 +496,6 @@ namespace FrameLogic {
             PlayerFrameData* fData = (PlayerFrameData*)malloc(sizeof(PlayerFrameData));
             fData->frame = currentFrame;
             fData->playerIdx = localPlayerIdx;
-            // hardcoded grabbing inputs from P1 controller
             fData->pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[localPlayerIdx]);
             //memcpy(&fData->pad, &PAD_SYSTEM->pads[localPlayerIdx], sizeof(gfPadGamecube));
 
@@ -543,7 +546,7 @@ namespace FrameLogic {
             u32 currentFrame = getCurrentFrame();
             OSReport("------ Frame %u ------\n", currentFrame);
             
-            #if ROLLBACK_IMPL
+            #ifdef ROLLBACK_IMPL
             if (FrameAdvance::framesToAdvance >= 1) { // dont save state on stalled frames
                 SaveState(currentFrame);
             }
@@ -551,17 +554,20 @@ namespace FrameLogic {
                 //OSReport("Didn't save state - framesToAdvance: %i\n", FrameAdvance::framesToAdvance);
             }
             #endif
-            
+
             // just resimulated/stalled/skipped/whatever, reset to normal
             FrameAdvance::ResetFrameAdvance();
-            
-            #if NETPLAY_IMPL
+
+            #ifdef NETPLAY_IMPL
             FrameDataLogic(currentFrame);
             #else
-                #if ROLLBACK_IMPL
-                //bool shouldRollback = PAD_SYSTEM->pads[0].buttons.A || PAD_SYSTEM->pads[1].buttons.A;
+                #ifdef ROLLBACK_IMPL
+                // manual rollback logic
+                // here i'm just rolling back every once in a while and tracking past inputs for resim
+                // this is for testing rollbacks without having to be in a netplay match
+
                 bool shouldRollback = currentFrame % 20 == 0; 
-                const int numFramesToRollback = MAX_ROLLBACK_FRAMES;
+                const int numFramesToRollback = 4;
 
                 if (shouldRollback && currentFrame > 250) {
                     RollbackInfo rollbackInfo;
@@ -569,12 +575,29 @@ namespace FrameLogic {
                     rollbackInfo.endFrame = getCurrentFrame();
                     OSReport("numframestorollback %i  beginFrame: %u    endFrame: %u\n", numFramesToRollback, rollbackInfo.beginFrame, rollbackInfo.endFrame);
                     rollbackInfo.hasPreserveBlocks = false;
-                    rollbackInfo.pastFrameDataPopulated = false;
+                    rollbackInfo.pastFrameDataPopulated = true;
                     EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, &rollbackInfo, sizeof(RollbackInfo));
                     if (stateReloadPckt.Send()) {
                         FrameAdvance::TriggerFastForwardState(numFramesToRollback  +1);
                     }
                 }
+                
+                if (FrameAdvance::pastFrameDatas.size()+1 > MAX_ROLLBACK_FRAMES+1) {
+                    FrameAdvance::pastFrameDatas.erase(0);
+                }
+                FrameData framedata = FrameData();
+                for (int i = 0; i < 2; i++) {
+                    framedata.playerFrameDatas[i].pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[i]);
+                    framedata.playerFrameDatas[i].frame = currentFrame;
+                    framedata.playerFrameDatas[i].playerIdx = i;
+                }
+                OSReport("Pushing frame %u\n", framedata.playerFrameDatas[0].frame);
+
+                FrameData* tmp_fd = (FrameData*)malloc(sizeof(FrameData));
+                memcpy(tmp_fd, &framedata, sizeof(FrameData));
+                // if rollbacks are enabled, but not netplay, track past inputs for resim
+                FrameAdvance::pastFrameDatas.push(tmp_fd);
+                
                 #endif
             #endif
 
@@ -601,6 +624,21 @@ namespace FrameLogic {
     //SIMPLE_INJECTION(beginFrame, 0x800171b4, "li r25, 0x1") { BeginFrame(); } // top of full game loop
 
     SIMPLE_INJECTION(beginFrame, 0x80147394, "li r0, 0x1") { BeginFrame(); } // inside beginFrameLogic()
-    //SIMPLE_INJECTION(endFrame,   0x801473a0, "li r0, 0x0") { EndFrame(); }
   
+
+    // just for timing frames
+    SIMPLE_INJECTION(beginOfMainGameLoop, 0x800171b4, "li	r25, 1") {
+        if (Netplay::IsInMatch()) {
+            //EXIPacket(EXICommand::CMD_OPEN_LOGIN).Send();
+        }
+    }
+    SIMPLE_INJECTION(endFrame, 0x801473a0, "li r0, 0x0") { 
+        if (Netplay::IsInMatch()) {
+            //EndFrame(); 
+            //EXIPacket(EXICommand::CMD_LOGOUT).Send();
+        }
+        
+    }
+
+
 }

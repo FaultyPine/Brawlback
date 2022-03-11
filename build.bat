@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-clear
+clear && color
 
 
 call "get_settings.bat"

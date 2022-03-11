@@ -19,9 +19,11 @@
 #include "Utility/Utility.h"
 
 
-
-#define NETPLAY_IMPL 1
-#define ROLLBACK_IMPL 1
+//  toggles for netplay logic and rollback logic
+#define NETPLAY_IMPL
+//#define ROLLBACK_IMPL
+// ^ if you disable rollbacks, make sure to also disable the ROLLBACK_IMPL flag in BrawlbackUtility.cpp on the dolphin side
+// ------------------------------------
 
 #define MAX_ROLLBACK_FRAMES 7
 
@@ -39,6 +41,9 @@
 
 #define changeNextScene ((void (*)(void* gfSceneManager)) 0x8002d020)
 #define setupMelee ((void (*)(void* unk1, u32 unk2)) 0x806dce94)
+
+// r3 - 0x90ff50a0
+#define exitScMelee ((u32 (*)(void* unk1)) 0x806d483c)
 
 // r3 - 0x90ff42e0
 #define setNextSqVsMelee ((void (*)(void* unk1)) 0x806dcaf0)
