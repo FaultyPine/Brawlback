@@ -22,6 +22,10 @@ int strcmp(const char* str1, const char* str2) {
     return _strcmp(str1, str2);
 }
 
+int strlen(const char* str) {
+    return _strlen(str);
+}
+
 char* strstr(const char* buffer, const char* target) {
     return _strstr(buffer, target);
 }

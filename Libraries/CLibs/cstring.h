@@ -12,6 +12,7 @@
 #define _sprintf ((int (*)(char* buffer, const char* format, ...)) 0x803f89fc)
 #define _strstr ((char* (*)(const char* buffer, const char* target)) 0x803fa798)
 #define _strcmp ((int (*)(const char* str1, const char* str2)) 0x803fa3fc)
+#define _strlen ((int (*)(const char* str)) 0x80281bb8)
 
 #define _atoi ((int (*)(const char* buffer)) 0x803fc704)
 #define _atof ((float (*)(const char* buffer)) 0x803fbbf8)
@@ -20,6 +21,7 @@ char* strcat(char* destination, const char* source);
 char* strcpy(char* destination, const char* source);
 char* strcpy(char* destination, const char* source, int length);
 int strcmp(const char* str1, const char* str2);
+int strlen(const char* str);
 //return ptr to first occurance of target in buffer, or nullptr if not found
 char* strstr(const char* buffer, const char* target);
 
