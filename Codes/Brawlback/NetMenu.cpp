@@ -6,6 +6,11 @@
 
 #if NETMENU_IMPL
 
+// Brawlback BOOST+
+INJECTION("BOOST1", 0x8018CFC4, "cmplwi r0, 0x30");
+INJECTION("BOOST2", 0x8018CFC8, "blt- 0x34");
+
+
 // disable initial login attempt
 // netThread/[NtMatching] near call to DWC_LoginAsync
 INJECTION("setToLoggedIn", 0x8014B5F8, R"(
@@ -16,8 +21,30 @@ INJECTION("setToLoggedIn2", 0x8014B5FC, R"(
 )");
 
 
+// 0x80687f6c = Address where a value is checked, and if it's 1 then the timer is processed on the CSS
+// 0x80687fe0 = Address where timer is converted to numbers before calling setCounter
+// 0x80688010 = Address right after calling setCounter
+// disable Set Counter original address is 800da6ec
+// INJECTION("disableSetCounterOnCSS", 0x8068800c, "nop"); 
+// Prevents the timer to decrease
+// INJECTION("preventCounterSubsOnCSS", 0x80687f88, "mr r4, r3"); 
+
+// create.muWifiCntWndTask.mu_wifi_cnt_wnd is the original method called to create the counter window
+
+// Disables Creation of Timer HUD on CSS
+INJECTION("disableCreateCounterOnCSS", 0x80686ae4, "BRANCH r3, 0x80686aec"); 
+
+// Prevent Timer from being processed on CSS
+INJECTION("turnOffCSSTimer", 0x80687f6c, "li r0, 0"); 
+
+// Disables Creation of Timer HUD on SSS
+INJECTION("disableCreateCounterOnSSS", 0x806b1da0, "BRANCH r3, 0x806B1DBC"); 
+
+// Prevent Timer from being processed on SSS
+INJECTION("turnOffSSSTimer", 0x806b3f28, "li r0, 8");
+
 // disable Mii render func
-INJECTION("disableMiiRender", 0x80033b48, "nop");
+INJECTION("disableMiiRender", 0x80033b48, "nop") ;
 
 // disable error thrown on matchmaking
 // startMatchingCommon/[muWifiInterfaceTask] forces branch to end of func
