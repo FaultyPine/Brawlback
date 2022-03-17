@@ -40,6 +40,19 @@ INJECTION("turnOffSSSTimer", 0x806b3f28, "li r0, 8");
 // disable Mii render func
 INJECTION("disableMiiRender", 0x80033b48, "nop");
 
+// TODO: 
+// The following are being disabled because you get an error of 0xD when you go back in any of the scenes
+// which shows the following dialog and drops you back to the main menu: 
+// "Your connection to other players was lost. Returning to the menu."
+// Ideally we should handle them better and figure out why we get that error on the first place.
+
+// Disable getNetworkError from wifiInterface during CSS
+INJECTION("disableGetNetworkErrorOnCSS", 0x80687c68, "li r3, 0"); // original was bl ->0x800CBCB0
+
+// Disable getNetworkError from wifiInterface during SSS
+INJECTION("disableGetNetworkErrorOnSSS", 0x806b3a74, "li r3, 0"); // original was bl ->0x800CBCB0
+
+
 // disable error thrown on matchmaking
 // startMatchingCommon/[muWifiInterfaceTask] forces branch to end of func
 DATA_WRITE(0x800CCF70, 48000024); // <- "b 0x24"
