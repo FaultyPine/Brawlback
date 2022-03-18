@@ -641,4 +641,41 @@ namespace FrameLogic {
     }
 
 
+
+
+    // resim optimization
+    // gfTask names listed in the array below
+    // will not be run during resimulation frames
+    #define NUM_NON_RESIM_TASKS 1
+    const char* nonResimTasks[NUM_NON_RESIM_TASKS] = {
+        "Camera",
+    };
+    INJECTION("gfTaskProcessHook", 0x8002dc74, R"(
+        SAVE_REGS
+        bl ShouldSkipGfTaskProcess
+        cmpwi r3, 0x0
+        beq NO_SKIP
+        RESTORE_REGS
+        BRANCH r12, 0x8002dd28
+        NO_SKIP:
+        RESTORE_REGS
+        cmpwi r4, 0x8
+    )");
+    vector<char*> names = {};
+    extern "C" bool ShouldSkipGfTaskProcess(u32* gfTask, u32 task_type) {
+        if (FrameAdvance::framesToAdvance > 1) { // if we're resimulating, disable certain tasks that don't need to run on resim frames.
+            char* taskName = (char*)(*gfTask); // 0x0 offset of gfTask* is the task name
+            //OSReport("Processing task %s\n", taskName);
+            for (int i = 0; i < NUM_NON_RESIM_TASKS; i++) {
+                if (!strcmp(taskName, nonResimTasks[i])) { // if they are equal
+                    //OSReport("Skipping task processing for %s\n", taskName);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+
+
 }
