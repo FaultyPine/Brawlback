@@ -15,9 +15,43 @@ INJECTION("setToLoggedIn2", 0x8014B5FC, R"(
     stw r4, -0x4048(r13)
 )");
 
+// NOTES on WIFI CSS/SSS:
+// 0x80687f6c = Address where a value is checked, and if it's 1 then the timer is processed on the CSS
+// 0x80687fe0 = Address where timer is converted to numbers before calling setCounter
+// 0x80688010 = Address right after calling setCounter
+// disable Set Counter original address is 800da6ec
+// INJECTION("disableSetCounterOnCSS", 0x8068800c, "nop"); 
+// Prevents the timer to decrease
+// INJECTION("preventCounterSubsOnCSS", 0x80687f88, "mr r4, r3"); 
+// create.muWifiCntWndTask.mu_wifi_cnt_wnd is the original method called to create the counter window
+
+// Disables Creation of Timer HUD on CSS
+INJECTION("disableCreateCounterOnCSS", 0x80686ae4, "BRANCH r3, 0x80686aec"); 
+
+// Prevent Timer from being processed on CSS
+INJECTION("turnOffCSSTimer", 0x80687f6c, "li r0, 0"); 
+
+// Disables Creation of Timer HUD on SSS
+INJECTION("disableCreateCounterOnSSS", 0x806b1da0, "BRANCH r3, 0x806B1DBC"); 
+
+// Prevent Timer from being processed on SSS
+INJECTION("turnOffSSSTimer", 0x806b3f28, "li r0, 8");
 
 // disable Mii render func
 INJECTION("disableMiiRender", 0x80033b48, "nop");
+
+// TODO: 
+// The following are being disabled because you get an error of 0xD when you go back in any of the scenes
+// which shows the following dialog and drops you back to the main menu: 
+// "Your connection to other players was lost. Returning to the menu."
+// Ideally we should handle them better and figure out why we get that error on the first place.
+
+// Disable getNetworkError from wifiInterface during CSS
+INJECTION("disableGetNetworkErrorOnCSS", 0x80687c68, "li r3, 0"); // original was bl ->0x800CBCB0
+
+// Disable getNetworkError from wifiInterface during SSS
+INJECTION("disableGetNetworkErrorOnSSS", 0x806b3a74, "li r3, 0"); // original was bl ->0x800CBCB0
+
 
 // disable error thrown on matchmaking
 // startMatchingCommon/[muWifiInterfaceTask] forces branch to end of func
