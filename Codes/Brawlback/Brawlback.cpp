@@ -152,6 +152,7 @@ namespace FrameAdvance {
     // how many game logic frames we should simulate this frame
     int framesToAdvance = 1;
     int getFramesToAdvance() { return framesToAdvance; }
+    bool isResim() { return framesToAdvance > 1; }
 
     // sets the number of frames of game logic to run every frame
     void TriggerFastForwardState(u8 numFramesToFF) {
@@ -252,9 +253,21 @@ namespace FrameAdvance {
                 OSReport("PastFrameDatas was empty!\n");
             }
             // during resim frames we need to save state since gamestate will be different on these frames than it was before
-            FrameLogic::SaveState(gameLogicFrame);
+            //FrameLogic::SaveState(gameLogicFrame);
+            
+            //static int numResims = 0;
+            /*if (FrameAdvance::getFramesToAdvance() == numResims) { // this logic depends upon the fact that timesyncs skip over this whole function
+                // on the final frame of resimulation (the "Render" tick), reset our frame advance variable.
+                // we do this so we can turn off bits of unnecessary game logic during resim frames, and turn them back on for the final frame
+                FrameAdvance::ResetFrameAdvance();
+                numResims = 0;
+            }
+            else {
+                numResims++;
+            }*/
         }
-        else if (overrideInputs != nullptr) {
+
+        if (overrideInputs != nullptr) {
             for (u8 i = 0; i < Netplay::getGameSettings()->numPlayers; i++) {
                 InjectBrawlbackPadToGame(overrideInputs[i].pad, overrideInputs[i].playerIdx);
             }
@@ -323,11 +336,10 @@ namespace FrameLogic {
 
         // load state
         EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo));
-        if (stateReloadPckt.Send()) {
-            // if we only need to resim 1 frame, leave it at that. Otherwise, resim an extra frame to get to where we were before
-            //numFramesToResimulate = numFramesToResimulate == 1 ? numFramesToResimulate : numFramesToResimulate + 1;
-            FrameAdvance::TriggerFastForwardState(numFramesToResimulate+1);
-        }
+        stateReloadPckt.Send();
+        // if we only need to resim 1 frame, leave it at that. Otherwise, resim an extra frame to get to where we were before
+        //numFramesToResimulate = numFramesToResimulate == 1 ? numFramesToResimulate : numFramesToResimulate + 1;
+        FrameAdvance::TriggerFastForwardState(numFramesToResimulate+1);
     }
 
     // takes in a RollbackInfo struct, and whether or not we should switch the endianness of the struct members
@@ -526,7 +538,8 @@ namespace FrameLogic {
         return randi(100) <= percent-1;
     }
 
-
+    int frame = 0;
+    int getNumFramesToSim();
     // called at the beginning of the game logic in a frame
     // a this point, inputs are populated for this frame
     // but the game logic that operates on those inputs has not yet happened
@@ -544,6 +557,7 @@ namespace FrameLogic {
             DEFAULT_MT_RAND->seed = 0x496ffd00;
 
             u32 currentFrame = getCurrentFrame();
+            //frame = currentFrame;
             OSReport("------ Frame %u ------\n", currentFrame);
             
             #ifdef ROLLBACK_IMPL
@@ -557,9 +571,10 @@ namespace FrameLogic {
 
             // just resimulated/stalled/skipped/whatever, reset to normal
             FrameAdvance::ResetFrameAdvance();
+            FrameAdvance::framesToAdvance = getNumFramesToSim();
 
             #ifdef NETPLAY_IMPL
-            FrameDataLogic(currentFrame);
+            //FrameDataLogic(currentFrame);
             #else
                 #ifdef ROLLBACK_IMPL
                 // manual rollback logic
@@ -629,16 +644,109 @@ namespace FrameLogic {
     // just for timing frames
     SIMPLE_INJECTION(beginOfMainGameLoop, 0x800171b4, "li	r25, 1") {
         if (Netplay::IsInMatch()) {
-            //EXIPacket(EXICommand::CMD_OPEN_LOGIN).Send();
+            //EXIPacket(EXICommand::CMD_START_TIMER).Send();
         }
     }
     SIMPLE_INJECTION(endFrame, 0x801473a0, "li r0, 0x0") { 
         if (Netplay::IsInMatch()) {
             //EndFrame(); 
-            //EXIPacket(EXICommand::CMD_LOGOUT).Send();
+            //EXIPacket(EXICommand::CMD_END_TIMER).Send();
         }
         
     }
 
+
+    // returns the number of frames to simulate
+    int getNumFramesToSim() {
+        int ret = 1;
+        u8 localPlayerIdx = Netplay::localPlayerIdx;
+        bool isInGame = localPlayerIdx != Netplay::localPlayerIdxInvalid && Netplay::IsInMatch();
+        if (isInGame) frame++;
+
+        if (isInGame && frame >= 250) {
+            PlayerFrameData* fData = (PlayerFrameData*)malloc(sizeof(PlayerFrameData));
+            fData->frame = frame;
+            fData->playerIdx = localPlayerIdx;
+            fData->pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[localPlayerIdx]);
+
+            // sending inputs + current game frame
+            EXIPacket(EXICommand::CMD_GAME_PROC_OVERRIDE, fData, sizeof(PlayerFrameData)).Send();
+            free(fData);
+
+            // reading back result (how many frames to sim)
+            int* readRes = (int*)malloc(sizeof(int));
+            readEXI(readRes, sizeof(int), EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
+            u32 numFramesToSim = (u32)*readRes;
+            swapByteOrder(&numFramesToSim); // swap endian
+            free(readRes);
+
+            ret = (int)numFramesToSim;
+        }
+
+        OSReport("Simulating %i frames\n", ret);
+        return ret;
+    }
+
+    // overwrites the branch to gameProc
+    /*INJECTION("gameProcOverride", 0x80017358, R"(
+        SAVE_REGS
+        bl gameProcOverrideImpl
+        RESTORE_REGS
+        li r3, 0x1
+    )");
+    extern "C" unsigned int gameProcOverrideImpl(void* gfApplication, int resim_idx) {
+        
+    }*/
+
+    // called inside gameProc at the very end
+    SIMPLE_INJECTION(insideGameProcHook, 0x800177b4, "rlwinm	r3, r0, 0x1, 0x1f, 0x1f") {
+        bool isInGame = Netplay::localPlayerIdx != Netplay::localPlayerIdxInvalid && Netplay::IsInMatch();
+        if (isInGame && frame >= 250) {
+            EXIPacket(EXICommand::CMD_GAME_PROC, &frame, sizeof(frame)).Send();
+        }
+    }
+
+
+
+    // resim optimization
+
+    /*
+    #define NUM_NON_RESIM_TASKS 2
+    const char* nonResimTasks[NUM_NON_RESIM_TASKS] = {
+        "Camera",
+        "EffectManager"
+    };
+
+    INJECTION("gfTaskProcessHook", 0x8002dc74, R"(
+        SAVE_REGS
+        bl ShouldSkipGfTaskProcess
+        cmpwi r3, 0x0
+        beq NO_SKIP
+
+        RESTORE_REGS
+        lis r12, 0x8002
+        ori r12, r12, 0xdd28
+        mtctr r12
+        bctr
+
+        NO_SKIP:
+        RESTORE_REGS
+        cmpwi r4, 0x8
+    )");
+    vector<char*> names = {};
+    extern "C" bool ShouldSkipGfTaskProcess(u32* gfTask, u32 task_type) {
+        if (FrameAdvance::isResim()) { // if we're resimulating, disable certain tasks that don't need to run on resim frames.
+            char* taskName = (char*)(*gfTask); // 0x0 offset of gfTask* is the task name
+            //OSReport("Processing task %s\n", taskName);
+            for (int i = 0; i < NUM_NON_RESIM_TASKS; i++) {
+                if (!strcmp(taskName, nonResimTasks[i])) { // if they are equal
+                    //OSReport("Skipping task processing for %s\n", taskName);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    */
 
 }

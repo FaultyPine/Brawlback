@@ -96,8 +96,38 @@ SIMPLE_INJECTION(netThreadTaskOverride, 0x8014b670, "nop") {
     //setNextScene(getGfSceneManager(), "scChallenger", 0);
     if (getCurrentFrame() == 150) {
         //BootToScMelee();
+        //exitScMelee((void*)0x90ff50a0);
     }
 }
+
+
+// TODO:
+// mess with processBegin/[stOperatorInfoWifiPractice]
+// force branches until it hits updateDispPlayerWifiMenuSeq/[stOperatorInfoWifiPractice]
+
+/*
+INJECTION("hijackWifiMenuSceneSwitchyThing", 0x80964e50, R"(
+    SAVE_REGS
+    bl testttttt
+    RESTORE_REGS
+    li r29, 0
+    add	r3, r26, r0
+)");
+
+extern "C" void testttttt() {
+    //OSReport("Hi\n");
+}
+
+SIMPLE_INJECTION(thing, 0x80963bb0, "lbz	r0, 0x014F (r3)") {
+    if (getCurrentFrame() > 150) {
+        OSReport("HII\n");
+    }
+}
+*/
+
+INJECTION("overrideNetMenuVariable", 0x80963bcc, R"(
+    li r0, 0x2a4
+)");
 
 #endif
 

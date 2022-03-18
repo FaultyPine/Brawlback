@@ -20,9 +20,12 @@
 
 
 //  toggles for netplay logic and rollback logic
+
 #define NETPLAY_IMPL
+
 //#define ROLLBACK_IMPL
 // ^ if you disable rollbacks, make sure to also disable the ROLLBACK_IMPL flag in BrawlbackUtility.cpp on the dolphin side
+
 // ------------------------------------
 
 #define MAX_ROLLBACK_FRAMES 7
@@ -49,6 +52,9 @@
 #define setNextSqVsMelee ((void (*)(void* unk1)) 0x806dcaf0)
 // r3 - 0x90ff3e40
 #define setNextSqNetAnyOkiraku ((void (*)(void* unk1)) 0x806f2320)
+
+// r3 - 0x805b4fd8  <- gfApplication
+#define gameProc ((unsigned int (*)(void* gfApplication, u32 iterIdx)) 0x80017618)
 
 u32 getCurrentFrame();
 
@@ -158,6 +164,7 @@ namespace FrameLogic {
 }
 namespace FrameAdvance {
     int getFramesToAdvance();
+    bool isResim();
 }
 
 #endif

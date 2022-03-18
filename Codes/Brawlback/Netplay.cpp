@@ -37,8 +37,9 @@ namespace Netplay {
         // Temporary. Atm, this just stalls main thread while we do our mm/connecting
         // in the future, when netmenu stuff is implemented, the organization of StartMatching and CheckIsMatched
         // will make more sense
+        OSReport("Checking for if we've matched...\n");
         while (!CheckIsMatched()) {}
-
+        //SetIsInMatch(true);
     }
 
     

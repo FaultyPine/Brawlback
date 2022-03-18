@@ -39,39 +39,24 @@ EXIPacket::~EXIPacket() {
     }
 }
 
-bool EXIPacket::Send() {
+void EXIPacket::Send() {
     _OSDisableInterrupts();
-    bool success = false;
-    if (!this->source || this->size <= 0) {
-        OSReport("Invalid EXI packet source or size!\n");
-    }
-    else {
-        writeEXI(this->source, this->size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
-        success = true;
-    }
-    //OSReport("EXICmd: %u   Source: %p   Size: %u\n", this->cmd, this->source, this->size);
-
+    ASSERT(this->source && this->size > 0);
+    writeEXI(this->source, this->size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
     _OSEnableInterrupts();
-    return success;
-}
-
-u8* EXIPacket::Receive(u32 size) {
-    _OSDisableInterrupts();
-
-    u8* ret = (u8*)malloc(size+1);
-    readEXI(ret, size+1, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
-    this->cmd = (EXICommand)ret[0];
-
-    this->source = ret;
-
-    _OSEnableInterrupts();
-    return &ret[1];
 }
 void EXIPacket::Receive(u8* buf, u32 size) {
     _OSDisableInterrupts();
-
+    ASSERT(buf && size > 0);
     readEXI(buf, size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
-    this->cmd = (EXICommand)buf[0];
+    _OSEnableInterrupts();
+}
 
+void EXIPacket::EXIFunction(EXICommand cmd, u8* src, u32 srcSize, u8* dst, u32 dstSize) {
+    _OSDisableInterrupts();
+    ASSERT(src && srcSize > 0 && dst && dstSize > 0);
+    EXIPacket pckt = EXIPacket(cmd, src, srcSize);
+    pckt.Send();
+    pckt.Receive(dst, dstSize);
     _OSEnableInterrupts();
 }
