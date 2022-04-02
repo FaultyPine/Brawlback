@@ -96,7 +96,7 @@ void BootToScMelee() {
     ChangeStruct3Scenes((u8*)0x90ff3e40, MemoryChange, InitialChange);
     //setNextSqVsMelee((void*)0x90ff42e0);
     //setNextSqNetAnyOkiraku((void*)0x90ff3e40);
-    setNextScene(getGfSceneManager(), "scChallenger", 0);
+    setNextScene(getGfSceneManager(), "scMelee", 0);
     ChangeGfSceneField(Idle);
     changeNextScene(getGfSceneManager());
 }

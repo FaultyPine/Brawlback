@@ -75,6 +75,101 @@ op b 0x10 @ $80078E14
 #############################################
 * 046CADE8 48000298
 
+
+######################################################
+1 Player Matches in Time Mode only [InternetExplorer]
+######################################################
+* C268D420 00000007
+* 2C060000 4181000C
+* 39000001 48000020
+* 2C060002 40800014
+* 3D009017 6108F360
+* 89080002 48000008
+* 39000000 2C080000
+* 60000000 00000000
+* 0468D424 41820024
+
+##########################################################################################################################
+[Legacy TE] Display Stack Trace, Instruction, and Address Upon Crashing [UnclePunch, Fracture] (internal crash fix by Eon)
+##########################################################################################################################
+HOOK @ $801D84C8
+{
+  mflr r0
+  stw r0, 4(r1)
+  stwu r1, -1280(r1)
+  addi r29, r1, 0x8
+  mr r3, r29
+  addi r4, r28, 0x174
+  crclr 6, 6
+  lis r12, 0x803F
+  ori r12, r12, 0x89FC
+  mtctr r12
+  bctrl 
+  add r29, r29, r3
+  lwz r25, 4(r30)
+  li r26, 0x0
+  b checkValidPointer
+
+printStackTrace:
+loc_0x3C:
+  lwz r6, 0(r25)
+  mr r5, r25
+  lwz r7, 4(r25)
+  addi r4, r28, 0x19C
+  mr r3, r29
+  crclr 6, 6
+  lis r12, 0x803F
+  ori r12, r12, 0x89FC
+  mtctr r12
+  bctrl 
+  add r29, r29, r3
+  lwz r25, 0(r25)
+
+checkValidPointer:
+  lis r0, 0x8000
+  cmplw r25, r0
+  blt printInstructionCrash
+
+  lis r0, 0x8180
+  cmplw r25, r0
+  blt cont
+
+  lis r0, 0x9000
+  cmplw r25, r0
+  blt printInstructionCrash
+
+  lis r0, 0x9400
+  cmplw r25, r0
+  bge printInstructionCrash
+
+cont:
+#check Has Printed 6 lines
+  cmplwi r26, 6
+  addi r26, r26, 0x1
+  blt+ printStackTrace
+
+printInstructionCrash:
+  mr r3, r29
+  lis r4, 0x8046
+  ori r4, r4, 0x77D8
+  lwz r5, 408(r30)
+  word 0x7CD302A6 		#`mfdar r6` not supported by gctrm
+  lis r12, 0x803F
+  ori r12, r12, 0x89FC
+  mtctr r12
+  bctrl 
+  subi r3, r13, 0x592C
+  subi r4, r13, 0x5924
+  addi r5, r1, 0x8
+  lis r12, 0x801D
+  ori r12, r12, 0xB7E8
+  mtctr r12
+  bctrl 
+}
+op li r7, 0 @ $801dbf60
+op li r8, 0 @ $801dbf68
+
+
 .include Source/LoadFiles.asm          # Load C++ codes
 
 #.include Source/Project+/MultiGCT.asm		# MAKE SURE THIS IS AT THE VERY BOTTOM OF THIS CODESET!!!

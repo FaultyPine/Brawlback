@@ -493,16 +493,14 @@ namespace FrameLogic {
         
         u8 localPlayerIdx = Netplay::localPlayerIdx;
         if (localPlayerIdx != Netplay::localPlayerIdxInvalid) {
-            PlayerFrameData* fData = (PlayerFrameData*)malloc(sizeof(PlayerFrameData));
-            fData->frame = currentFrame;
-            fData->playerIdx = localPlayerIdx;
-            fData->pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[localPlayerIdx]);
-            //memcpy(&fData->pad, &PAD_SYSTEM->pads[localPlayerIdx], sizeof(gfPadGamecube));
+            PlayerFrameData fData;
+            fData.frame = currentFrame;
+            fData.playerIdx = localPlayerIdx;
+            fData.pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[localPlayerIdx]);
 
             // sending inputs + current game frame
-            EXIPacket fDataPckt = EXIPacket(EXICommand::CMD_ONLINE_INPUTS, fData, sizeof(PlayerFrameData));
+            EXIPacket fDataPckt = EXIPacket(EXICommand::CMD_ONLINE_INPUTS, &fData, sizeof(PlayerFrameData));
             fDataPckt.Send();
-            free(fData);
 
             // reading in response from emu
             ReadFrameData();
@@ -513,19 +511,8 @@ namespace FrameLogic {
     }
 
     void SaveState(u32 currentFrame) {        
-        EXIPacket saveSavePckt = EXIPacket(EXICommand::CMD_CAPTURE_SAVESTATE, &currentFrame, sizeof(currentFrame));
-        saveSavePckt.Send();
+        EXIPacket(EXICommand::CMD_CAPTURE_SAVESTATE, &currentFrame, sizeof(currentFrame)).Send();
     }
-
-    //Does not update random seed, so multiple uses at once return same value
-    int randi(int max) {
-        return DEFAULT_MT_RAND->seed % max;
-    }
-
-    bool percentChance(int percent) {
-        return randi(100) <= percent-1;
-    }
-
 
     // called at the beginning of the game logic in a frame
     // a this point, inputs are populated for this frame
@@ -627,15 +614,15 @@ namespace FrameLogic {
   
 
     // just for timing frames
-    SIMPLE_INJECTION(beginOfMainGameLoop, 0x800171b4, "li	r25, 1") {
+    SIMPLE_INJECTION(beginningOfMainGameLoop, 0x800171b4, "li	r25, 1") {
         if (Netplay::IsInMatch()) {
-            //EXIPacket(EXICommand::CMD_OPEN_LOGIN).Send();
+            EXIPacket(EXICommand::CMD_TIMER_START).Send();
         }
     }
     SIMPLE_INJECTION(endFrame, 0x801473a0, "li r0, 0x0") { 
         if (Netplay::IsInMatch()) {
             //EndFrame(); 
-            //EXIPacket(EXICommand::CMD_LOGOUT).Send();
+            EXIPacket(EXICommand::CMD_TIMER_END).Send();
         }
         
     }
