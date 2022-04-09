@@ -49,7 +49,6 @@ bool EXIPacket::Send() {
         writeEXI(this->source, this->size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
         success = true;
     }
-    //OSReport("EXICmd: %u   Source: %p   Size: %u\n", this->cmd, this->source, this->size);
 
     _OSEnableInterrupts();
     return success;

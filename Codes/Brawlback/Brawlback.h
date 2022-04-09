@@ -25,7 +25,7 @@
 // ^ if you disable rollbacks, make sure to also disable the ROLLBACK_IMPL flag in BrawlbackUtility.cpp on the dolphin side
 // ------------------------------------
 
-#define MAX_ROLLBACK_FRAMES 4
+#define MAX_ROLLBACK_FRAMES 5
 
 #define MAX_REMOTE_PLAYERS 3
 #define MAX_NUM_PLAYERS 4
