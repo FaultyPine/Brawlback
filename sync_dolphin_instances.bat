@@ -9,6 +9,7 @@ set dolphin_main_dir=%DOLPHIN_BINARIES_DIR%\x64
 set dolphin_secondary_dir=%DOLPHIN_BINARIES_DIR%\Secondary
 
 set sd_raw_rel_path=\User\Wii
+set map_folder=\User\Maps
 
 echo ==================================
 echo Synchronizing dolphin instances...
@@ -24,6 +25,10 @@ xcopy /y /q "%dolphin_main_dir%\Dolphin.exe" "%dolphin_secondary_dir%\Dolphin.ex
 
 :: copy sd.raw which contains our code mods
 xcopy /y /q "%dolphin_main_dir%\%sd_raw_rel_path%\sd.raw" "%dolphin_secondary_dir%\%sd_raw_rel_path%\sd.raw"*
+
+:: copy Symbols.map file to dolphin map folders
+xcopy /y /q "%CD%\build\Disassembly\Symbols.map" "%dolphin_main_dir%\%map_folder%\RSBE01.map"
+xcopy /y /q "%CD%\build\Disassembly\Symbols.map" "%dolphin_secondary_dir%\%map_folder%\RSBE01.map"
 
 echo ==============================
 echo Synchronized dolphin instances
