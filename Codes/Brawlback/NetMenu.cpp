@@ -1,12 +1,11 @@
 #include "NetMenu.h"
 #include "Netplay.h"
 
-// courtesey of Eon
 #define NETMENU_IMPL true
 
 #if NETMENU_IMPL
 
-// disable initial login attempt
+// disable initial login attempt [Eon]
 // netThread/[NtMatching] near call to DWC_LoginAsync
 INJECTION("setToLoggedIn", 0x8014B5F8, R"(
     li r4, 3
@@ -14,6 +13,23 @@ INJECTION("setToLoggedIn", 0x8014B5F8, R"(
 INJECTION("setToLoggedIn2", 0x8014B5FC, R"(
     stw r4, -0x4048(r13)
 )");
+
+// disable Mii render func [Eon]
+INJECTION("disableMiiRender", 0x80033b48, "nop");
+
+// disable error thrown on matchmaking [Eon]
+// startMatchingCommon/[muWifiInterfaceTask] forces branch to end of func
+DATA_WRITE(0x800CCF70, 48000024); // <- "b 0x24"
+
+
+// pretend request of "ConnectToAnybodyAsync" succeeded [Eon]
+// thStartMatching/[NtMatching] replaces call to ConnectToAnybodyAsync with just a success code
+INJECTION("ConnectToAnybodyAsyncHook", 0x801494A4, R"(
+    li r3, 1
+)");
+
+
+// disable CSS/SSS timers in online menus. Courtesey of Rapito
 
 // NOTES on WIFI CSS/SSS:
 // 0x80687f6c = Address where a value is checked, and if it's 1 then the timer is processed on the CSS
@@ -25,20 +41,17 @@ INJECTION("setToLoggedIn2", 0x8014B5FC, R"(
 // INJECTION("preventCounterSubsOnCSS", 0x80687f88, "mr r4, r3"); 
 // create.muWifiCntWndTask.mu_wifi_cnt_wnd is the original method called to create the counter window
 
-// Disables Creation of Timer HUD on CSS
+// Disables Creation of Timer HUD on CSS [Rapito]
 INJECTION("disableCreateCounterOnCSS", 0x80686ae4, "BRANCH r3, 0x80686aec"); 
 
-// Prevent Timer from being processed on CSS
+// Prevent Timer from being processed on CSS [Rapito]
 INJECTION("turnOffCSSTimer", 0x80687f6c, "li r0, 0"); 
 
-// Disables Creation of Timer HUD on SSS
+// Disables Creation of Timer HUD on SSS [Rapito]
 INJECTION("disableCreateCounterOnSSS", 0x806b1da0, "BRANCH r3, 0x806B1DBC"); 
 
-// Prevent Timer from being processed on SSS
+// Prevent Timer from being processed on SSS [Rapito]
 INJECTION("turnOffSSSTimer", 0x806b3f28, "li r0, 8");
-
-// disable Mii render func
-INJECTION("disableMiiRender", 0x80033b48, "nop");
 
 // TODO: 
 // The following are being disabled because you get an error of 0xD when you go back in any of the scenes
@@ -46,23 +59,15 @@ INJECTION("disableMiiRender", 0x80033b48, "nop");
 // "Your connection to other players was lost. Returning to the menu."
 // Ideally we should handle them better and figure out why we get that error on the first place.
 
-// Disable getNetworkError from wifiInterface during CSS
+// Disable getNetworkError from wifiInterface during CSS [Rapito]
 INJECTION("disableGetNetworkErrorOnCSS", 0x80687c68, "li r3, 0"); // original was bl ->0x800CBCB0
 
-// Disable getNetworkError from wifiInterface during SSS
+// Disable getNetworkError from wifiInterface during SSS [Rapito]
 INJECTION("disableGetNetworkErrorOnSSS", 0x806b3a74, "li r3, 0"); // original was bl ->0x800CBCB0
 
 
-// disable error thrown on matchmaking
-// startMatchingCommon/[muWifiInterfaceTask] forces branch to end of func
-DATA_WRITE(0x800CCF70, 48000024); // <- "b 0x24"
 
 
-// pretend request of "ConnectToAnybodyAsync" succeeded
-// thStartMatching/[NtMatching] replaces call to ConnectToAnybodyAsync with just a success code
-INJECTION("ConnectToAnybodyAsyncHook", 0x801494A4, R"(
-    li r3, 1
-)");
 
 
 // overrides the branch to thStartMatching
