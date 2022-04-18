@@ -43,8 +43,6 @@ public:
     ~EXIPacket();
 
     bool Send();
-    u8* Receive(u32 size);
-    void Receive(u8* buf, u32 size);
 
     EXICommand getCmd();
 

@@ -53,6 +53,40 @@
 
 u32 getCurrentFrame();
 
+
+enum PlayerType : u8
+{
+    PLAYERTYPE_LOCAL = 0x0,
+    PLAYERTYPE_REMOTE = 0x1,
+};
+
+struct PlayerSettings
+{
+    u8 charID;
+    u8 charColor;
+    PlayerType playerType;
+    u8 controllerPort;
+    u16 nametag[NAMETAG_SIZE];
+    u8 displayName[DISPLAY_NAME_SIZE];
+    u8 connectCode[CONNECT_CODE_SIZE];
+};
+
+struct GameSettings
+{
+    u8 localPlayerIdx;
+    u8 numPlayers;
+    u16 stageID;
+    u32 randomSeed;
+    PlayerSettings playerSettings[MAX_NUM_PLAYERS];
+};
+
+struct PreserveBlock {
+    u32 address;
+    u32 length;
+};
+
+#pragma pack(push, 4)
+
 struct BrawlbackPad {
     unsigned short buttons;
     char stickX;
@@ -105,37 +139,6 @@ struct FrameData {
             playerFrameDatas[i] = PlayerFrameData(frame, i);
         }
     }
-}; //__attribute__((packed, aligned(4)));
-
-enum PlayerType : u8
-{
-    PLAYERTYPE_LOCAL = 0x0,
-    PLAYERTYPE_REMOTE = 0x1,
-};
-
-struct PlayerSettings
-{
-    u8 charID;
-    u8 charColor;
-    PlayerType playerType;
-    u8 controllerPort;
-    u16 nametag[NAMETAG_SIZE];
-    u8 displayName[DISPLAY_NAME_SIZE];
-    u8 connectCode[CONNECT_CODE_SIZE];
-};
-
-struct GameSettings
-{
-    u8 localPlayerIdx;
-    u8 numPlayers;
-    u16 stageID;
-    u32 randomSeed;
-    PlayerSettings playerSettings[MAX_NUM_PLAYERS];
-};
-
-struct PreserveBlock {
-    u32 address;
-    u32 length;
 };
 
 struct RollbackInfo {
@@ -148,8 +151,10 @@ struct RollbackInfo {
     FrameData pastFrameDatas[MAX_ROLLBACK_FRAMES];
 
     bool hasPreserveBlocks;
-    vector<PreserveBlock> preserveBlocks;
+    //vector<PreserveBlock> preserveBlocks;
 };
+
+#pragma pack(pop)
 
 void fillOutGameSettings(GameSettings* settings);
 void MergeGameSettingsIntoGame(GameSettings* settings);
