@@ -85,7 +85,7 @@ struct PreserveBlock {
     u32 length;
 };
 
-#pragma pack(push, 4)
+#pragma pack(push, 2)
 
 struct BrawlbackPad {
     unsigned short buttons;
@@ -106,6 +106,9 @@ struct BrawlbackPad {
         RTrigger = 0;
     }
 };
+#pragma pack(pop)
+
+#pragma pack(push, 4)
 
 struct PlayerFrameData {
     u32 frame;
