@@ -654,11 +654,17 @@ namespace FrameLogic {
             EXIPacket(EXICommand::CMD_TIMER_START).Send();
         }
     }
+    // inside endGameLogic, after game logic, but before graphics calls
     SIMPLE_INJECTION(endFrame, 0x801473a0, "li r0, 0x0") { 
         if (Netplay::IsInMatch()) {
             //EndFrame(); 
             EXIPacket(EXICommand::CMD_TIMER_END).Send();
         }
+        
+    }
+
+    // very end of main game loop, after all game logic and graphics calls
+    SIMPLE_INJECTION(endMainLoop, 0x800174fc, "lwz r3, 0x100(r23)") {
         
     }
 
@@ -668,9 +674,9 @@ namespace FrameLogic {
     // resim optimization
     // gfTask names listed in the array below
     // will not be run during resimulation frames
-    #define NUM_NON_RESIM_TASKS 1
+    #define NUM_NON_RESIM_TASKS 0
     const char* nonResimTasks[NUM_NON_RESIM_TASKS] = {
-        "Camera",
+        //"Camera",
     };
     INJECTION("gfTaskProcessHook", 0x8002dc74, R"(
         SAVE_REGS
