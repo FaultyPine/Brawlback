@@ -54,9 +54,7 @@ BrawlbackPad GamePadToBrawlbackPad(const gfPadGamecube* pad) {
     ret.RTrigger = pad->RTrigger;
     return ret;
 }
-void InjectBrawlbackPadToGame(const BrawlbackPad& pad, u8 playerIdx) {
-    //SyncLoc(pad, playerIdx);
-    gfPadGamecube* gamePad = &PAD_SYSTEM->pads[playerIdx];
+void InjectBrawlbackPadToPadStatus(gfPadGamecube* gamePad, const BrawlbackPad& pad) {
     gamePad->buttons.bits = pad.buttons;
     gamePad->cStickX = pad.cStickX;
     gamePad->cStickY = pad.cStickY;
@@ -64,6 +62,17 @@ void InjectBrawlbackPadToGame(const BrawlbackPad& pad, u8 playerIdx) {
     gamePad->stickY = pad.stickY;
     gamePad->LTrigger = pad.LTrigger;
     gamePad->RTrigger = pad.RTrigger;
+}
+void InjectBrawlbackPadToGame(const BrawlbackPad& pad, u8 playerIdx) {
+    //SyncLoc(pad, playerIdx);
+    gfPadGamecube* gamePad = &PAD_SYSTEM->pads[playerIdx];
+    InjectBrawlbackPadToPadStatus(gamePad, pad);
+}
+
+void InjectFramedataToPadStatusArray(FrameData* fd, gfPadGamecube* pad_statuses) {
+    for (int i = 0; i < MAX_NUM_PLAYERS; i++) {
+        InjectBrawlbackPadToPadStatus(&pad_statuses[i], fd->playerFrameDatas[i].pad);
+    }
 }
 
 // fill gamesettings struct with game info
@@ -125,7 +134,6 @@ void MergeGameSettingsIntoGame(GameSettings* settings) {
 
 
 namespace Match {
-
 
     // on scene start (AFTER the start/[scMelee] function has run)
 
@@ -219,7 +227,8 @@ namespace FrameAdvance {
     // for keeping track of the past few framedatas
     vector<FrameData*> pastFrameDatas = {};
 
-    void FindAndInjectInputsForResimFrame(u32 gameLogicFrame) {
+    FrameData FindInputsForResimFrame(u32 gameLogicFrame) {
+        FrameData ret;
         bool foundInputs = false;
         for (int i = 0; i < pastFrameDatas.size(); i++) {
             FrameData* fd = pastFrameDatas[i];
@@ -228,6 +237,7 @@ namespace FrameAdvance {
             if (fd->playerFrameDatas[0].frame == gameLogicFrame) {
                 // inject inputs and break out
                 PlayerFrameData* playerFrameDatas = &fd->playerFrameDatas[0];
+                ret = *fd;
                 InjectInputsForAllPlayers(playerFrameDatas);
                 foundInputs = true;
                 break;
@@ -245,12 +255,13 @@ namespace FrameAdvance {
                 }
             }
         }
+        return ret;
     }
 
 
     // this is at the very beginning of the main game logic loop (right before 'gameProc'). This should be a good place to inject inputs for
     // each fast-forwarded frame
-    SIMPLE_INJECTION(resimPoint, 0x80017354, "or r4, r19, r19") {
+    /*SIMPLE_INJECTION(resimPoint, 0x80017354, "or r4, r19, r19") {
         _OSDisableInterrupts();
         // if we are currently resimulating
         if (isRollback) {
@@ -272,7 +283,83 @@ namespace FrameAdvance {
             overrideInputs = nullptr;
         }
         _OSEnableInterrupts();
+    }*/
+
+    // should be called on every simulated frame. Handles injecting inputs (and saving state for resimulated frames) 
+    /*FrameData ProcessGameSimulation() {
+        _OSDisableInterrupts();
+        FrameData fd;
+        u32 gameLogicFrame = getCurrentFrame();
+        // if we are currently resimulating
+        if (isRollback) {
+            if (!pastFrameDatas.empty()) {
+                fd = FindInputsForResimFrame(gameLogicFrame);
+            }
+            else {
+                OSReport("PastFrameDatas was empty!\n");
+            }
+            // during resim frames we need to save state since gamestate will be different on these frames than it was before
+            FrameLogic::SaveState(gameLogicFrame);
+        }
+        else if (overrideInputs != nullptr) {
+            memcpy(&fd.playerFrameDatas, overrideInputs, sizeof(PlayerFrameData)*Netplay::getGameSettings()->numPlayers);
+            fd.randomSeed = 0; // ?
+
+            free(overrideInputs);
+            overrideInputs = nullptr;
+        }
+
+        _OSEnableInterrupts();
+        return fd;
+    }*/
+
+    INJECTION("getPadInputHook", 0x8004a468, R"(
+
+        SAVE_REGS
+        bl isRemotePlayerInjection
+        cmpwi r3, 0x0              # if we are local player, don't skip getPadInput. If it's remote player, we inject inputs ourselves, so we don't need the game to do it (skip this func)
+        beq NO_SKIP_GET_PAD_INPUT
+        RESTORE_REGS
+        BRANCH r12, 0x8004a56c     # skip to blr of getPadInput
+        NO_SKIP_GET_PAD_INPUT:
+        RESTORE_REGS
+
+        add	r4, r3, r4
+    )");
+
+    // returns whether or not this port is a remote player. (if it is a remote player, does input injection)
+    extern "C" bool isRemotePlayerInjection(void* pad_config, unsigned int port, int param_3, gfPadGamecube pad_status[4]) {
+        //FrameData fd = ProcessGameSimulation();
+        _OSDisableInterrupts();
+        if (Netplay::IsInMatch()) {
+            FrameData fd;
+            u32 gameLogicFrame = getCurrentFrame();
+            // if we are currently resimulating
+            if (isRollback) {
+                if (!pastFrameDatas.empty()) {
+                    fd = FindInputsForResimFrame(gameLogicFrame);
+                }
+                else {
+                    OSReport("PastFrameDatas was empty!\n");
+                }
+                // during resim frames we need to save state since gamestate will be different on these frames than it was before
+                FrameLogic::SaveState(gameLogicFrame);
+            }
+            else if (overrideInputs != nullptr) {
+                memcpy(&fd.playerFrameDatas, overrideInputs, sizeof(PlayerFrameData)*Netplay::getGameSettings()->numPlayers);
+                fd.randomSeed = 0; // ?
+
+                free(overrideInputs);
+                overrideInputs = nullptr;
+            }
+
+            InjectFramedataToPadStatusArray(&fd, pad_status);
+        }
+
+        _OSEnableInterrupts();
+        return port != (unsigned int)Netplay::localPlayerIdx;
     }
+
 
 }
 

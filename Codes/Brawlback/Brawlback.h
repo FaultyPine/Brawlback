@@ -21,7 +21,7 @@
 
 //  toggles for netplay logic and rollback logic
 #define NETPLAY_IMPL
-#define ROLLBACK_IMPL
+//#define ROLLBACK_IMPL
 // ^ if you disable rollbacks, make sure to also disable the ROLLBACK_IMPL flag in BrawlbackUtility.cpp on the dolphin side
 // ------------------------------------
 
@@ -50,6 +50,10 @@
 #define setNextSqVsMelee ((void (*)(void* unk1)) 0x806dcaf0)
 // r3 - 0x90ff3e40
 #define setNextSqNetAnyOkiraku ((void (*)(void* unk1)) 0x806f2320)
+
+#define updateGame (( void (*)(gfPadSystem* pad_system) ) 0x8002a4f8)
+
+inline void updateGamePadSystem() { updateGame(PAD_SYSTEM); }
 
 u32 getCurrentFrame();
 
