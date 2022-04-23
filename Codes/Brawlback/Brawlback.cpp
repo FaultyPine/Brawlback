@@ -69,7 +69,7 @@ void InjectBrawlbackPadToGame(const BrawlbackPad& pad, u8 playerIdx) {
     InjectBrawlbackPadToPadStatus(gamePad, pad);
 }
 
-void InjectFramedataToPadStatusArray(FrameData* fd, gfPadGamecube* pad_statuses) {
+void InjectFrameDataToPadStatusArray(FrameData* fd, gfPadGamecube* pad_statuses) {
     for (int i = 0; i < MAX_NUM_PLAYERS; i++) {
         InjectBrawlbackPadToPadStatus(&pad_statuses[i], fd->playerFrameDatas[i].pad);
     }
@@ -353,7 +353,8 @@ namespace FrameAdvance {
                 overrideInputs = nullptr;
             }
 
-            InjectFramedataToPadStatusArray(&fd, pad_status);
+            // for some reason injecting over pad_status here prevents the game from simulating forward... or something
+            //InjectFrameDataToPadStatusArray(&fd, pad_status);
         }
 
         _OSEnableInterrupts();
