@@ -13,6 +13,7 @@
 #include "Brawl/GF/gfPadSystem.h"
 #include "Brawl/FT/ftManager.h"
 #include "Brawl/gmGlobalModeMelee.h"
+#include "Brawl/GF/gfApplication.h"
 #include "Wii/mtRand.h"
 #include "Wii/OS/OSTime.h"
 #include "EXIPacket.h"
@@ -50,6 +51,19 @@
 #define setNextSqVsMelee ((void (*)(void* unk1)) 0x806dcaf0)
 // r3 - 0x90ff3e40
 #define setNextSqNetAnyOkiraku ((void (*)(void* unk1)) 0x806f2320)
+
+#define updateGame (( void (*)(gfPadSystem* pad_system) ) 0x8002a4f8)
+
+#define modeChange ( ( void (*) (void* ipswitch, int mode) ) 0x8004a914)
+
+#define getGamePadStatus (( int (*) (gfPadSystem* pad_system, int port, gfPadGamecube* dst) ) 0x8002ac54)
+#define getPadInput ( ( void (*) (void* pad_config, u32 playerIdx, gfPadGamecube* current_inputs, u32* pad_status) ) 0x8004a468)
+#define getPadCofigInstance ( (void* (*) ()) 0x80048548)
+#define getIpSwitchInstance ( (void* (*) ()) 0x8004a750)
+
+#define setPause ( ( void (*) (gfApplication* application, bool isPaused, int unk) ) 0x80016900)
+
+inline void updateGamePadSystem() { updateGame(PAD_SYSTEM); }
 
 u32 getCurrentFrame();
 

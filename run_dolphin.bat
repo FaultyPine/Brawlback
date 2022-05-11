@@ -2,11 +2,6 @@
 
 call "get_settings.bat"
 
-:: launchers
-::set launcher="vBrawl.elf"
-::set launcher="Project+.elf"
-::set launcher="PM.elf"
-
 set dolphin_exe=%DOLPHIN_EXE_PATH%
 
 :: if arg is secondary, run a seperate instance of dolphin
