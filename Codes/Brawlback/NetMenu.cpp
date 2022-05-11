@@ -19,6 +19,8 @@ INJECTION("disableMiiRender", 0x80033b48, "nop");
 
 // disable error thrown on matchmaking [Eon]
 // startMatchingCommon/[muWifiInterfaceTask] forces branch to end of func
+
+// TODO: DATA_WRITE Seems to not work lol... fix it
 DATA_WRITE(0x800CCF70, 48000024); // <- "b 0x24"
 
 
