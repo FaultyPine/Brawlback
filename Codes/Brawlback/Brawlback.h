@@ -103,12 +103,12 @@ struct PreserveBlock {
 
 struct BrawlbackPad {
     unsigned short buttons;
-    char stickX;
-    char stickY;
-    char cStickX;
-    char cStickY;
-    char LTrigger;
-    char RTrigger;
+    s8 stickX;
+    s8 stickY;
+    s8 cStickX;
+    s8 cStickY;
+    s8 LTrigger;
+    s8 RTrigger;
 
     BrawlbackPad() {
         buttons = 0;
@@ -164,7 +164,7 @@ struct RollbackInfo {
     u32 endFrame; // frame we received new remote inputs, and should now resim with those
     FrameData predictedInputs;
 
-    bool pastFrameDataPopulated;
+    bool shouldRollbackThisFrame;
     FrameData pastFrameDatas[MAX_ROLLBACK_FRAMES];
 
     bool hasPreserveBlocks;
