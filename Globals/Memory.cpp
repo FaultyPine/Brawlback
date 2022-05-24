@@ -1,4 +1,5 @@
 #include "Memory.h"
+#include "Wii/OS/OSError.h"
 
 MEMHeapHandle mainHeap;
 
@@ -24,7 +25,11 @@ extern "C" int memcmp(const void* a, const void* b, size_t size) {
 }
 
 extern "C" void* malloc(size_t size, int alignment) {
-	return allocFromExpHeap(mainHeap, size, alignment);
+    void* ret = allocFromExpHeap(mainHeap, size, alignment);
+    if (!ret) {
+        OSReport("Failed to malloc %u! Heap space available: %08x\n", size, getFreeSize(mainHeap));
+    }
+	return ret;
 }
 
 extern "C" void free(void* ptr) {

@@ -26,6 +26,8 @@
 // ^ if you disable rollbacks, make sure to also disable the ROLLBACK_IMPL flag in BrawlbackUtility.cpp on the dolphin side
 // ------------------------------------
 
+#define ROLLBACK_TESTING
+
 // make sure this is the same as the one in BrawlbackUtility.cpp on dolphin side
 #define MAX_ROLLBACK_FRAMES 5
 
@@ -156,6 +158,12 @@ struct FrameData {
             playerFrameDatas[i] = PlayerFrameData(frame, i);
         }
     }
+};
+
+struct PadStatus {
+    u16 buttons;
+    u8 stickX;
+    u8 stickY;
 };
 
 struct RollbackInfo {

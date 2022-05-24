@@ -145,8 +145,8 @@ namespace Match {
         OSReport("  ~~~~~~~~~~~~~~~~  Start Scene Melee  ~~~~~~~~~~~~~~~~  \n");
         #ifdef NETPLAY_IMPL
         //Netplay::StartMatching(); // now moved to GmGlobalModeMelee.cpp
-        #endif
         Netplay::SetIsInMatch(true);
+        #endif
         //modeChange(getIpSwitchInstance(), 0);
         _OSEnableInterrupts();
     }
@@ -157,8 +157,8 @@ namespace Match {
         OSReport("  ~~~~~~~~~~~~~~~~  Exit Scene Melee  ~~~~~~~~~~~~~~~~  \n");
         #ifdef NETPLAY_IMPL
         Netplay::EndMatch();
-        #endif
         Netplay::SetIsInMatch(false);
+        #endif
         _OSEnableInterrupts();
     }
 
@@ -172,7 +172,7 @@ namespace FrameAdvance {
     int framesToAdvance = 1;
     int getFramesToAdvance() { return framesToAdvance; }
 
-    // sets the number of frames of game logic to run every frame
+    // sets the number of frames of game logic to run this frame
     void TriggerFastForwardState(u8 numFramesToFF) {
         if (framesToAdvance == 1 && numFramesToFF > 0) {
             framesToAdvance = numFramesToFF;
@@ -210,7 +210,7 @@ namespace FrameAdvance {
 
 
     // array of inputs for each player to get injected
-    PlayerFrameData* overrideInputs = nullptr;
+    FrameData* overrideInputs = nullptr;
 
     // playerFrameDatas should have numPlayers # of framedatas
     void InjectInputsForAllPlayers(PlayerFrameData* playerFrameDatas) {
@@ -227,10 +227,10 @@ namespace FrameAdvance {
     // for keeping track of the past few framedatas
     vector<FrameData*> pastFrameDatas = {};
 
-    void FindInputsForResimFrame(u32 frameToFind, FrameData* inputs) {
+    void FindInputsForResimFrame(const vector<FrameData*>& pastInputs, u32 frameToFind, FrameData* inputs) {
         bool foundInputs = false;
-        for (int i = 0; i < pastFrameDatas.size(); i++) {
-            FrameData* fd = pastFrameDatas[i];
+        for (int i = 0; i < pastInputs.size(); i++) {
+            FrameData* fd = pastInputs[i];
             ASSERT(fd->playerFrameDatas[0].frame == fd->playerFrameDatas[1].frame);
             //OSReport("framedata frame for idx 0 %u   for idx 1 %u\n", fd->playerFrameDatas[0].frame, fd->playerFrameDatas[1].frame);
             if (fd->playerFrameDatas[0].frame == frameToFind) {
@@ -246,8 +246,8 @@ namespace FrameAdvance {
             OSReport("Couldn't find inputs for frame %u for resimulating!\n", frameToFind);
             OSReport("Full past framedatas\n");
             for (int i = 0; i < MAX_ROLLBACK_FRAMES; i++) {
-                FrameData* fd = pastFrameDatas[i];
-                OSReport("~~~~~~~ pastFramedatas[%i] ~~~~~~~\n", i);
+                FrameData* fd = pastInputs[i];
+                OSReport("~~~~~~~ pastInputs[%i] ~~~~~~~\n", i);
                 for (int pIdx = 0; pIdx < 2; pIdx++) {
                     OSReport("pIdx %i:::   Frame %u\n", pIdx, fd->playerFrameDatas[pIdx].frame);
                 }
@@ -262,8 +262,8 @@ namespace FrameAdvance {
         // if we are currently resimulating
         if (isRollback) {
             if (!pastFrameDatas.empty()) {
-                //OSReport("Finding inputs for resim frame %u\n", gameLogicFrame);
-                FindInputsForResimFrame(gameLogicFrame, inputs);
+                OSReport("Finding inputs for resim frame %u\n", gameLogicFrame);
+                FindInputsForResimFrame(pastFrameDatas, gameLogicFrame, inputs);
             }
             else {
                 OSReport("PastFrameDatas was empty!\n");
@@ -273,12 +273,8 @@ namespace FrameAdvance {
         }
         // not resimulating, we probably just need to grab inputs normally
         else if (overrideInputs != nullptr) {
-            memcpy(&inputs->playerFrameDatas, overrideInputs, sizeof(PlayerFrameData)*Netplay::getGameSettings()->numPlayers);
-            inputs->randomSeed = 0; // ?
+            *inputs = *overrideInputs;
             //OSReport("Grabbing normal input frame %u\n", inputs->playerFrameDatas[0].frame);
-
-            free(overrideInputs);
-            overrideInputs = nullptr;
         }
         if (inputs->playerFrameDatas[0].frame != gameLogicFrame || inputs->playerFrameDatas[1].frame != gameLogicFrame) {
             OSReport("Game frame != injected inputs frame! %u %u  frame: %u\n", inputs->playerFrameDatas[0].frame, inputs->playerFrameDatas[1].frame, gameLogicFrame);
@@ -322,12 +318,26 @@ namespace FrameAdvance {
         _OSEnableInterrupts();
     }
 
+    /*INJECTION("getPadStatusHook", 0x8004ac48, R"(
+        stb	r0, 0x0003 (r5)
+        SAVE_REGS
+        bl getPadStatusHookHandler
+        RESTORE_REGS
+    )");
+    extern "C" void getPadStatusHookHandler(void* ip_switch, int playerno, PadStatus *pad_status) {
+        PadStatus this_frame_inputs = *pad_status;
+        OSReport("Pad status info  P%i\n", playerno);
+        OSReport("Buttons: ");
+        print_half(this_frame_inputs.buttons);
+        OSReport("\n StickX = %u   StickY = %u\n", (u32)this_frame_inputs.stickX, (u32)this_frame_inputs.stickY);
+    }*/
+
     // Clear pad related stubs
     #if 0
     INJECTION("clearPadEdgeReportHook", 0x8002b62c, R"(
         SAVE_REGS
         bl shouldSkipClearPadEdgeReport
-        cmpwi r3, 0x1
+        cmpwi r3, 0x0
         beq NO_SKIP_CLEAR_PAD_EDGE
         RESTORE_REGS
         BRANCH r12, 0x8002b6fc     # skip to blr of clearPadEdgeReport
@@ -357,19 +367,44 @@ namespace FrameAdvance {
         
 }
 
+bool isGoodFrame() {
+    u32 currentFrame = getCurrentFrame();
+    return currentFrame > 250 && Netplay::localPlayerIdx == 1 && currentFrame % 30 != 0 && FrameAdvance::framesToAdvance != 0;
+}
+
+const int numFramesToRollback = MAX_ROLLBACK_FRAMES;
+const int dbg_rollback_frame_mod = 5;
 
 namespace FrameLogic {
 
+    bool usingPredicted = false;
+
     void ProcessFrameDataFromEmu(FrameData* framedata) {
         u8 numPlayers = Netplay::getGameSettings()->numPlayers;
-        size_t inputsSize = sizeof(PlayerFrameData) * numPlayers;
-        if (FrameAdvance::overrideInputs != nullptr) {
-            //OSReport("Override inputs already populated!\n");
-            free(FrameAdvance::overrideInputs);
-            FrameAdvance::overrideInputs = nullptr;
+        OSReport("process frame %u %u\n", framedata->playerFrameDatas[0].frame, framedata->playerFrameDatas[1].frame);
+        // every once in a while, udon't overwrite these inputs, which makes it use previous inputs
+        if (!usingPredicted) {
+            //OSReport("Overwriting overrideInputs\n");
+            memcpy(FrameAdvance::overrideInputs, framedata, sizeof(FrameData));
         }
-        FrameAdvance::overrideInputs = (PlayerFrameData*)malloc(inputsSize);
-        memcpy(FrameAdvance::overrideInputs, &framedata->playerFrameDatas[0], inputsSize);
+
+        #ifdef ROLLBACK_TESTING
+
+        if (getCurrentFrame() % dbg_rollback_frame_mod == 0 && isGoodFrame()) {
+            usingPredicted = !usingPredicted;
+            OSReport("Using predicted: %i\n", usingPredicted);
+        }
+        
+        if (FrameAdvance::pastFrameDatas.size()+1 > MAX_ROLLBACK_FRAMES+1) {
+            FrameAdvance::pastFrameDatas.erase(0);
+        }
+        OSReport("Pushing frame %u\n", framedata->playerFrameDatas[0].frame);
+        FrameData* tmp_fd = (FrameData*)malloc(sizeof(FrameData));
+        memcpy(tmp_fd, framedata, sizeof(FrameData));
+        FrameAdvance::pastFrameDatas.push(tmp_fd);
+        OSReport("Using frame %u\n", FrameAdvance::overrideInputs->playerFrameDatas[0].frame);
+
+        #endif
     }
 
     void FixFrameDataEndianness(FrameData* fd) {
@@ -438,7 +473,7 @@ namespace FrameLogic {
         }
 
         // do the actual rollback (load state)
-        EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo)).Send();
+        EXIPacket::CreateAndSend(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo));
         // trigger fast forward (resimulation)
         FrameAdvance::TriggerFastForwardState(numFramesToResimulate);
         // mark current state as rolling back/resim-ing
@@ -525,8 +560,7 @@ namespace FrameLogic {
             fData.pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[localPlayerIdx]);
 
             // sending inputs + current game frame
-            EXIPacket fDataPckt = EXIPacket(EXICommand::CMD_ONLINE_INPUTS, &fData, sizeof(PlayerFrameData));
-            fDataPckt.Send();
+            EXIPacket::CreateAndSend(EXICommand::CMD_ONLINE_INPUTS, &fData, sizeof(PlayerFrameData));
         }
         else {
             OSReport("Invalid player index! Can't send inputs to emulator!\n");
@@ -541,7 +575,7 @@ namespace FrameLogic {
     }
 
     void SaveState(u32 currentFrame) {        
-        EXIPacket(EXICommand::CMD_CAPTURE_SAVESTATE, &currentFrame, sizeof(currentFrame)).Send();
+        EXIPacket::CreateAndSend(EXICommand::CMD_CAPTURE_SAVESTATE, &currentFrame, sizeof(currentFrame));
     }
 
     // called at the beginning of the game logic in a frame
@@ -616,10 +650,8 @@ namespace FrameLogic {
                     OSReport("numframestorollback %i  beginFrame: %u    endFrame: %u\n", numFramesToRollback, rollbackInfo.beginFrame, rollbackInfo.endFrame);
                     rollbackInfo.hasPreserveBlocks = false;
                     rollbackInfo.shouldRollbackThisFrame = true;
-                    EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, &rollbackInfo, sizeof(RollbackInfo));
-                    if (stateReloadPckt.Send()) {
-                        FrameAdvance::TriggerFastForwardState(numFramesToRollback  +1);
-                    }
+                    EXIPacket::CreateAndSend(EXICommand::CMD_LOAD_SAVESTATE, &rollbackInfo, sizeof(RollbackInfo))
+                    FrameAdvance::TriggerFastForwardState(numFramesToRollback  +1);
                 }
                 else {
                     ProcessFrameDataFromEmu(&framedata);
@@ -627,6 +659,21 @@ namespace FrameLogic {
                 
                 
                 #endif
+            #endif
+
+
+            #ifdef ROLLBACK_TESTING
+            bool shouldRollback = currentFrame % dbg_rollback_frame_mod == 0; 
+
+            if (shouldRollback && isGoodFrame()) {
+                FrameAdvance::isRollback = true;
+                RollbackInfo rollbackInfo;
+                rollbackInfo.beginFrame = getCurrentFrame() - numFramesToRollback;
+                OSReport("numframestorollback %i  beginFrame: %u    endFrame: %u\n", numFramesToRollback, rollbackInfo.beginFrame, rollbackInfo.endFrame);
+                EXIPacket::CreateAndSend(EXICommand::CMD_LOAD_SAVESTATE, &rollbackInfo, sizeof(RollbackInfo));
+                FrameAdvance::TriggerFastForwardState(numFramesToRollback  +1);
+                
+            }
             #endif
 
 
@@ -659,14 +706,14 @@ namespace FrameLogic {
     // just for timing frames
     SIMPLE_INJECTION(beginningOfMainGameLoop, 0x800171b4, "li	r25, 1") {
         if (Netplay::IsInMatch()) {
-            EXIPacket(EXICommand::CMD_TIMER_START).Send();
+            EXIPacket::CreateAndSend(EXICommand::CMD_TIMER_START);
         }
     }
     // inside endGameLogic, after game logic, but before graphics calls
     SIMPLE_INJECTION(endFrame, 0x801473a0, "li r0, 0x0") { 
         if (Netplay::IsInMatch()) {
             //EndFrame(); 
-            EXIPacket(EXICommand::CMD_TIMER_END).Send();
+            EXIPacket::CreateAndSend(EXICommand::CMD_TIMER_END);
         }
         
     }

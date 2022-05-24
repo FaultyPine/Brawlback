@@ -44,6 +44,8 @@ public:
 
     bool Send();
 
+    static void CreateAndSend(u8 EXICmd, void* source = nullptr, u32 size = 0);
+
     EXICommand getCmd();
 
 private:
