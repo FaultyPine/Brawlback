@@ -1,10 +1,6 @@
 { "codeSegments": [
   {
-<<<<<<< HEAD
     "startAddress": "0x8055A620",
-=======
-    "startAddress": "0x8055C600",
->>>>>>> 521f3441bf95644e02efcfc2f4a43c8622495d8c
     "endAddress": "0x80563100"
   },
   {

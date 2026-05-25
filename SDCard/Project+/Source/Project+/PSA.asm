@@ -218,56 +218,65 @@ CODE @ $80fc27d0
 
 
 #following codes all based on removal of Animation Engine
+
+############################
 CaptureJump FSM in PSA [Eon]
+############################
 .alias PSA_Off 	= 0x8054C2D0
 CODE @ $8054C2D0
 {
 	word 2; word PSA_Off+0x10
 	word 1; scalar 1.66666
 	
-	word 0x04070200; word PSA_Off+0x8 #multiply frame speed by 1.6666
+	word 0x04070100; word PSA_Off+0x8 #multiply frame speed by 1.6666
 	word 0x00000000; word 0
 }
 CODE @ $80FB06D4
 {
 	word 0x00090100; word PSA_Off 
 }
+############################
 PassiveCeil FSM in PSA [Eon]
+############################
 .alias PSA_Off 	= 0x8054C2F0
 CODE @ $8054C2F0
 {
 	word 2; word PSA_Off+0x10
 	word 1; scalar 1.3
 	
-	word 0x04070200; word PSA_Off+0x8 #multiply frame speed by 1.6666
+	word 0x04070100; word PSA_Off+0x8 #multiply frame speed by 1.6666
 	word 0x00000000; word 0
 }
 CODE @ $80FB599C
 {
 	word 0x00090100; word PSA_Off 
 }
+#####################################
 SmashSwingItemWindup FSM in PSA [Eon]
+#####################################
 .alias PSA_Off 	= 0x8054C310
 CODE @ $8054C310
 {
 	word 2; word PSA_Off+0x10
 	word 1; scalar 1.4137932
 	
-	word 0x04070200; word PSA_Off+0x8 #multiply frame speed by 1.6666
+	word 0x04070100; word PSA_Off+0x8 #multiply frame speed by 1.6666
 	word 0x00000000; word 0
 }
 CODE @ $80FC2E50
 {
 	word 0x00090100; word PSA_Off 
 }
+#####################################
 Unknown Special Jump FSM in PSA [Eon]
+#####################################
 .alias PSA_Off 	= 0x8054C330
 CODE @ $8054C330
 {
 	word 2; word PSA_Off+0x10
 	word 1; scalar 1.5
 	
-	word 0x04070200; word PSA_Off+0x8 #multiply frame speed by 1.6666
+	word 0x04070100; word PSA_Off+0x8 #multiply frame speed by 1.6666
 	word 0x00000000; word 0
 }
 CODE @ $80FBCDD4
@@ -275,7 +284,9 @@ CODE @ $80FBCDD4
 	word 0x00090100; word PSA_Off 
 }
 
+################################################
 Tether fail passes frame but dont pass FSM [Eon]
+################################################
 .alias PSA_Off 	= 0x8054C360
 CODE @ $80FC2D10
 {
@@ -286,4 +297,42 @@ CODE @ $8054C360
 	word 5; RA_Basic 2
 	word 3; word 1
 	word 1; scalar 1.0
+}
+
+####################################################################################
+PSA If Compare now accepts basics passed into them instead of requiring floats [Eon]
+####################################################################################
+#first arg
+CODE @ $807827EC
+{
+    lwz r0, 0x0(r3)
+    cmplwi r0, 1
+    beq 0xC
+}
+HOOK @ $807827f8
+{
+    lwz r0, 0x4(r3)
+    xoris r0, r0, 0x8000
+    stw r0, 0x4FC(r1)
+    lfd f1, 0x4F8(r1)
+    lfd f2, 0x150(r31)
+    fsubs f1, f1, f2
+}
+#second arg
+CODE @ $807828C8 
+{
+    lwz r0, 0x0(r3)
+    cmpwi r0, 0x5
+    beq 0xC
+    nop #this is that hook below this 
+    b 0x44 
+}
+HOOK @ $807828D4
+{
+    lwz r0, 0x4(r3)
+    xoris r0, r0, 0x8000
+    stw r0, 0x4FC(r1)
+    lfd f1, 0x4F8(r1)
+    lfd f2, 0x150(r31)
+    fsubs f1, f1, f2
 }

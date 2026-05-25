@@ -55,7 +55,7 @@ int[4] 0x26, -1, -1, -1   @ $80AD8588
 int[6] 1, 1, 1, 1, 1, 1 @ $80B0BA90
 int 0 @ $80B0BAC4
 # Knuckles
-int 0x0176 @ $80AD8A94
+int 0x0146 @ $80AD8A94
 address $8058585D @ $80AD7EF4
 address $80585876 @ $80AD8154
 int[4] 0x2D, -1, -1, -1 @ $80AD85A8
@@ -102,7 +102,7 @@ HOOK @ $80AA95B8
   lis r3, 0x22
 loc_0xC:
   cmpwi r30, 0x26;  bne- %END%
-  lis r3, 0x8F
+  lis r3, 0x27
 }
 HOOK @ $80AA9D60
 {
@@ -248,6 +248,17 @@ op addi r3, r3, 0x5FF0	@ $800EB234
 op li r0, 0x1B 			@ $800EB230
 int 0x201D @ $80408B0C
 int[4] 0x202A, 0x1FDE, 0x1FF0, 0x817983A0 @ $805860BC
+
+##############################################
+Clone Engine Clear Final Smash Fix [DukeItOut]
+##############################################
+# Assigns a FitFinalSpy file for use in Clear Mode.
+HOOK @ $8084D41C
+{
+    cmpwi r31, 47    # Sonic
+    beq+ %END%
+    cmpwi r31, 45    # & Knuckles
+}
 
 #####################################
 ![Project+] Mewtwo Kirby Fixes [ds22]

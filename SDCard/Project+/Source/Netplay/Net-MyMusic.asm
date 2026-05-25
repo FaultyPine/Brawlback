@@ -320,6 +320,22 @@ Mushroomy Kingdom's slot only loads one tracklist [DukeItOut]
 #############################################################
 op b 0x174	@ $8117DF88
 
+###################################################
+Salty Runback Expansion Stage Music Fix [DukeItOut]
+###################################################
+# Fixes Salty Runback music not working 
+# appropriately with expansion stages due to 
+# higher values not being checked for music
+###################################################
+op NOP @ $8010F9C0
+
+################################################
+#Salty Runback Always Shuffles Music [DukeItOut]
+# 
+# Disabled on purpose, but left here for builds that want to make it shuffle.
+#
+#op b 0x68 @ $8010F9A8
+
 ##################################################################################
 Hanenbow can display song titles, but stage builder stages can't [JOJI, DukeItOut]
 ##################################################################################
@@ -351,21 +367,74 @@ HOOK @ $8010F9DC
   li r27, 0x0
 }
 
-###############################################################################################################
-# Note that CMM SD File Saver isn't present here, that's by design! Netplay doesn't save tracklists on purpose!
-###############################################################################################################
+#############################################################################
+# Note that CMM SD File Saver isn’t present here, that’s by design! Netplay doesn’t save tracklists on purpose!
+!CMM SD File Saver (Uses SD Root Code’s Directory) [Desi, Fracture, DukeItOut]
+#############################################################################
+HOOK @ $8117E5C0
+{
+  stwu r1, -0xA0(r1)
+  lis r4, 0x8053;  ori r4, r4, 0xCFF8		# 
+  lwz r5, 0(r4)				# "sound/tracklist/"
+  lwz r4, 4(r4)				# "%s%s.tlst"	# "sound/tracklist/" + filename + ".tlst"
+  lis r12, 0x8053			# \
+  ori r12, r12, 0xF000		# | Get the tracklist file name
+  lwz r8, 0x18(r12)			# |
+  lwz r7, 0x4(r12)			# |
+  add r7, r7, r12			# |
+  add r6, r8, r7			# /
+  addi r3, r1, 0x40
+  lis r12, 0x803F			# \
+  ori r12, r12, 0x89FC		# | Create the filename string
+  mtctr r12					# |
+  bctrl						# /
+  # string at r3 + 0x24
+  addi r7, r1, 0x40		# Filename to write
+  stwu r1, -0x200(r1)
+  lis r4, 0x8048		# \
+  ori r4, r4, 0xEFF6	# / "%s%s%s%s"
+  lis r5, 0x8040		# \ Mod name
+  ori r5, r5, 0x6920	# /
+  lis r6, 0x7066		# \ "pf"
+  stw r6, 0x10(r1)		# |
+  addi r6, r1, 0x10		# /
+  addi r3, r1, 0x40
+  lis r12, 0x803F			# \
+  ori r12, r12, 0x89FC		# | Create the filename string
+  mtctr r12					# |
+  bctrl						# /
+  addi r3, r1, 0x10
+  li r5, 0
+  stw r5, 0x4(r3)
+  stw r5, 0x10(r3)
+  lis r4, 0x8053;  ori r4, r4, 0xF200		#\ File size and location to write
+  stw r4, 0xC(r3)							# | 
+  lhz r4, 0x8(r4)							#/
+  stw r4, 0x8(r3)
+  li  r4, -1
+  stw r4, 0x14(r3)
+  addi r4, r1, 0x40
+  stw r4, 0(r3)
+  lis r0, 0x8001		# \  
+  ori r0, r0, 0xD740	# |	write to file on SD card!
+  mtctr r0				# |
+  bctrl 				# /
+  lwz r1, 0(r1)
+  lwz r1, 0(r1)
+  li r26, 0x0
+}
 
 ##########################################################################################################
-MyMusic loads from 8053F200 instead of 81521F18 [Desi]
+MyMusic loads from 8053F200 instead of 81521F18 V1.1 [Desi, DukeItOut]
 #
 #The goal of each of these hook points is to make MyMusic read Song IDs from 8053F200 instead of 81521F18. 
 #By doing this, 8117E180 can be NOP and not overwrite the Song Count at 81521F54.
+#
+#1.1: Fixed issue where altering the My Music menu too extensively would break compatibility with this code
 ##########################################################################################################
 HOOK @ $8117E7B8
 {
-	lis r5, 0x8152
-	ori r5, r5, 0x1880
-	sub r3, r3, r5
+	sub r3, r3, r28
 	mulli r3, r3, 0x4
 	lis r5, 0x8053
 	ori r5, r5, 0xF20C
@@ -375,9 +444,7 @@ HOOK @ $8117E7B8
 
 HOOK @ $8117f0E0
 {
-	lis r29, 0x8152
-	ori r29, r29, 0x1880
-	subf r29, r28, r6
+	sub r29, r6, r28
 	mulli r29, r29, 0x4
 	lis r6, 0x8053
 	ori r6, r6, 0xF20C

@@ -1,10 +1,19 @@
-##############################################################################
-[Legacy TE] Restrict Special Character Selection to L [PyotrLuzhin, Yohan1044]
-##############################################################################
-op li r0, 0x40 @ $8068480C
+#############################################################################################
+[Legacy TE] Restrict Special Character Selection to L 1.1 [PyotrLuzhin, Yohan1044, DukeItOut]
+#
+# 1.1: Re-added support for Wiimote and Wiimote+Nunchuk
+#############################################################################################
+# op li r0, 0x40 @ $8068480C	# Old version of code
+HOOK @ $8068480C
+{
+	lwzx r0, r3, r0		# Original operation
+	li r12, -0x21		# \ Load a filter FFFF FFDF to clear out 20 (GC/CC R)
+	and r0, r0, r12		# /
+}
+int 0x80000 @ $806A080C	# Make Nunchucks use (-) instead of C
 
 ###################################################################################################################
-[Legacy TE] Hold Z for AltZ Characters, R for AltR Characters V2 [PyotrLuzhin, codes, ASF1nk, Yohan1044, DukeItOut]
+[Legacy TE] Hold Z for AltZ Characters, R for AltR Characters V3 [PyotrLuzhin, codes, ASF1nk, Yohan1044, DukeItOut]
 ###################################################################################################################
 .macro sqAdvCheck()
 {
@@ -17,38 +26,38 @@ op li r0, 0x40 @ $8068480C
 .macro AltCos(<arg1>)	// The argument is the address for the port
 {	
 	* 4A000000 <arg1>
-	* 300436F8 00000001
-	* 1000009D 0000003E
+	* 300436F8 00000001		# if 800436F8 == 1
+	* 1000009D 0000003E		# 62: AltZ
 	* E2100000 00000000
-	* 300436F8 00000002
-	* 1000009D 0000003D
+	* 300436F8 00000002		# if 800436F8 == 2
+	* 1000009D 0000003D		# 61: AltR
 	* E0000000 80008000		# .RESET
 }
 
 HOOK @ $8068478C
-{
-  stw r9,  0x18(r2)
-  stw r10, 0x1C(r2)
+{  
   mr r29, r3
   lwz r0, 0x1B4(r24);  cmpwi r0, 0x0;   beq- loc_0x74
   lwz r0, 0x1DC(r24);  cmpwi r0, 0x0;   blt- loc_0x88
 					   cmpwi r0, 0xF0;  beq- loc_0x74
-  li r9, 0x1
+  li r28, 0x1
   lis r3, 0x805A
-  lhz r10, 0x3A(r3)
-  slw r9, r9, r0
-  and. r10, r9, r10;  bne- loc_0x74
+  lhz r15, 0x3A(r3)
+  slw r28, r28, r0
+  and. r15, r28, r15;  bne- loc_0x74
   lwz r3, 0x40(r3)
-  rlwinm r10, r0, 6, 0, 25
-  add r3, r3, r10
+  rlwinm r15, r0, 6, 0, 25
+  add r3, r3, r15
   lbz r0, 0x27C(r3)
   lwz r3, 0x244(r3);  extsb. r0, r0;  bne- loc_0x74
-  li r0, 0x10;      and. r0, r3, r0;  beq- loc_0x74
   
-  li r3, 0x1;  b loc_0x8C
+  andi. r0, r3, 0x10; beq- loc_0x74  		# Check for Z
+  li r3, 0x1;  b loc_0x8C	# Set AltZ
 loc_0x74:
-  li r0, 0x20;  and. r0, r3, r0;  beq- loc_0x88
-  li r3, 0x2;  b loc_0x8C
+  andi. r0, r3, 0x20; bne- setAltR			# Check for R on a GC/CC
+  andis. r0, r3, 0x4; beq+ loc_0x88			# Check for C on a Nunchuk
+setAltR:
+  li r3, 0x2;  b loc_0x8C	# Set AltR
 loc_0x88:
   li r3, 0x0
 
@@ -56,8 +65,6 @@ loc_0x8C:
   lis r15, 0x4
   ori r15, r15, 0x3AD8
   stwx r3, r15, r20
-  lwz r9,  0x18(r2)
-  lwz r10, 0x1C(r2)
   mr r3, r29
 }
 

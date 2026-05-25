@@ -1,8 +1,9 @@
 @echo off
 setlocal enabledelayedexpansion
 
-clear && color
+cls && color
 
+pushd "%~dp0"
 
 call "get_settings.bat"
 
@@ -28,3 +29,4 @@ for %%x in (%*) do (
 
 :: just sync after building to ensure instances are always synced
 call "sync_dolphin_instances.bat"
+popd

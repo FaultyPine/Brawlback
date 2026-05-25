@@ -3,7 +3,7 @@
 #####################################################################################
 HOOK @ $80048F64
 {
-	cmpwi r12, 0x2329;	beqlr-;	lbz r5, 8(r5
+	cmpwi r12, 0x2329;	beqlr-;	lbz r5, 8(r5)
 }
 HOOK @ $80049DB4
 {
@@ -18,9 +18,6 @@ HOOK @ $8004A19C
 }
 HOOK @ $80764F14
 {
- lwz r10, 8(r28)
-  cmpwi r10, 0x0;  blt- loc_0x108
-  cmpwi r10, 0x8;  bge- loc_0x108
   stwu r1, -0x28(r1)
   stmw r24, 8(r1)
   lwz r31, -4(r30)
@@ -41,6 +38,12 @@ loc_0x3C:
   addi r5, r2, 0x14
   addi r6, r2, 0x54
   mulli r25, r4, 0x1C4
+
+
+  lwz r10, 8(r28)
+  cmpwi r10, 0x0;  blt- updateInputHistory
+  cmpwi r10, 0x8;  bge- updateInputHistory
+
   mulli r10, r10, 0x40
   add r9, r9, r10
 
@@ -65,12 +68,27 @@ loc_0x84:
   lwz r9, 0x48(r30)
   andc r8, r9, r10
   stw r8, 0x48(r30)
+updateInputHistory:
   cmpwi r27, 0xF;  bne+ loc_0x100
+# only Update past if ICs apparently
   lis r9, 0x8062;  ori r9, r9, 0x13D4
   add r9, r9, r25
+
+  #go into input list found at 
   lwz r8, 0x40(r9)
-  li r25, 3 			#number of frames to retroactively change (caps at 16 coz only 16 frames are remembered)
-DecrementInputCounter: 	#defines how many frames are available to Zsync, 1 makes it match vanilla
+  subi r8, r8, 1
+  cmpwi r8, 0x0;  bge 0x8
+  li r8, 0xF
+  mulli r8, r8, 0x4
+  lwzx r7, r9, r8 #getPrevFrame in queue
+  
+  lwz r8, 0x48(r30) #current calced prevFrame
+  andc r10, r7, r8
+
+
+  lwz r8, 0x40(r9)
+  li r25, 3 			        #number of frames to retroactively change (caps at 16 coz only 16 frames are remembered)
+DecrementInputCounter: 	  #defines how many frames are available to Zsync, 1 makes it match vanilla
   cmpwi r25, 0
   beq loc_0x100
   subi r25, r25, 0x1
@@ -102,23 +120,23 @@ Gamecube Controller Light LR Button Presses when not Set to Shield [Dantarion, M
 #####################################################################################
 HOOK @ $80029700
 {
-  stb r0, 0x34(r31)
-  cmpwi r0, 0x2D;  blt- %END%
+  stb r0, 0x34(r31)				# Current shoulder button pressed rate
+  cmpwi r0, 45;  blt- %END%
   lbz r0, -0x26B0(r6)
-  cmpwi r0, 0x3;   beq- %END%
+  cmpwi r0, 0x3;   beq- %END%	# Shield setting
   lwz r0, 0(r31)
-  ori r0, r0, 0x40	# L-button
+  ori r0, r0, 0x40				# L-button
   stw r0, 0(r31)
   stw r0, 4(r31)
 }
 HOOK @ $80029708
 {
   stb r0, 0x35(r31)
-  cmpwi r0, 0x2D;  blt- %END%
+  cmpwi r0, 45;  blt- %END%		# Current shoulder button pressed rate
   lbz r0, -0x26AF(r6)
-  cmpwi r0, 0x3;   beq- %END%
+  cmpwi r0, 0x3;   beq- %END%	# Shield setting
   lwz r0, 0(r31)
-  ori r0, r0, 0x20	# R-button
+  ori r0, r0, 0x20				# R-button
   stw r0, 0(r31)
   stw r0, 4(r31)
 }
@@ -129,34 +147,65 @@ Classic Controller Light LR Button Presses when not Set to Shield [Magus]
 HOOK @ $80029E30
 {
   stb r0, 0x34(r18)
-  cmpwi r0, 0x39;  blt- %END%
+  cmpwi r0, 57;  blt- %END%		# Current shoulder button pressed rate
   subi r11, r17, 0x393C
   mulli r0, r19, 0x21
   lbzx r0, r11, r0
-  cmpwi r0, 0x3;   beq- %END%
+  cmpwi r0, 0x3;   beq- %END%	# Shield setting
   lwz r0, 0(r18)
-  ori r0, r0, 0x40	# L-button
+  ori r0, r0, 0x40				# L-button
   stw r0, 0(r18)
   stw r0, 4(r18)
 }
 HOOK @ $80029E48
 {
-  stb r0, 53(r18)
-  cmpwi r0, 0x39;  blt- %END%
+  stb r0, 0x35(r18)
+  cmpwi r0, 57;  blt- %END%		# Current shoulder button pressed rate
   subi r11, r17, 0x393B
   mulli r0, r19, 0x21
   lbzx r0, r11, r0
-  cmpwi r0, 0x3;   beq- %END%
+  cmpwi r0, 0x3;   beq- %END%	# Shield setting
   lwz r0, 0(r18)
-  ori r0, r0, 0x20; # R-button
+  ori r0, r0, 0x20; 			# R-button
   stw r0, 0(r18)
   stw r0, 4(r18)
 
 }
 
 ######################################################################################
-Analog C-Stick, L R, & Light-Shield Button Stored as Variables v2.3 [Magus, DukeItOut]
+Analog C-Stick, L R, & Light-Shield Button Stored as Variables v2.5 [Magus, DukeItOut]
+#
+# 2.4: fixes issue where controllers could influence AI shielding or C-Stick behavior
+# 2.5: made Wii Classic and GameCube C-Sticks be modified at the same rate so replays
+#		were more stable
 ######################################################################################
+#
+# LA-Basic[77] = New L or R press
+#	0 = No L or R
+#	1 = No new L or R, but is held
+#	2 = New L or R press
+#
+# LA-Float[34] = C-Stick Relative X
+# LA-Float[35] = C-Stick Y
+# LA-Float[36] = Analog L
+# LA-Float[37] = Analog R
+#
+# LA-Float[38] = Previous C-Stick Relative X
+# LA-Float[39] = Previous C-Stick Y
+# LA-Float[40] = Previous Analog L
+# LA-Float[41] = Previous Analog R
+#
+# LA-Float[64] = Duo Partner C-Stick Relative X
+# LA-Float[65] = Duo Partner C-Stick Y
+# LA-Float[66] = Duo Partner Analog L 
+# LA-Float[67] = Duo Partner Analog R
+#
+# LA-Float[68] = Duo Partner Previous C-Stick Relative X
+# LA-Float[69] = Duo Partner Previous C-Stick Y
+# LA-Float[70] = Duo Partner Previous Analog L 
+# LA-Float[71] = Duo Partner Previous Analog R
+#
+##################################################
 HOOK @ $80913190
 {
   stfs f1, 0xDC(r25)
@@ -169,22 +218,22 @@ HOOK @ $80913190
   lwz r4, 0x1C(r29)
   lwz r28, 0xC(r29)
   lwz r29, 0x14(r29)
-  lwz r12, 0x88(r29);  stw r12, 0x98(r29)
-  lwz r12, 0x8C(r29);  stw r12, 0x9C(r29)
+  lwz r12, 0x88(r29);  stw r12, 0x98(r29)	# C-Stick Relative X -> C-Stick Relative X (prev frame)
+  lwz r12, 0x8C(r29);  stw r12, 0x9C(r29)	
   lwz r12, 0x90(r29);  stw r12, 0xA0(r29)
   lwz r12, 0x94(r29);  stw r12, 0xA4(r29)
   lwz r27, 8(r21)
-  lwz r26, 0x110(r27);  cmpwi r26, 0xF;  bne+ loc_0x68
-  lhz r26, 0xFC(r27);   cmpwi r26, 0x1;  beq- loc_0x70
+  lwz r26, 0x110(r27);  cmpwi r26, 0xF;  bne+ notNana	# Check if Ice Climbers
+  lhz r26, 0xFC(r27);   cmpwi r26, 0x1;  beq- Nana		# check if sub character (Nana)
 
-loc_0x68:
+notNana:
   li r26, 0x0;  b loc_0xD8
 
-loc_0x70:
-  lwz r12, 0x110(r29);  stw r12, 0x88(r29)
-  lwz r12, 0x114(r29);  stw r12, 0x8C(r29)
-  lwz r12, 0x118(r29);  stw r12, 0x90(r29)
-  lwz r12, 0x11C(r29);  stw r12, 0x94(r29)
+Nana:
+  lwz r12, 0x110(r29);  stw r12, 0x88(r29)	# Set C-Stick Relative X
+  lwz r12, 0x114(r29);  stw r12, 0x8C(r29)	# Set C-Stick Y
+  lwz r12, 0x118(r29);  stw r12, 0x90(r29)	# Set Analog L
+  lwz r12, 0x11C(r29);  stw r12, 0x94(r29)	# Set Analog R
   addi r3, r29, 0x100
   addi r31, r29, 0xD0
 
@@ -199,7 +248,7 @@ loc_0x98:
   addi r29, r29, 0x48
   lwz r12, 0x0C(r4)
   rlwinm r12, r12, 15, 31, 31
-  cmpwi r12, 0x1;  bne- loc_0x14C
+  cmpwi r12, 0x1;  bne- dont_control
 
 loc_0xD8:
   lis r30, 0x805B;  ori r30, r30, 0x7480
@@ -219,54 +268,56 @@ loc_0xD8:
   mulli r12, r12, 8  #\ Align to the first slot to get the true port.
   sub r3, r3, r12	 #/
 ICsDuo:
+  lwz r4, 0x64(r3);  cmpwi r4, 1; beq+ is_AI	# Fixes issue where players could set AI variables
   lwz r3, 0x70(r3)	 # Get the proper port
-					 cmpwi r3, 0x0;  blt- loc_0x14C
-					 cmpwi r3, 0x7;  bgt- loc_0x14C
-					 cmpwi r3, 0x4;  bge- loc_0x128
+					 cmpwi r3, 0x0;  blt- dont_control	# -1 or CCCCCCCC if no controller
+					 cmpwi r3, 0x7;  bgt- dont_control	# 0x10 in replays
+					 cmpwi r3, 0x4;  bge- Wii_control	# 4 = Wiimote
+GC_control:					 
   mulli r12, r3, 0xC
   add r30, r30, r12
-  lis r4, 0x4316
-  li r27, 0x96
+  lis r4, 0x4316		# 150.0		# GC
+  li r27, 150			# int form?
   b loc_0x140
-
-loc_0x128:
+Wii_control:
   addi r30, r30, 0x44
   subi r12, r3, 0x4
   mulli r12, r12, 0x21
   add r30, r30, r12
-  lis r4, 0x433E
-  li r27, 0xBE
+  lis r4, 0x433E		# 190.0		# Wiimote
+  li r27, 190			# int form?
 
 loc_0x140:
   mulli r12, r3, 0x40
   add r31, r31, r12
   b loc_0x164
 
-loc_0x14C:
-  li r12, 0x0
+is_AI:
+dont_control:
+  li r12, 0x0								# Reset LA-Float[34] through LA-Float[37]
   stw r12, 0x88(r29);  stw r12, 0x8C(r29)
   stw r12, 0x90(r29);  stw r12, 0x94(r29)
   b loc_0x294
 
 loc_0x164:
   stw r4, 0x18(r2);  lfs f0, 0x18(r2)
-  lis r12, 0x4330;  stw r12, 0x10(r2)
+  lis r12, 0x4330;  stw r12, 0x10(r2)	# 176.0
   lfd f2, -0x7B90(r2)
   li r4, 0x0
 
 loc_0x17C:
   lbz r12, 0(r30);  cmpwi r12, 0x3;  beq+ loc_0x194
-  li r12, 0x0;  stw r12, 0x90(r29)
+  li r12, 0x0;  stw r12, 0x90(r29)		# Reset LA-Float[36] (Analog L)
   b loc_0x1BC
 
 loc_0x194:
-  lbz r12, 0x34(r31);  cmpw r12, r27;  ble+ loc_0x1A4
-  mr r12, r27
+  lbz r12, 0x34(r31);  cmpw r12, r27;  ble+ loc_0x1A4	# \ Max analog L/R threshold
+  mr r12, r27											# / set to cap (150 for GC, 190 for Wii)
 
 loc_0x1A4:
   xoris r12, r12, 0x8000;  stw r12, 0x14(r2)
   lfd f1, 0x10(r2);  fsub f1, f1, f2
-  fdivs f1, f1, f0;  stfs f1, 0x90(r29)
+  fdivs f1, f1, f0;  stfs f1, 0x90(r29)	# Set LA-Float[36] (Analog L)
 
 loc_0x1BC:
   addi r30, r30, 0x1
@@ -276,15 +327,22 @@ loc_0x1BC:
   cmpwi r4, 0x2;  bne+ loc_0x17C
   subi r29, r29, 0x8
   subi r31, r31, 0x2
+  
   li r4, 0x0
-  cmpwi r3, 0x4;  bge- loc_0x1F4
-  lis r12, 0x3C40;  ori r12, r12, 0xEBEE;  b loc_0x1FC
-loc_0x1F4:
-  lis r12, 0x3C23;  ori r12, r12, 0xD70A
+  cmpwi r3, 0x4;  
+# bge- loc_0x1F4	# Disabled
+  
+  lis r12, 0x3C40;  ori r12, r12, 0xEBEE;  # b loc_0x1FC  
+		# 0.011775	# GC C-Stick multiplier radius in PM.
+					# Made to apply the same in P+ for Wii Classic Controllers
 
+#loc_0x1F4:
+#  lis r12, 0x3C23;  ori r12, r12, 0xD70A				#
+#		# 0.01		# CC C-Stick multiplier radius.
+# 
 loc_0x1FC:
   stw r12, 0x18(r2)
-  lis r12, 0x3F80
+  lis r12, 0x3F80	# 1.0
   stw r12, 0x1C(r2)
 
 loc_0x208:
@@ -317,7 +375,7 @@ loc_0x268:
   fmr f1, f0
 
 loc_0x278:
-  stfs f1, 0x88(r29)
+  stfs f1, 0x88(r29)				# Set LA-Float[34] (C-Stick X Relative)
   addi r29, r29, 0x4
   addi r31, r31, 0x1
   addi r4, r4, 0x1
@@ -325,33 +383,35 @@ loc_0x278:
   subi r29, r29, 0x8
 
 loc_0x294:
-  cmpwi r26, 0x1;  bne+ loc_0x2A0
-  subi r29, r29, 0x48
+  cmpwi r26, 0x1;  bne+ loc_0x2A0	# will be 0 for everyone but Nana
+  subi r29, r29, 0x48				# Nana's variables are 18 words lower?
 
 loc_0x2A0:
-  lis r12, 0x3E99;  ori r12, r12, 0x999A
-  lwz r3, 0x90(r29)
-  lwz r4, 0x94(r29)
+  lis r12, 0x3E99;  ori r12, r12, 0x999A		# 0.3. Analog threshold minimum.
+  lwz r3, 0x90(r29)				# LA-Float[36] (Analog L)
+  lwz r4, 0x94(r29)				# LA-Float[37] (Analog R)
   cmpw r3, r12;  bge- loc_0x2C8
   cmpw r4, r12;  bge- loc_0x2D4
-  li r12, 0x0;  b loc_0x2F8
+  li r12, 0x0;  b loc_0x2F8		# No L or R pressed
 
 loc_0x2C8:
-  lwz r4, 0xA0(r29);  cmpw r4, r12;  blt- loc_0x2F4
+  lwz r4, 0xA0(r29)				# LA-Float[40] (Previous Analog L)
+  cmpw r4, r12;  
+  blt- loc_0x2F4	
 
 loc_0x2D4:
-  lwz r3, 0x94(r29)
-  lwz r4, 0xA4(r29)
+  lwz r3, 0x94(r29)				# LA-Float[37] (Analog R)
+  lwz r4, 0xA4(r29)				# LA-Float[41] (Previous Analog R)
   cmpw r3, r12;  blt+ loc_0x2EC
   cmpw r4, r12;  blt- loc_0x2F4
 
 loc_0x2EC:
-  li r12, 0x2;  b loc_0x2F8
+  li r12, 0x2;  b loc_0x2F8		# No new L or R press BUT one of them is held
 loc_0x2F4:
-  li r12, 0x1
+  li r12, 0x1					# New L or R press
 
 loc_0x2F8:
-  stw r12, 0x134(r28)
+  stw r12, 0x134(r28)			# Set LA-Basic[77]
   lfd f0, 0(r2);  lfd f1, 8(r2)
   lfd f2, 0x20(r2);  lmw r26, 8(r1)
   addi r1, r1, 0x20

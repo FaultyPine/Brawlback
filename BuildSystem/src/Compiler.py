@@ -1,9 +1,10 @@
 import os, ntpath, re
 from Library import File, Library
 from Section import Section
-from Common import cmdLineOutput, makeBinUtilCommandFile
+from Common import cmdLineOutput, makeBinUtilCommandFile, makeCustomLinkerScriptFile
 from typing import List
-ppcCompiler = 'powerpc-eabi-g++.exe'
+ppcCompiler = R'C:\Users\dareb\Documents\PPlusCpp\BuildSystem\Compiler\bin\powerpc-eabi-g++.exe'
+linkerScriptBase = R'C:\Users\dareb\Documents\PPlusCpp\BuildSystem\src\customLinkerScript.ld'
 binUtilCommandFilePath = 'IntermediateFiles\\binUtilCommands.txt'
 
 class Compiler:
@@ -20,33 +21,60 @@ class Compiler:
         self.options = options
 
     def compile(self, cppFile: File, libraries, textStart: int=None, dataStart: int=None, sections: List[Section]=None, outPath: str=None, extraOptions: list=None):
+        print(cppFile.path)
         if not cppFile.exists():
             raise AssertionError(f"{cppFile.path} not found")
         else:
             options = self.options.copy()
+            customSections: list[str] = []
             if textStart is not None:
                 options.append(f'-Wl,"-Ttext={hex(textStart)}"')
             if dataStart is not None:
                 options.append(f'-Wl,"--section-start=.rodata={hex(dataStart)}"')
             if sections is not None:
                 for s in sections:
-                    options.append(f'-Wl,"--section-start={s.name}={hex(s.address)}"')
+                    if cppFile.name == "initFile.cpp":
+                        # customSections.append(f'. = SEGMENT_START("{s.name}", {hex(s.address)});')
+                        customSections.append(f'{s.name} {hex(s.address)} : ' + "{ }")
+                    else:
+                        options.append(f'-Wl,"--section-start={s.name}={hex(s.address)}"')
 
         if extraOptions is not None:
             options.extend(extraOptions)
+        
+        
+        with open(linkerScriptBase) as file:
+            linkerScript = file.read()
+            
+        linkerScript = makeCustomLinkerScriptFile(linkerScript.replace("[REPLACE_ME_WITH_STUFFS]", '\n\t'.join(customSections)))
         commandFile = makeBinUtilCommandFile(' '.join(options))
         if outPath is None:
             outPath = ntpath.splitext(cppFile.path)[0]
         libraries = ' '.join([lib.path for lib in libraries])
-        compileCommand = f"{ppcCompiler} {cppFile.path} @{commandFile.path} {libraries} {libraries} {libraries} -o {outPath}"
+        if cppFile.name == "initFile.cpp":
+            compileCommand = f"{ppcCompiler} {cppFile.path} -T{linkerScript.path} @{commandFile.path} {libraries} {libraries} {libraries} -o {outPath}"
+        else:
+            compileCommand = f"{ppcCompiler} {cppFile.path} @{commandFile.path} {libraries} {libraries} {libraries} -o {outPath}"
+            
         try:
+            print(">>> STARTING")
             output = cmdLineOutput(compileCommand)
             output = filterUselessWarnings(output)
-            if output:
-                print(output)
-        except:
+            # print(output)
+            # if output:
+                # print(output)
+        except Exception as e:
+            print(">>> SOME EXCEPTION OCCURED??")
+            print(["error", e])
+            paths = compileCommand.split(" ")
+            for path in paths:
+                print(f"testing path: {path}...")
+                if not os.path.exists(path):
+                    print(f"failed to get path {path}")
+            # print(f"??? ==\n{compileCommand}\n== ???")
             os.system(compileCommand)
         else:
+            print(">>> OUTPUT OK\n\n\n\n\n")
             return Library(outPath)
 
 

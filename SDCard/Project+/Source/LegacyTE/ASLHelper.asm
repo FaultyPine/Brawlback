@@ -1,9 +1,10 @@
 ######################################################################################
-[Legacy TE] ASL Helper for Solo Modes, SFX/GFX, and Replays V1.1 [DukeItOut]
+[Legacy TE] ASL Helper for Solo Modes, SFX/GFX, and Replays V1.2 [DukeItOut]
 #
 # 1.1: Changes hookpoint so that D-pad inputs don't get replaced by control stick ones
 # 			This fixes an issue where the D-pad couldn't get read when disabling it
 #			on the SSS with a different code!
+# 1.2: Adds support for Wiimotes and Wiimote+Nunchuk
 ######################################################################################
 .macro LoadAddress(<arg1>,<arg2>)
 {
@@ -66,16 +67,21 @@ single_event:
   cmpwi r12,  4;	beq- single_L	# Event Match  4 (A Skyworld Engagement), load Brawl Skyworld
   cmpwi r12,  6;	beq- single_X	# Event Match  6 (Bird in the Darkest Night), loads Brinstar (Planet Zebes' X-alt)
   cmpwi r12,  9;	beq- single_X	# Event Match  9 (Clash of Swords), load Castle Siege Brawl
+  cmpwi r12, 12;	beq- single_X	# Event Match 12 (Sleeping in the Eggs), load Yoshi's Island Brawl
+  cmpwi r12, 16;	beq- single_X	# Event Match 16 (Power Suit ON!), load Frigate Orpheon
   cmpwi r12, 17;	beq- single_L	# Event Match 17 (Brisk Expedition), load Summit (Infinite Glacier's L-alt)
   cmpwi r12, 19;	beq- single_Y	# Event Match 19 (Metal Battle in Metal Cavern), load Metal Cavern 64
   cmpwi r12, 26;	beq- single_Y	# Event Match 26 (Carefree Concert), load K.K. Smashville
+  cmpwi r12, 29;	beq- single_X	# Event Match 29 (All-Star Semifinal Regulars), load Yoshi's Island Brawl)
+  cmpwi r12, 30;	beq- single_X	# Event Match 30 (Sonic Boom), loads Brawl Green Hill Zone
   cmpwi r12, 33;	beq- single_L	# Event Match 33 (Advent of the Evil King), loads Ganon's Castle (Hyrule Castle's L-alt)
   cmpwi r12, 38;	beq- single_X	# Event Match 38 (The Wolf Hunts The Fox), load tilting version of Lylat
   cmpwi r12, 41;	beq- single_R	# Event Match 41 (The FINAL final battle), loads PM Final Destination
   b single_default
 co_op_event:
-  cmpwi r12, 7;		beq- single_Z	# Event Match  7 (Battle of the Dark Sides), loads Bridge of Eldin 
-  cmpwi r12, 17;	beq- single_L	# Event Match 17 (Sonic & Mario), loads Brawl Green Hill Zone
+  cmpwi r12, 7;	beq- single_Z	# Event Match  7 (Battle of the Dark Sides), loads Bridge of Eldin 
+  cmpwi r12, 11;	beq- single_Z	# Event Match 11 (The Great Remodeling Battle), loads Luigi's Mansion Brawl
+  cmpwi r12, 17;	beq- single_X	# Event Match 17 (Sonic & Mario), loads Brawl Green Hill Zone
   cmpwi r12, 20;	beq- single_L	# Event Match 20 (The Final Battle for Two), loads Brawl FD (with Melee FD collisions)
   b single_default
 classic:
@@ -112,7 +118,65 @@ replay:
 myMusic:
 multiplayer:
 training:
-  lwz r0, 0xC(r1);  b setStage	# Get the input, without the control stick
+
+	li r3, 0
+	li r5, -0x4000		#\ Filter for ZL and ZR, see below. (FFFF 7FFF) 
+	subi r5, r5, 0x4001	# /
+	li r6, 0
+	li r7, 0
+portLoop:
+	lis r12, 0x805B
+	ori r12, r12, 0xAD00
+	lwzx r3, r12, r6
+	cmpwi r6, 0x100
+	bge- Wiimote
+GameCube:
+	or r7, r7, r3	# Set the buttons as expected
+	b buttonTested
+Wiimote:
+	and r3, r3, r5	# Filter out ZR and ZL to treat like Z on a Classic Controller. We'll be reserving 0x8000 in the future.
+	andis. r0, r3, 0xFFFF; beq GameCube		# Treat non-Wiimote/Nunchuk unique buttons as GC for Classic
+
+	andis. r0, r3, 0x40; beq notWiiB;						# Wiimote B?
+
+
+	andi. r0, r3, 0xF; beq notWiiB							# Act as a modifier to get other inputs
+	andi. r0, r3, 1; beq notWiiMinusLeft; ori r7, r7, 0x40		# Wiimote B&Left? GC L
+notWiiMinusLeft:
+	andi. r0, r3, 8; beq notWiiMinusUp; ori r7, r7, 0x20		# Wiimote B&Up? GC R
+notWiiMinusUp:
+	andi. r0, r3, 2; beq notWiiMinusRight; ori r7, r7, 0x10		# Wiimote B&Right? GC Z
+notWiiMinusRight:
+	andi. r0, r3, 4; beq notWiiB; ori r7, r7, 0x400				# Wiimote B&Down? GC X
+
+	
+notWiiB:	
+	andis. r0, r3, 0x04; beq notWiiC; ori r7, r7, 0x400		# Wiimote C? Treat like GC X
+notWiiC:
+	andis. r0, r3, 0x20; beq notWiiA; ori r7, r7, 0x20		# Wiimote A? Treat like GC R
+notWiiA:
+	andis. r0, r3, 0x10; beq notCCPlus; ori r7, r7, 0x1000	# Classic +? Treat like GC Start
+notCCPlus:
+	andis. r0, r3, 0x08; beq notWiiMinus; 
+		
+	andi. r0, r3, 0x1000; beq justWiiMinus	# Is Wiimote + also pressed?
+	ori r7, r7, 0x800; b notWiiMinus	# Wiimote -&+? Treat like GC Y
+justWiiMinus:
+	ori r7, r7, 0x400					# Wiimote -? Treat like GC X
+notWiiMinus:
+	
+
+buttonTested:	
+	addi r6, r6, 0x40
+	cmpwi r6, 0x200
+	blt+ portLoop
+	
+	mr r0, r7
+	b setStage
+
+
+
+  # lwz r0, 0xC(r1);  b setStage	# Get the input, without the control stick
 single:
   %LoadAddress(r4,0x800B9EA4)
   lwz r3, -4(r4)

@@ -1,8 +1,3 @@
-#############################
-[Project+] SD Root=/Project+/
-#############################
-string "/Project+/" @ $80406920
-
 ##########################
 Remove "RSBX" from SD Path
 ##########################
@@ -20,253 +15,655 @@ op stb r0, -0x1(r5) @ $8003CB1C
 op NOP				@ $8003CB28
 
 ##############################################################################################
-[Legacy TE] File Patch Code v3.5.2 (NTSC-U) (projectm/) [Phantom Wings, DukeItOut]
-#
-# 3.5.2: Prevents race condition from having multiple files load at the same time. [DukeItOut]
+File Patch Code REDUX v0.95 (/Project+) [Sammi Husky]
 ##############################################################################################
-* E0000000 80008000
-* 225664EC 00000000
+.alias _pf               = 0x80507b70
+.alias FPC_PATH          = 0x805a7c00
+.alias MOD_FOLDER        = 0x80406920
+.alias THP_FILEPATH      = 0x8049DDD0
 
-# Chooses to read from the SD or DVD
-# Checks a string at 805A7C0C
+.alias checkSD          = 0x8001f5a0
+.alias strncpy          = 0x803fa340
+.alias strcpy           = 0x803fa280
+.alias strcat           = 0x803fa384
+.alias FAFStat          = 0x803ebf6c
+.alias FAFOpen          = 0x803ebeb8
+.alias FAFSeek          = 0x803ebee8
+.alias FAFRead          = 0x803ebee4
+.alias FAFClose         = 0x803ebe8c
+.alias DVDClose         = 0x801f6524
+.alias DVDOpen          = 0x801f6278
+.alias DVDReadPrio      = 0x801f67f0
+.alias DVDReadAsyncPrio = 0x801f6708
+.alias OSReport         = 0x801d8600
 
-op b 0x58BE20 @ $8001BFE0
-CODE @ $805A7E00
+.macro lwi(<reg>, <val>)
 {
-	li r5, 0x67
-	addi r4, r1, 0x20
-	stwu r1, -0x180(r1)
-	stw r4, 0x8(r1)
-	lis r4, 0x8040		#\ Mod folder
-	ori r4, r4, 0x6920	#/
-	addi r3, r1, 0x10
-	lis r12, 0x803F 
-	ori r12, r12, 0xA340
-	mtctr r12
-	bctrl
-	li r5, 0x7066		# \ "pf"
-	sth r5, 0x1A(r1)	# /
-	li r5, 0x7F
-	addi r3, r1, 0x1C	# String address + 12 (assumed length of "/Project+/" + "pf")
-	lwz r4, 0x8(r1)		# Actual filename
-	bctrl
-	li r5, 0x68
-	addi r4, r1, 0x10
-	addi r3, r1, 0x188	# original 0x8(r1) with the 0x180 offset
-	stw r4, 0x188(r1)	# Force a string redirect
-	stwu r1, -0x80(r1)
-	stmw r2, 0x8(r1)
-	lis r12, 0x8001				# \
-	ori r12, r12, 0xCBF4		# | Read from SD
-	mtctr r12					# |
-	bctrl						# |
-	mr r28, r3					# /
-	cmpwi r3, 0
-	bne notFoundOnSD
-	addi r1, r1, 0x80
-	b finish	
-notFoundOnSD:
-	lmw r2, 0x8(r1)
-	addi r1, r1, 0x80
-	lwz r4, 0x8(r1)			# Get filename
-	addi r3, r1, 0x1A0		# \ Revert parameter pointer to original string (0x20(r1))
-	stw r3, 0x188(r1)		# /
-	addi r3, r1, 0x188		# Original 0x8(r1) + 0x180 added
-	lis r12, 0x8001			# \
-	ori r12, r12, 0xC144	# | Read from DVD
-	mtctr r12				# |
-	bctrl					# |
-	mr r28, r3				# /
-finish:
-	addi r1, r1, 0x180
-	lis r12, 0x8001
-	ori r12, r12, 0xC054
-	mtctr r12
-	bctr
+    .alias  temp_Hi = <val> / 0x10000
+    .alias  temp_Lo = <val> & 0xFFFF
+    lis     <reg>, temp_Hi
+    ori     <reg>, <reg>, temp_Lo
 }
-
-# Related to setting parameters for file loading
-* 040223E0 48585BC0
-* 065A7FA0 00000028
-* 80010044 3C608001
-* 6063581C 7C001800
-* 4082000C 7FDDC850
-* 3BDEFFE0 93DB0008
-* 4BA7A424 00000000
-
-# Related to memory allocation
-* 0401CD0C 4858B1F4
-* 065A7F00 00000038
-* 2C030000 4182000C
-* 4BA7DD51 4BA74E04
-* 80780008 2C030000
-* 41820014 8118000C
-* 7C634214 7C7B1850
-* 48000008 8078000C
-* 4BA74DE0 00000000
-
-op b 0x14 @ $803EE9D8
-op b 0x14 @ $803EEBD4
-op b 0x18 @ $803D8B9C
-op li r3, 0 @ $803E9B4C
-op li r3, 0 @ $803E9D38
-op NOP @ $803D8C80
-
-* 80000000 80406920	# Copies the mod name header (10 bytes)
-* 80000001 805A7C00	# to 805A7C00
-* 8A000A01 00000000
-
-* 065A7C0A 00000002	#
-* 70660000 00000000 # Adds "pf" ?!?
-
-* 80000001 805A7B00 # Also copies the mod name header to 805A7B00
-* 8A000A01 00000000	#
-
-# string "pf/sound/" @ $805A7B0A # Warning, commented out because the null terminator for the string breaks the filenames!
-* 065A7B0A 00000009				 #
-* 70662F73 6F756E64				 #
-* 2F000000 00000000				 #
-
-# Related to music streams
-* 041C6CE0 483E0D20
-* 065A7A00 00000028
-* 9421FF80 BC410008
-* 3C60805A 60637B13
-* 4BE52931 B8410008
-* 38210080 4BE52995
-* 4BC1F2C4 00000000
-
-# Related to loading off the SD card
-* 065A7900 00000078
-* 9421FF80 7C0802A6
-* 9001000C BC810010
-* 9421FF00 7C872378
-* 54B2BA7E 7CD33378
-* 38800000 9081000C
-* 90810010 90610014
-* 90810018 3880FFFF
-* 9081001C 38610020
-* 90610008 7CE43B78
-* 38A00080 4BE529F5
-* 38610008 4BA752A1
-* 60000000 80210000
-* B8810010 8001000C
-* 7C0803A6 80210000
-* 4E800020 00000000
-
-HOOK @ $803E399C
+.macro call(<addr>)
 {
-  lwz r5, 0x20(r28)
-  add r5, r5, r18
-  li r18, 0x0
-}
-HOOK @ $803DBAEC
-{
-	lwz r0, 0x2A4(r3)	# Get filesize
-	cmpwi r19, 0
-	beq- loc_0x10
-	mr r0, r19			# if r19 is non-zero (r6 at 805A7900), then only load this much
-loc_0x10:
-	li r19, 0
-}
-HOOK @ $801CDF7C
-{
-  lwz r12, 0x14(r12)		# 801BEFC8
-  stwu r1, -0x80(r1)
-  stmw r2, 8(r1)			# r4 = stream buffer address, r5 = amount to update it, r6 = location in file?
-  mr r8, r4
-  lis r3, 0x804D			# Address the brstm file buffer goes to
-  lis r4, 0x805A			# \ Pointer to brstm stream filename
-  ori r4, r4, 0x7B00		# /
-  
-  mr r5, r6
-  li r6, 0x4200
-  lwz r7, 128(r4)
-  cmpwi r7, 0x0;  bne- loc_0x54
-  lis r12, 0x805A
-  ori r12, r12, 0x7900
+  %lwi(r12, <addr>)
   mtctr r12
-  bctrl
-  cmpwi r3, 0x0;  beq- loc_0x60
-
-loc_0x54:
-  lmw r2, 8(r1)
-  lwz r1, 0(r1)
-  b %END%
-
-loc_0x60:
-  andi. r5, r5, 0x1FF
-  subi r3, r8, 0x1
-  lis r4, 0x804C
-  ori r4, r4, 0xFFFF
-  add r4, r4, r5
-  li r5, 0x4001
-
-loc_0x78:
-  subi r5, r5, 0x1
-  lbzu r0, 1(r4)
-  stbu r0, 1(r3)
-  cmpwi r5, 0x0;  bne+ loc_0x78
-  lmw r2, 8(r1)
-  lwz r1, 0(r1)
-
-  lis r12, 0x801C
-  ori r12, r12, 0xDFA0
-  mtctr r12
-  bctr			# Skip ahead 0x20 more than usual to skip streaming off disc
+  bctrl    
 }
+.macro jump(<addr>)
+{
+  %lwi(r12, <addr>)
+  mtctr r12
+  bctr
+}
+.macro FPCPath(<stackOffset>, <filepathRegister>)
+{
+        addi    r3, r1, <stackOffset>       # \     
+        %lwi    (r4, MOD_FOLDER)            # | copy mod patch folder to address where
+        li      r5, 0x17                    # | we will build our SD filepath
+        %call   (strncpy)                   # /  
+        %lwi    (r4, _pf)                   # \ Append /pf to our mod folder
+        %call   (strcat)                    # /
+        mr      r4, <filepathRegister>
+        lbz     r0, 0(<filepathRegister>)
+        cmpwi   r0, 0x2f
+        beq     _skip
+        li      r0, 0x2f
+        stb     r0, 0(r5)
+    _skip:
+        %call   (strcat)
+}
+
+.RESET
+* 225664EC 00000000 # only execute if value at 0x805664EC != 0x0 (sd mounted)
+
+string    "/Project+/"                          @ $80406920 # Sets path used for SD lookups / reads
+string    "pf"                                  @ $80507b70
+string    "SDStreamOpen (slot:%d): %s"          @ $80507b80
+uint8_t   0xA                                   @ $80507b9a
+string    "SDStreamOpen Failed: %s"             @ $80507ba0
+uint8_t   0xA                                   @ $80507bb7
+
+
+#################################################################
+#                         MAIN SEGMENT                          #
+#################################################################
+# Intercepts read requests that would normally go to DVD        #
+# and checks if the file exists on SD. If it does, it will      #
+# redirect the file to load from the SD card.                   #
+#################################################################
+HOOK @ $8001BF38
+{
+_start:
+    cmpwi   r3, 1 # if DVD
+    bne     end
+    stwu    r1, -0x100(r1)
+    mflr    r0
+    stw     r0, 0x104(r1)
+    stmw    r4, 0x88(r1)                # | store registers r4 - r31 to stack
+    
+_main:
+    lwz     r29, 0x0(r30)               # | r30 contains pointer to request object
+    lwz     r3, 0(r29)                  # | load first 4 characters of path string
+    subis   r3, r3, 0x6476              # \
+    cmpwi   r3, 0x643A                  # | check if string starts with 'dvd:'
+    bne     _skipAdjust                 # | and adjust pointer if it does
+    addi    r28, r28, 0x04              # / use r28 for modified path pointer
+
+_skipAdjust:
+    %FPCPath(0x08, r28)
+    stw     r3, 0(r30)                  # \
+    mr      r3, r30                     # | overwrite string ptr in orignal request and
+    %call   (checkSD)                   # | use modified request to check sd for file
+    cmpwi   r3, 0                       # /
+    bne     _dvd
+    mr      r3, r29                     # \ copy new string to unadjusted pointer
+    addi    r4, r1, 0x08                # | If the file exists, copy our modifed path
+    li      r5, 0x7f                    # | to the original request's path field.
+    %call   (strncpy)                   # | and set request type to SD read.
+    li      r3, 3                       # | 
+    b       _restore                    # /
+_dvd:
+    li      r3, 1                       # \ if file doesn't exist, restore pointer to original
+    stw     r29, 0(r30)                 # / path string and set request type to dvd read.
+    
+_restore:
+    lmw     r4, 0x88(r1)
+    lwz     r0, 0x104(r1)
+    mtlr    r0
+    addi    r1, r1, 0x100
+end:
+    mr      r29, r3                     # | original instruction
+}
+
+################################################################
+#                     GetFileSize patch                          
+################################################################
+# Description:                                                  
+#     force getFileSize to return the size of the file 
+#     on the SD card (if it exists), else return size 
+#     from the file on disk.
+#################################################################
+HOOK @ $8001FFF8
+{
+_start:
+    mr      r28, r3 # original instruction
+    stwu    r1, -0xA0(r1)
+    mflr    r0
+    stw     r0, 0xA4(r1)  
+_main:
+    %FPCPath(0x08, r28)
+    addi    r4, r1, 0x90
+    %call   (FAFStat)
+    cmpwi   r3, 0
+    lwz     r3, 0x90(r1)    # get filesize returned from FAFStat
+    addi    r3, r3, 0x1f
+    rlwinm  r3, r3, 0, 0, 26
+    lwz     r0, 0xA4(r1)
+    mtlr    r0
+    addi    r1, r1, 0xA0
+    bne     _end            # if filesize was zero, use the original size (already in r28)
+    mr      r28, r3         # otherwise, overwrite r28 with size from SD
+    %jump   (0x80020338)    # branch to the end of getFileSize
+_end:
+    mr      r3, r28
+}
+
+################################################################
+#                     ReadSD Allocation Fix                          
+################################################################                                 
+# Description:                                                  
+#     Patch game's SDRead function to use the pointer
+#     in the request object as destination for loaded
+#     data. Allocate new memory if field is zero.
+#################################################################
+HOOK @ $8001CD0C
+{
+_main:
+    cmpwi     r3, 0x0       # | does our request object specify a heap to use?
+    bne       _doAlloc      # | if yes, allocate new memory with that heap.
+    lwz       r3, 0x0C(r24) # | Otherwise, use target load addr from request object.
+    b         %END%
+
+_doAlloc:
+    %call     (0x80025c58) # gfMemoryPool::alloc
+}
+
+#################################################################
+##                     ReadSD Length Fix                          
+#################################################################                                 
+## Description:                                                  
+##     Patch game's SDRead function to use the length
+##     field in the request object instead of always
+##     reading the full file. If zero, will read entire file.
+#################################################################
+HOOK @ $8001CCB8
+{
+_main:
+    lwz     r0, 0x8(r24) # check request length field
+    cmpwi   r0, 0        # if zero, load full file
+    beq     end
+    mr      r30, r0      # if non-zero, use as length when reading file
+    
+end:
+    cmpwi   r30, 0       # original instruction
+    
+}
+
+################################################################
+#                     Custom SDLoad routine                          
+################################################################                                 
+# Description:                                                  
+#     The original FPC provided this utility function
+#     to load files from SD. We implement our own for 
+#     compatability here, but without the r19/r18 jank.
+#################################################################
+CODE @ $805A7900
+{
+    stwu    r1, -128(r1)
+    mflr    r0
+    stw     r0, 12(r1)
+    stmw    r4, 16(r1)
+    stwu    r1, -256(r1)
+    mr      r7, r4
+    li      r4, 0x0
+    stw     r5, 12(r1)   # reguest.offset
+    stw     r6, 16(r1)   # request.length
+    stw     r3, 20(r1)   # request.loadAddress
+    stw     r4, 24(r1)   # request.heap
+    li      r4, 0xFFFF
+    stw     r4, 28(r1)
+    addi    r3, r1, 0x20 # request + 0x14
+    stw     r3, 8(r1)    # request.pFilepath
+    mr      r4, r7
+    li      r5, 0x80
+    %call   (strncpy)    # copy our filepath to request.filepath
+    addi    r3, r1, 0x8
+    %call   (0x8001cbf4) # readSDFile
+    lwz     r1, 0(r1)
+    lmw     r4, 16(r1)
+    lwz     r0, 12(r1)
+    mtlr    r0
+    lwz     r1, 0(r1)
+    blr 
+}
+
+################################################################
+#                     SDStreamOpen                          
+################################################################                                 
+# @params:
+#     r3 = filepath
+#     r4 = slotID
+# @desc:
+#   Opens an SD file for streaming and saves 
+#   it to a specific streaming file slot.
+#################################################################
+.alias STREAM_FILES        = 0x805a7450
+.alias SDStreamOpen        = 0x805a7500
+.alias SDStreamRead        = 0x805a7700
+.alias SDStreamClose       = 0x805a7650
+CODE @ $805A7500
+{
+start:
+    stwu    r1, -0x120(r1)
+    mflr    r0
+    stw     r0, 0x124(r1)
+    stmw    r4, 0x88(r1)
+    mr      r26, r3
+    mr      r27, r4
+    
+_body:
+    %FPCPath(0x08, r26)
+    mr      r30, r3
+    %lwi    (r4, 0x8059c590) # open mode = 'r'
+    %call   (FAFOpen)
+    cmpwi   r3, 0
+    beq     _failed
+    %lwi    (r4, STREAM_FILES)
+    mulli   r28, r27, 0x04
+    stwx    r3, r28, r4
+    mr      r29, r3
+    %lwi    (r3, 0x80507b80)    # format string for SDStreamOpen success
+    mr      r4, r27
+    mr      r5, r30
+    %call   (OSReport)
+    mr      r3, r29
+    b       _end
+_failed:
+    %lwi    (r3, 0x80507ba0)    # format string for SDStreamOpen failed
+    mr      r4, r30
+    %call   (OSReport)
+    li      r3, 0
+_end:
+    lmw     r4, 0x88(r1)
+    lwz     r0, 0x124(r1)
+    mtlr    r0
+    addi    r1, r1, 0x120
+    blr
+}
+
+################################################################
+#                     SDStreamRead                          
+################################################################                                 
+# @params:
+#     r3 = slotID
+#     r4 = address
+#     r5 = length
+#     r6 = offset
+# @desc:
+#   Reads data from a specific stream
+#   file slot
+#################################################################
+CODE @ $805A7700
+{
+start:
+    stwu    r1, -0x90(r1)
+    mflr    r0
+    stw     r0, 0x94(r1)
+    stmw    r4, 0x08(r1)
+    mr      r26, r3
+    mr      r27, r4
+    mr      r28, r5
+    mr      r29, r6
+    
+    %lwi    (r4, STREAM_FILES)  # \
+    mulli   r3, r3, 4           # | Check if specified stream slot is valid
+    lwzx    r31, r3, r4         # | 
+    cmpwi   r31, 0              # /
+    beq     badend
+    cmpwi   r29, 0              # check if need to seek first
+    beq     _read
+    
+_seek:
+    mr      r3, r31
+    mr      r4, r29
+    li      r5, 0 # seek_origin
+    %call   (FAFSeek)
+    cmpwi   r3, 0
+    bne     badend
+    
+_read:
+    mr      r3, r27 # addr
+    li      r4, 1   # size
+    mr      r5, r28 # length
+    mr      r6, r31 # file descriptor
+    %call   (FAFRead)
+    b       end
+    
+badend:
+    li r3, 0
+    
+end:
+    lmw     r4, 0x08(r1)
+    lwz     r0, 0x94(r1)
+    mtlr    r0
+    addi    r1, r1, 0x90
+    blr
+}
+
+################################################################
+#                     SDStreamClose                          
+################################################################                                 
+# @params:
+#     r3 = slotID
+# @desc:
+#   Closes a specific SD streaming file
+#################################################################
+CODE @ $805A7650
+{
+start:
+    stwu    r1, -0x90(r1)
+    mflr    r0
+    stw     r0, 0x94(r1)
+    stmw    r4, 0x08(r1)
+    mr      r31, r3
+    
+_body:
+    %lwi    (r30, STREAM_FILES)
+    mulli   r31, r31, 4
+    lwzx    r3, r31, r30
+    cmpwi   r3, 0
+    beq     _badend
+    %call   (FAFClose)
+    li      r0, 0
+    stwx    r0, r31, r30
+
+_badend:
+    li      r3,  -1
+
+_end:
+    lmw     r4, 0x08(r1)
+    lwz     r0, 0x94(r1)
+    mtlr    r0
+    addi    r1, r1, 0x90
+    blr
+    
+}
+
+################################################################
+#                Read BRSTM Header from SD                          
+################################################################                                 
 HOOK @ $801CCF90
 {
-  stwu r1, -0x80(r1)
-  stmw r2, 8(r1)
-  mr r3, r31
-  lis r4, 0x805A
-  ori r4, r4, 0x7B00
-  li r5, 0x0
-  li r6, 0x4000
-  lis r12, 0x805A
-  ori r12, r12, 0x7900
-  mtctr r12				# Goes to 0x805A7900
-  bctrl	
-  stw r3, 0x80(r4)
-  lwz r3, 8(r31)
-  stw r3, 0x14(r26)
-  stw r3, 0x5C(r26)
-  stw r3, 0x74(r26)
-  lmw r2, 8(r1)
-  lwz r1, 0(r1)
-  lwz r3, 0(r31)
+_start:
+    stwu    r1, -0x90(r1)
+    mflr    r0
+    stw     r0, 0x94(r1)
+    li      r3, 1           # slot
+    mr      r4, r31         # address
+    li      r5, 0x4000      # length
+    lis     r6, 0           # offset
+    %call   (SDStreamRead)
+    lwz     r3, 8(r31)
+    stw     r3, 0x14(r26)
+    stw     r3, 0x5C(r26)
+    stw     r3, 0x74(r26)
+    
+end:
+    lwz     r3, 0(r31)
+    lwz     r0, 0x94(r1)
+    mtlr    r0
+    addi    r1, r1, 0x90
 }
+################################################################
+#                BRSTM SDStreamOpen Wrapper                     
+#         NOTE: Automatically closes existing open file
+################################################################  
+HOOK @ $801c6ce4
+{
+_start:
+    stwu    r1, -0x30(r1)
+    mflr    r0
+    stw     r0, 0x34(r1)
+    stmw    r29, 0x08(r1)
+    mr      r31, r3
+    mr      r30, r4
+    mr      r29, r5
+    
+_body:
+    li      r3, 1           # \ Close existing BRSTM file if still open
+    %call   (SDStreamClose) # /
+    mr      r3, r31         # \ filename
+    li      r4, 1           # | slot
+    %call   (SDStreamOpen)  # /
+    
+end:
+    mr      r3, r31         # \
+    mr      r4, r30         # | Restore registers and return
+    mr      r5, r29         # /
+    lmw     r29, 0x08(r1)
+    lwz     r0, 0x34(r1)
+    mtlr    r0
+    addi    r1, r1, 0x30
+    addi    r27, r1, 0x150  # replaced instruction
+}
+################################################################
+#                BRSTM SDStreamRead Wrapper                          
+################################################################
+HOOK @ $801CDF84
+{
+_start:
+    stwu    r1, -0x90(r1)
+    mflr    r0
+    stw     r0, 0x94(r1)
+    stmw    r27, 0x08(r1)
+    mr      r31, r3
+    mr      r30, r4
+    mr      r29, r5
+    mr      r28, r6
+    mr      r27, r12    # save original branch target
+
+    li      r3, 1       # slot
+    mr      r4, r30     # address
+    mr      r5, r29     # length
+    mr      r6, r28     # offset
+    %call   (SDStreamRead)
+    cmpwi   r3, 0       # if successfull, branch to end
+    bne     end
+    mr      r3, r31     # \
+    mr      r4, r30     # | Otherwise, put original branch target
+    mr      r5, r29     # | back in r12 and branch to it.
+    mr      r6, r28     # /
+    mtctr   r27
+    bctrl
+    
+end:
+    lmw     r27, 0x08(r1)
+    lwz     r0, 0x94(r1)
+    mtlr    r0
+    addi    r1, r1, 0x90
+}
+################################################################
+#                THPOpen Routine                         
+################################################################
+op  bl 0x52B9F4 @ $8007be0c    # THPPlayerOpen
+
+.macro lastFrameOpenPatch()
+{
+    %lwi    (r5, STREAM_FILES)
+    lwz     r0, 0x0(r5)
+    cmpwi   r0, 0
+    bne     %END%
+    %call   (DVDOpen)
+}
+HOOK @ $8007ed5c        # mvMoviePlayer::loadLastFrameInfo
+{
+    %lastFrameOpenPatch()
+}
+HOOK @ $8007ee60        # mvMoviePlayer::loadLastFrame
+{
+    %lastFrameOpenPatch()
+}
+CODE @ $805A7800
+{
+_sdopen:
+    # save our context
+    stwu    r1, -0x90(r1)
+    stmw    r4, 0x08(r1)
+    mflr    r0
+    stw     r0, 0x94(r1)
+    mr      r26, r3 # char* filepath
+    mr      r27, r4 # DVDFileInfo*
+    li      r4, 0
+    %call   (SDStreamOpen)
+    cmpwi   r3, 0
+    bne     _end # only fall to DVD if open fails
+    
+_dvd:
+    mr      r3, r26
+    mr      r4, r27
+    %call   (DVDOpen)
+
+_end:
+    lmw     r4, 0x08(r1) # restore original registers
+    lwz     r0, 0x94(r1)
+    addi    r1, r1, 0x90
+    mtlr    r0 # original LR
+    blr
+}
+################################################################
+#                THPClose Routine                          
+################################################################
+op  bl 0x52B964   @ $8007c19c   # THPPlayerClose
+op  bl 0x52BBF4   @ $8007bf0c   # THPPlayerOpenProc
+op  bl 0x52BAAC   @ $8007c054   # THPPlayerOpenProc
+op  bl 0x528F68   @ $8007eb98   # mvMoviePlayer::__dt
+
+.macro lastFrameClosePatch()
+{
+    %lwi    (r5, STREAM_FILES)
+    lwz     r0, 0x0(r5)
+    cmpwi   r0, 0
+    bne     %END%
+    %call   (DVDClose)
+}
+HOOK @ $8007ee08        # mvMoviePlayer::closeLastFrameInfo
+{
+    %lastFrameClosePatch()
+}
+HOOK @ $8007ef28        # mvMoviePlayer::closeLastFrame
+{
+    %lastFrameClosePatch()
+}
+CODE @ $805A7B00
+{
+_start:
+    stwu    r1, -0x80(r1)
+    mflr    r0
+    stw     r0, 0x84(r1)
+    stmw    r4, 0x08(r1)
+    mr      r26, r3
+    
+    li      r3, 0
+    %call   (SDStreamClose)    # SDStreamClose
+    cmpwi   r0, -1
+    bne     _end
+    
+_dvd:
+    mr      r3, r26
+    lmw     r4, 0x08(r1)
+    %call   (DVDClose)
+
+_end:
+    lwz     r0, 0x84(r1)
+    mtlr    r0
+    addi    r1, r1, 0x80
+    blr
+
+}
+################################################################
+#                THPRead Routine                          
+################################################################
+op bl 0x52BB60 @ $8007bea0  # THPPlayerOpenProc
+op bl 0x52BAA8 @ $8007bf58  # THPPlayerOpenProc
+op bl 0x52B9DC @ $8007c024  # THPPlayerOpenProc
+op bl 0x52B9BC @ $8007c044  # THPPlayerOpenProc
+
+op bl 0x529790 @ $8007e270  # Reader/(mv_THPRead.o)
+op bl 0x52B354 @ $8007c6ac  # THPPlayerPrepare
+op bl 0x52B290 @ $8007c770  # THPPlayerPrepare
+
+op bl 0x528C80 @ $8007ed80  # loadLastFrameInfo/[mvMoviePlayer]
+op bl 0x528B7C @ $8007ee84  # loadLastFrame/[mvMoviePlayer]
+CODE @ $805A7A00
+{
+_start:
+    stwu    r1, -0x30(r1)
+    mflr    r0
+    stw     r0, 0x34(r1)
+    stmw    r26, 0x8(r1) # save all regs
+    mr      r26, r3
+    mr      r27, r4 # addr
+    mr      r28, r5 # size
+    mr      r29, r6 # offset
+    mr      r30, r7
+    
+    li      r3, 0
+    %call   (SDStreamRead)    # SDStreamRead
+    cmpwi   r3, 0
+    beq     _disk
+    b       _end   
+_disk:
+    mr      r3, r26
+    mr      r4, r27
+    mr      r5, r28
+    mr      r6, r29
+    mr      r7, r30
+    cmpwi   r7, 2
+    beq     _sync
+    
+_async:
+    %call   (DVDReadAsyncPrio)
+    b       _end
+    
+_sync:
+    %call   (DVDReadPrio)
+    
+_end:
+    lmw     r26, 0x08(r1)
+    lwz     r0, 0x34(r1)
+    addi    r1, r1, 0x30 # restore sp
+    mtlr    r0 # original LR
+    blr
+    
+}
+################################################################
+#                   Never unmount SD
+################################################################                                 
+# Description:                                                  
+#     Normally the gfCollection threads unmount the
+#     SD and idle while they wait for a request. These
+#     patches prevent file read errors caused by the
+#     unmounting.
+#################################################################
+op  blr  @ $8001eb94
+
 .RESET
 
-###############################################
-Suppress OSReport For Music Streams [DukeItOut]
-###############################################
-HOOK @ $8001CD9C
-{
-	lis r12, 0x804D		# Songs are written to 804D0000 when read from the SD card.
-	cmpw r29, r12
-	blt- notMusic
-	ori r12, r12, 0x4200
-	cmpw r29, r12
-	bge- notMusic
-	lis r12, 0x8001
-	ori r12, r12, 0xCDA4
-	mtctr r12
-	bctr
-notMusic:
-	crclr 6, 6			# Original operation
-}
-
-###############################################################
-pfmenu2 fixes (sc_title, mu_menumain & if_adv_mngr) [Dantarion]
-###############################################################
-string "/menu2/sc_title.pac"     @ $806FF9A0
-string "/menu2/mu_menumain.pac"  @ $806FB248
-string "/menu2/if_adv_mngr.pac"  @ $80B2C7F8
-
 ##############################################################################################################################
-[Project+] RSBE v1.30 (/Project+/pf/sfx, can load soundbank clones for stages) (requires CSSLE) [InternetExplorer, DukeItOut]
+[Project+] RSBE v1.31 (/Project+/pf/sfx, can load soundbank clones for stages) (requires CSSLE) [InternetExplorer, DukeItOut]
+#
+# 1.31: The RWSD location check is now independent of Sound Resource size.
 ##############################################################################################################################
 * 80000000 80406920
 * 80000001 805A7D18
@@ -386,9 +783,13 @@ findRWSD:
   bne+ findRWSD
   sub r4, r4, r27
   stw r4, -0x40(r3)
-  lis r9, 0x90E6
-  ori r9, r9, 0xF10
-  lwz r9, 0(r9)
+  # lis r9, 0x90E6		# \ Sound Data Block (90E60820) + 6F0 
+  # ori r9, r9, 0xF10	# / Normally at 90E60F10, which is the end of the Sound Resource - 0x4F0
+
+  lis r9, 0x9019		# \
+  ori r9, r9, 0x9800	# | Get end of Sound Resource heap. 
+  lwz r9, 0x8(r9)		# /
+  lwz r9, -0x4F0(r9)	# 4F0 from end
   mr r4, r9
   mr r6, r4
   addi r6, r6, 0x8
@@ -604,103 +1005,50 @@ HOOK @ $803EE0BC
   lis r3, 0x805A
 }
 
-THP Replacement Engine v1.0 [Sammi Husky]
-* 065A74DF 00000018
-* 54485050 6C617965
-* 724F7065 6E28293A
-* 2025730A 00000000
-* C207BE08 0000000C
-* 9421FFE0 7C0802A6
-* 90010024 93E1001C
-* 93C10018 7C7F1B78
-* 7C9E2378 3C60805A
-* 606374DF 7FE4FB78
-* 3D80801D 618C8600
-* 7D8903A6 4E800421
-* 7FE3FB78 7FC4F378
-* 80010024 83E1001C
-* 83C10018 7C0803A6
-* 38210020 7FE4FB78
-* 60000000 60000000
-* 0407BE0C 4852B4F5
-* 0407ED5C 485285A5
-* 0407EE60 485284A1
-* 065A7300 00000090
-* 9421FF70 BC810008
-* 7C0802A6 90010094
-* 7C7A1B78 7C9B2378
-* 9421FF80 7C641B78
-* 3C60805A 60637C0C
-* 38A00040 4BE53015
-* 38610008 3C808059
-* 6084C598 4BE52F45
-* 3C80805A 60847C01
-* 38A00080 4BE53065
-* 3C808059 6084C590
-* 4BE44B61 3C80805A
-* 906474F8 38210080
-* 2C030000 40820010
-* 7F43D378 7F64DB78
-* 4BC4EF01 B8810008
-* 80010094 38210090
-* 7C0803A6 4E800020
-* 0407BEA0 4852B661
-* 0407BF58 4852B5A9
-* 0407C024 4852B4DD
-* 0407C044 4852B4BD
-* 0407E270 48529291
-* 0407C6AC 4852AE55
-* 0407C770 4852AD91
-* 0407ED80 48528781
-* 0407EE84 4852867D
-* 065A7500 00000100
-* 9421FFD0 7C0802A6
-* 90010034 BF410008
-* 7C7A1B78 7C9B2378
-* 7CBC2B78 7CDD3378
-* 7CFE3B78 3C60805A
-* 806374F8 2C030000
-* 41820020 3C608049
-* 6063DDD0 7F64DB78
-* 7F85E378 7FA6EB78
-* 48000045 4800002C
-* 7F43D378 7F64DB78
-* 7F85E378 7FA6EB78
-* 7FC7F378 2C070002
-* 4182000C 4BC4F19D
-* 48000008 4BC4F27D
-* BB410008 80010034
-* 38210030 7C0803A6
-* 4E800020 9421FF80
-* 7C0802A6 90010084
-* BC810008 7C7A1B78
-* 7C9B2378 7CBC2B78
-* 7CDD3378 2C1D0000
-* 41820020 3C60805A
-* 806374F8 7FA4EB78
-* 38A00000 4BE44925
-* 2C030000 40820020
-* 7F63DB78 38800001
-* 7F85E378 3CC0805A
-* 80C674F8 4BE440FD
-* 48000004 B8810008
-* 80010084 7C0803A6
-* 38210080 4E800020
-* 0407C19C 4852B065
-* 0407BF0C 4852B2F5
-* 0407C054 4852B1AD
-* 0407EE08 485283F9
-* 0407EF28 485282D9
-* 0407EB98 48528669
-* 065A7200 00000058
-* 9421FF80 7C0802A6
-* 90010084 BC810008
-* 7C7A1B78 3C80805A
-* 800474F8 2C000000
-* 41820018 3C60805A
-* 806374F8 4BE44C61
-* 3C80805A 906474F8
-* 7F43D378 B8810008
-* 4BC4F2E5 80010084
-* 7C0803A6 38210080
-* 4E800020 60000000
+
+###############################
+checkModSDFile [DukeItOut] 
+#
+# Gives an easy way to check
+# if a file is in the SD card
+# for the mod WITHOUT checking 
+# first if it is on the DVD. 
+#
+# r3 returns 0 if FOUND
+# NOT if FALSE
+###############################
+HOOK @ $8001F598
+{
+	addi r1, r1, 0xA0		# Make room for the following hook
+	blr
+}
+HOOK @ $8001F59C			# call this function
+{
+	stwu r1, -0x100(r1)
+	mflr r0
+	stw r0, 0x104(r1)
+	mr r7, r3				# string of file requested
+	addi r3, r1, 0x20
+	lis r4, 0x8048			# \ %s%s%s
+	ori r4, r4, 0xEFF6      # /
+	lis r5, 0x8040			# \ mod name folder
+	ori r5, r5, 0x6920		# / 
+	lis r6, 0x8050			# \ pf
+	ori r6, r6, 0x7B70		# /
+	
+	lis r12, 0x803F			# \
+	ori r12, r12, 0x89FC	# | sprintf
+	mtctr r12				# |
+	bctrl 					# /		
+	addi r3, r1, 0x20
+	stw r3, 0xC(r1)
+	addi r3, r1, 0x0C
+	lis r12, 0x8001			# \ 
+	ori r12, r12, 0xF5A0	# | checkFileSD
+	mtctr r12				# |
+	bctrl					# /
+	lwz r0, 0x104(r1)
+	mtlr r0
+	addi r1, r1, 0x100
+	blr
+}

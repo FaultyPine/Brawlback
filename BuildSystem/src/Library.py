@@ -50,8 +50,8 @@ class Library(File):
     def objcopy(self, options: str, dest: File):
         output = objcopy(self, dest, options)
         output = filterEmptySegmentWarning(output)
-        if output:
-            print(output)
+        # if output:
+        #     print(output)
         return self.__class__(dest.path)
 
     def compress(self, dest: File):

@@ -1,10 +1,6 @@
 { "codeSegments": [
   {
-    "startAddress": "0x817da5a4",
-    "endAddress": "0x81FFFFFF"
-  },
-  {
-    "startAddress": "0x8055A600",
+    "startAddress": "0x80560500",
     "endAddress": "0x80563100"
   },
   {
@@ -12,9 +8,20 @@
     "endAddress": "0x805B61D0"
   },
   {
+    "startAddress": "0x808FE5A0",
+    "endAddress": "0x80901790"
+  },
+  {
     "startAddress": "0x817CE880",
     "endAddress": "0x817DA590"
-  }],
+  },
+  {
+    "comment": "Temp",
+    "startAddress": "0x809017B8",
+    "endAddress": "0x80903180"
+  }
+  ],
+  "comment": "original was 0x935D0000",
   "infoSegmentAddress": "0x935D0000",
   "memoryHeapEndAddress": "0x935E0000",
   "initializerInfoAddress": "0x81500000",

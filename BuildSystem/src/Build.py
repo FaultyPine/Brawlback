@@ -45,6 +45,7 @@ def build(buildDir=None, codesDir=None, ppcBinDirectory=None, brawlFuncMapPath=N
     inputCodesDirectoryObject = LibraryDirectory(codesDir, libraryType=InitialSectionNameLibrary)
     renamedCodesDirectoryObject = renameSections(inputCodesDirectoryObject)
     removedConstructorsDirectoryObject = renamedCodesDirectoryObject.removeSections(['.ctors', '.dtors'], removedConstructorsDir)
+    
     compiler = Compiler()
     cppFile = makeCodesCPPFile(removedConstructorsDirectoryObject.symbols)
     linkedCodes = compiler.compile(cppFile, (removedConstructorsDirectoryObject.libraries), textStart=int("0x80000000", 0))
@@ -52,11 +53,13 @@ def build(buildDir=None, codesDir=None, ppcBinDirectory=None, brawlFuncMapPath=N
     segments = SegmentManager(settings)
     segments.assignFunctionAddresses(functions)
     temp = [segment.sections for segment in segments.codeSegments]
-    codeSections = list(chain.from_iterable(temp))
+    codeSections = sorted(list(chain.from_iterable(temp)), key=lambda sec : sec.address)
     initFile = makeInitCPPFile(removedConstructorsDirectoryObject.symbols)
     compiledCodes = compiler.compile(initFile, (renamedCodesDirectoryObject.libraries), textStart=settings.INITIALIZER_SEGMENT_ADDRESS,
       dataStart=settings.DATA_SEGMENT_ADDRESS,
-      sections=codeSections)
+      sections=codeSections,
+      extraOptions=['-Wl,-v', '-v'])
+    
     compiledCodes = FinalSectionNameLibrary(compiledCodes.path)
     for s in compiledCodes.sections:
         assert int("0x80000000", 0) <= s.address <= int("0xA0000000", 0), f"{s}, address: {hex(s.address)} out of acceptable range"
@@ -92,6 +95,7 @@ def makeCodesCPPFile(symbols):
 def makeInitCPPFile(symbols):
     initFormat = '\n        asm(R"(.globl _start\n        _start:\n            b _INITIALIZE_\n            {codeBranches}\n            {writes}\n        )");\n        '
     injections = []
+    s: Symbol
     for s in symbols:
         if s.isInjection() or s.isStartup():
             injections.append(s)
@@ -350,6 +354,7 @@ def makeMap(symbols, dest: File):
 def makeFilesFile(compiledCodes: Library, files: list):
     data = bytearray()
     s = [s for s in compiledCodes.sections if s.name == '_INITIALIZE___text__']
+    # print(s)
     assert len(s) == 1, (f"{s}")
     data.extend(s[0].address.to_bytes(4, 'big'))
     data.extend(settings.INITIALIZER_INFO_ADDRESS.to_bytes(4, 'big'))
@@ -366,6 +371,7 @@ def makeFilesFile(compiledCodes: Library, files: list):
 def extractFiles(linkedCodes: Library, segmentList: SegmentManager):
     files = []
     for s in segmentList.segments.values():
+        # print(s)
         if s.sections:
             extractedCodes = linkedCodes.extractSections(s.sections, File(f"IntermediateFiles/{s.name}"))
             outputCodes = extractedCodes.compress(File(f"Output/{s.name}"))
@@ -452,7 +458,7 @@ def makeDataWriteInfo(compiledCodes: Library):
             address = int((w[1]), base=16).to_bytes(4, 'big')
             data = int((w[2]), base=16)
             data = data.to_bytes(ceil((len(w[2]) - 2) / 2), 'big')
-            if w[4].startswith('0x'):
+            if w[3].startswith('0x'):
                 repeats = int((w[3]), base=16)
             else:
                 repeats = int(w[3])
@@ -487,7 +493,7 @@ if __name__ == '__main__':
     def show_exception_and_exit(exc_type, exc_value, tb):
         import traceback
         traceback.print_exception(exc_type, exc_value, tb)
-        input('Press enter to exit.')
+        # input('Press enter to exit.')
         sys.exit(-1)
 
 

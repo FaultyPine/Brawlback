@@ -21,23 +21,19 @@ CODE @ $8054C130
 	word 5; IC_Basic 20003
 	word 0; word 2
 	word 1; scalar 64.0
-	word 5; IC_Basic 3023
+	word 5; IC_Basic 3270
 	word 5; RA_Float 7
-	word 1; scalar 6.0
-	word 5; RA_Float 7
-	word 1; scalar 0.48
+	word 1; scalar -1
 	word 5; RA_Float 7
 	word 1; scalar 0.0
 	word 1; scalar 0.0
-	word 1; scalar 0.0
-	word 0; word 1
-	word 1; scalar -2.0
 	word 5; RA_Float 7
+	word 5; IC_Basic 3271
 	
-	word 2; word PSA_Off+0xD0
-	word 2; word PSA_Off+0xE8
-	word 2; word PSA_Off+0x118
-	word 2; word PSA_Off+0x140
+	word 2; word PSA_Off+0xB0
+	word 2; word PSA_Off+0xC8
+	word 2; word PSA_Off+0xF8
+	word 2; word PSA_Off+0x120
 	
 	word 0x00070100; word 0x80FB019C
 	word 0x00070100; word 0x80FB0004
@@ -56,15 +52,14 @@ CODE @ $8054C130
 	word 0x04000100; word 0x80FB05A4
 	word 0x00080000; word 0
 	
-	word 0x000A0400; word PSA_Off+0x30
-	word 0x12060200; word PSA_Off+0x50
-	word 0x120F0200; word PSA_Off+0x60
-	word 0x12070200; word PSA_Off+0x70
-	word 0x0E080400; word PSA_Off+0x80
-	word 0x0E010200; word PSA_Off+0xA0
-	word 0x000F0000; word 0
-	word 0x04000100; word 0x80FB06AC
-	word 0x00080000; word 0	
+	word 0x000A0400; word PSA_Off+0x30	#If Compare
+	word 0x12060200; word PSA_Off+0x50	#Float Variable Set
+	word 0x120F0200; word PSA_Off+0x60	#Float Variable Multiply
+	word 0x0E080200; word PSA_Off+0x70	#Set Momentum
+	word 0x0E010200; word PSA_Off+0x80	#Add/Subtract Momentum
+	word 0x000F0000; word 0				#EndIf
+	word 0x04000100; word 0x80FB06AC	#Change Sub Action
+	word 0x00080000; word 0				#Return
 }
 CODE @ $80FB0174
 {
@@ -72,20 +67,20 @@ CODE @ $80FB0174
 	word 0x00020000; word 0
 	word 0x00020000; word 0
 }
-op word PSA_Off+0xB0 @ $80FB0018
-op word PSA_Off+0xB0 @ $80FB0030
+op word PSA_Off+0x90 @ $80FB0018
+op word PSA_Off+0x90 @ $80FB0030
 
 CODE @ $80FB041C
 {
-	word 0x00070100; word PSA_Off+0xB8
+	word 0x00070100; word PSA_Off+0x98
 }
 CODE @ $80FB060C
 {
-	word 0x00070100; word PSA_Off+0xC0
+	word 0x00070100; word PSA_Off+0xA0
 }
 CODE @ $80FB06CC
 {
-	word 0x00070100; word PSA_Off+0xC8
+	word 0x00070100; word PSA_Off+0xA8
 }
 CODE @ $8054C0A8
 {

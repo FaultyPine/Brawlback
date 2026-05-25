@@ -36,9 +36,7 @@
 # Volume does not need to be set for brstm files read off of the disc. Song start delays, however, must be manually
 #	set for all song IDs that utilize them!
 ####################################################################################################
-[Project+] Custom Sound Engine v4.2 [Dantarion, PyotrLuzhin, DukeItOut]
-# 
-# Allows song IDs from 0xF000 through 0xFFFF to be loaded from IDs EX_000.brstm through EX_FFF.brstm 
+[Project+] Custom Sound Engine v4.2b [Dantarion, PyotrLuzhin, DukeItOut]
 ####################################################################################################
 .alias exMusicRange_Lo = 0xF000 # lowest custom music ID possible 
 .alias exMusicRange_Hi = 0xFFFF # highest custom music ID possible
@@ -294,7 +292,12 @@ skipToggle:
 	lwz r5, 0x64(r3)			# Restore r5
 	lhz r4, 0xF4(r3)			# Original operation
 }
-
+HOOK @ $80079190
+{
+	lis r12, 0x8054 		# \ Preemptively store song ID to prevent replays
+	stw r4, -0x102C(r12)	# / from having the titles break
+	lwz r3, -0x4250(r13)	# Original operation
+}
 
 
 HOOK @ $801C7D00 		# ReadSoundInfo/[nw4r3snd6detail22SoundArchiveFileReaderCFUI]

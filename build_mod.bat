@@ -4,6 +4,9 @@
 set buildTarget=all
 
 :: cmake build - got this command from the console output of running cmake build from the command palette
+:: Prepend the PowerPC cross-compiler bin so powerpc-eabi-as is found instead of the host assembler
+set PATH=%~dp0BuildSystem\Compiler\bin;%PATH%
+
 set cmakebuild="%CMAKE_EXE_PATH%" --build %CD%/build --config Release --target %buildTarget% -j 14 --
 :: move build binaries into SD folder which can then be synced with VSDSync
 set pymovefiles=py scripts/moveOutputToSDFolder.py
@@ -15,4 +18,10 @@ echo ====================================
 echo Building mod files...
 echo ====================================
 
-%cmakebuild% && %pymovefiles% && %vsdsync%
+%cmakebuild%
+IF %ERRORLEVEL% NEQ 0 (echo Error:%ERRORLEVEL% && exit /b)
+%pymovefiles% 
+IF %ERRORLEVEL% NEQ 0 (echo Error:%ERRORLEVEL% && exit /b)
+::echo VSDSync...
+::%vsdsync%
+::IF %ERRORLEVEL% NEQ 0 (echo Error:%ERRORLEVEL% && exit /b)

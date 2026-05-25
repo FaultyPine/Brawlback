@@ -8,52 +8,78 @@ Visit pmunofficial.com for more details.
 Legacy TE Concept & Design by the Legacy Team.
 Visit unofficialsmashlegacy.weebly.com for more details.
 
-#################
-Project+ Dev Team
-#################
--Motobug
--Beeeswith3Es
--Bird
--DukeItOut
--Eon
--Fracture
--Function
--HyperFlame
--Ish
--KingJigglypuff
--Kirbeast
--Mach 7
--Omni
--Ripple
--Ryztiq
--SJ
--SOJ
+Project+ would not be possible without the continued support of the competitive, casual, and modding communities.
+Thank you for playing!
 
-################
+##########################
+Project+ Development Team
+##########################
+- Beeeswith3Es
+- Bird
+- DukeItOut
+- Fracture
+- Function
+- KingJigglypuff
+- Kirbeast
+- Layell
+- Motobug
+- Ripple
+- SOJ
+
+##################
+Project+ Art Team
+##################
+- Bird of Light
+- Dapperman
+- Fireball
+- GRAND AZEL
+- Kapedani
+- Kirbeast
+- Layell
+- Link Tahuterasu Spirit
+- Mach 7
+- mawwwwk
+- MetalLegacy
+- nnebf
+- Omni
+- Ryztiq
+- Skilar
+- SJ
+- Survivian
+- tyle
+- tryptech
+- VirtualBeef
+- Xenthos
+- Yorch
+
+#################
 Project+ Testers
-################
--BaconPancakes
--Captain Birdman
--Envy
--Malachi
--Rongunshu
--Switch
+#################
+- BaconPancakes
+- Captain Birdman
+- Envy
+- Frozen
+- Malachi
+- Pikmon
+- Sosa
+- Switch
 
-#####################
+######################
 Project+ Past Members
-#####################
--Arsenals
--Boiko
--Boringman
--dvd
--Dyllon Stejakoski
--Frozen
--Jolteon
--Junebug
--Lunchables
--Nanobuds
--PyotrLuzhin
--Umbreon
+######################
+- Arsenals
+- dvd
+- Dyllon Stejakoski
+- Eon
+- HyperFlame
+- Ish
+- Jolteon
+- Junebug
+- Lunchables
+- Nanobuds
+- PyotrLuzhin
+- Rongunshu
+- Umbreon
 
 ########################################
 PSA + Motion + Fighter Modules:
@@ -72,6 +98,7 @@ Dry Bowser Alt Costume Effects by KingJigglypuff
 Mewtwo Costume-Specific Tail Trails by KingJigglypuff
 Dark Pit Arrows by Codes/TheGag96 and Strange Matter
 Snake Knife Glow by King Draco.
+Yoshi Egg Break GFX material edits by Xenthos.
 
 You can view a detailed breakdown of the edits in the "LegacyTE_PSA_edits.txt" file in the LegacyTE\pf\fighter folder. And of course, crazy thanks to the PMDT for all the original PSAs.
 
@@ -89,16 +116,20 @@ Lightbulb Effects for Pikachu by KingJigglypuff
 Diddy Kong Victory Blink Fix by Yohan1044
 Link uses external Etc files per costume set by KingJigglypuff. Models and textures by AlGeorgeRomo, Shy, and Moe.
 Peach uses external Etc files per costume set by KingJigglypuff.
+Animated Samus PED Suit Lights by KingJigglypuff, with credit to Sammi Husky.
 
 PSA and Motion -
 
 Sonic uses costume dependent gfx banks and Etc files by DukeItOut and Yohan1044.
-ROB uses costume dependent GFX banks and Etc files by KingJigglypuff.
+ROB uses costume dependent GFX banks and Etc files by KingJigglypuff and MarioDox.
 Ivysaur uses costume-dependent Razor Leaf colors by KingJigglypuff.
 Ganondorf uses external Etc files per costume by KingJigglypuff.
+Dedede uses external Etc files per costume by Motobug.
 Iron Tail Effects for Pikachu by KingJigglypuff.
 Snake Box Walk by KingJigglypuff and Magus.
 Yoshi Egg Trails by bringobrongo
+Meta Knight Sword Glows by SJS and KingJigglypuff
+Link Entry animation overhaul by FireballStars.
 
 Module -
 
@@ -114,6 +145,7 @@ All renders and cosmetic assets were created by davidvkimball, tryptech, MetalLe
 
 MARIO
 Pose by davidvkimball, model polish by tryptech, Xenthos, and MarioDox, rendered by CSProject Backroom, SJ
+Model optimizations by Layell
 All .pacs have removed F.L.U.D.D. models and texture data for file size optimization.
 04 - Wario Mario (restored from Brawl)
 20 - Dr. Mario by PMDT, cleanup by SJ and Xenthos
@@ -125,7 +157,7 @@ All .pacs have removed F.L.U.D.D. models and texture data for file size optimiza
 30 - Builder Mario 2.0 by SJ
 31 - Green Builder Mario 2.0 by SJ
 32 - Blue Builder Mario 2.0 by SJ
-AltR - Vacation Mario by SJS, StarWaffle
+AltR - Vacation Mario by SJS, ART+
 AltZ - Brawlified: Cowboy Mario V2 by Sub, AlGeorgeRomo, Mach 7, Puzzled and Xenthos
 
 
@@ -135,13 +167,13 @@ Pose by davidvkimball, model polish by tryptech, and MarioDox, rendered by CSPro
 07 - Purple DK by mawwwk
 08 - Mint DK by mawwwk, original costume by Apples
 09 - Tan DK by mawwwk
-20 - Boxer DK by PMDT
-21 - Blue Boxer DK by PMDT
-22 - Green Boxer DK by PMDT
-23 - [PM 3.6] Pink Boxer Donkey Kong by MetalLegacy, davidvkimball with credit to the PMDT for the original model. 
-24 - Gold Boxer DK by MetalLegacy, with credit to the PMDT
-AltR - Funky Kong by TOCK
-AltZ - Wind-up DK by StarWaffle, Nanobuds
+20 - Boxer DK v2 by The Project+ Art team, SJS, Kirbeat, and tyleto, with credit to the PMDT
+21 - Blue Boxer DK v2 by The Project+ Art team, SJS, Kirbeat, and tyleto, with credit to the PMDT
+22 - Green Boxer DK v2 by The Project+ Art team, SJS, Kirbeat, and tyleto, with credit to the PMDT
+23 - Pink Boxer DK v2 by The Project+ Art team, SJS, Kirbeat, and tyleto, with credit to the PMDT, MetalLegacy, and davidvkimball
+24 - Gold Boxer DK v2 by The Project+ Art team, SJS, Kirbeat, and tyleto, with credit to the PMDT, and MetalLegacy
+AltR - Funky Kong by The Project+ Art team, SJS, tyleto, with credit to TOCK
+AltZ - Wind-up DK by ART+, Nanobuds
 
 
 LINK
@@ -150,21 +182,23 @@ New Bomb model by SJS
 07 - Purple Link by Layell, credit to bizzozeron
 08 - cBliss Pink Link by SJS 
 09 - NES Link by Layell
-20 - OoT Link by PMDT, revamped by Moe, LinkTahuterasuSpirit, AlGeorgeRomo 
-21 - Red OoT Link by PMDT, revamped by Moe, LinkTahuterasuSpirit, AlGeorgeRomo 
-22 - Blue OoT Link by PMDT, revamped by Moe, LinkTahuterasuSpirit, AlGeorgeRomo 
-23 - Black OoT Link by PMDT, revamped by Moe, LinkTahuterasuSpirit, AlGeorgeRomo 
-24 - Lavender OoT Link by Moe, credit to the PMDT
-25 - Fierce Deity Link by Moe, AlGeorgeRomo, with additional edits by SatoshiKura, Crixler, ledgerewskie, Layell, Aghanim, PizzaDog, Jigglypoof21, Xenthos, Draco, Skilarbabcock, Mach 7, AlGeorgeRomo, Nanobuds, Theytah, credit to PMDT
-AltR - Hyrule Warriors Link (Brawlified) by Moblin, iwantgames, Taiko, Satoshi with credit to DSX8, ManikDX, and Large Leader [edited by MarioDox]
+20 - OoT Link by Skilar, SJS, fireball, tyleto, Xenthos, and the P+ Art Team, credit to the PMDT, Moe, LinkTahuterasuSpirit, AlGeorgeRomo
+21 - Red OoT Link by Skilar, SJS, fireball, tyleto, Xenthos, and the P+ Art Team, credit to the PMDT, Moe, LinkTahuterasuSpirit, AlGeorgeRomo
+22 - Blue OoT Link by Skilar, SJS, fireball, tyleto, Xenthos, and the P+ Art Team, credit to the PMDT, Moe, LinkTahuterasuSpirit, AlGeorgeRomo
+23 - Black OoT Link by Skilar, SJS, fireball, tyleto, Xenthos, and the P+ Art Team, credit to the PMDT, Moe, LinkTahuterasuSpirit, AlGeorgeRomo
+24 - Lavender OoT Link by Skilar, SJS, fireball, tyleto, Xenthos, and the P+ Art Team, credit to the PMDT, Moe, LinkTahuterasuSpirit, AlGeorgeRomo
+23 - Violet OoT Link by Skilar, SJS, fireball, tyleto, Xenthos, and the P+ Art Team, credit to the PMDT, Moe, LinkTahuterasuSpirit, AlGeorgeRomo
+26 - Fierce Diety Link by  Moe, AlGeorgeRomo, additional edits and revamps by Bird of Light, Skillar, SJS, fireball, tyleto, Xenthos, SatoshiKura, Crixler, ledgerewskie, Layell, Aghanim, PizzaDog, Jigglypoof21, Draco, Mach 7, Nanobuds, Theytah, credit to PMDT
+AltR - Hyrule Warriors Link (Brawlified) by Moblin, iwantgames, Taiko, Satoshi with credit to ManikDX, and Large Leader [edited by MarioDox]
 AltZ - Classic Link by Moe with credit to AlGeorge Romo, PMDT, Ely, LinkTahuterasuSpirit, iwantgames, SJS, Dr., Mach 7, Nanobuds, Ryztiq, Wii, Cosmetic Standarization Project
+
 
 SAMUS
 Poses by tryptech, rendered by tryptech, SJS, Xenthos, and Motobug
-00-05 - Samus revamp by SJS, tryptech, StarWaffle, Ryztiq
-20 - Dark Suit Samus revamp by SJS, StarWaffle, Ryztiq
-23 - Light Suit Samus by SJS, StarWaffle, Ryztiq
-27 - Hazard PED by SJS, StarWaffle, Ryztiq
+00-05 - Samus revamp by SJS, tryptech, ART+, Ryztiq
+20 - Dark Suit Samus revamp by SJS, ART+, Ryztiq
+23 - Light Suit Samus by SJS, ART+, Ryztiq
+27 - Hazard PED by SJS, ART+, Ryztiq
 30 - Fusion Suit Samus by PMDT
 31 - Varia Fusion Suit Samus v2 Recolor by SJS, Nanobuds with credit to Ryztiq
 32 - Omega Fusion Suit Samus v2 Recolor by SJS, Nanobuds with credit to Ryztiq
@@ -176,6 +210,8 @@ AltR - Revamped Power Suit Samus by SJS
 
 YOSHI
 Pose by davidvkimball, model polish by tryptech, MetalLegacy, and Layell, rendered by CSProject Backroom
+06 - Black Yoshi by SJS
+07 - White Yoshi by SJS
 11 - Brown Yoshi by mawwwk
 12 - Yoshi Cookie by MetalLegacy
 20 - Dorrie Yoshi by EggTimer, Ryztiq, mawwwk, soopercool101, MetalLegacy, DukeItOut, SJS
@@ -186,20 +222,24 @@ AltZ - Boshi by SJS
 
 
 KIRBY
-Pose by davidvkimball, model polish by tryptech, and MetalLegacy, HD eyes by MetalLegacy, rendered by CSProject Backroom
-08 - Emerald Kirby by MetalLegacy with vPM Kirby Hats by Yohan1044
-09 - Cherry Kirby by MetalLegacy with vPM Kirby Hats by Yohan1044
-10 - Chocolate Kirby by MetalLegacy
-11 - Snow Kirby by MetalLegacy
-20 - Fighter Kirby by Nanobuds with credit to the PMDT for Headband Jigglypuff, Reserved for the angry eyes, Snoe, revamp by SJ
-21 - Citrus Fighter Kirby by MetalLegacy, Snoe, revamp by SJ
-22 - Sapphire Fighter Kirby by MetalLegacy, Snoe, revamp by SJ
-AltR - Classic Kirby Brawl Model Version by Layell and Ryztiq
+Poses and renders by tryptech
+06 - Purple Kirby by SJS
+07 - Brown Kirby by SJS
+20 - Fighter Kirby by Nanobuds with credit to the PMDT for Headband Jigglypuff, Reserved for the angry eyes, Snoe, revamp by SJS
+21 - Citrus Fighter Kirby by MetalLegacy, Snoe, revamp by SJS
+22 - Sapphire Fighter Kirby by MetalLegacy, Snoe, revamp by SJS
+23 - Carbon Fighter Kirby by SJS
+30 - Cowboy Kirby by SJS, Xenthos, and the P+ Art Team
+31 - Snow Cowboy Kirby by SJS, Xenthos, and the P+ Art Team
+32 - Emerald Cowboy Kirby by SJS, Xenthos, and the P+ Art Team
+33 - Lavender Cowboy Kirby by SJS, Xenthos, and the P+ Art Team
+AltR - Headphones Kirby by SJS with credit to KingJigglypuff
 AltZ - Yarn Kirby by Ryztiq 
 
 
 FOX
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
+Model optimizations by Snoe and Layell
 06 - Orange Fox by Moe
 07 - Lime Fox by Layell
 08 - Brawlified: Smash 3 Blue Fox by Nick [additional edits by Layell]
@@ -216,15 +256,16 @@ AltZ - Melee James McCloud by bizzozeron, mawwwk with credit to Tock for the ori
 PIKACHU
 Pose by davidvkimball, model polish by tryptech, MarioDox, Layell, and Spigel, rendered by CSProject Backroom
 Iron Tail effects by KingJigglypuff
-07 - Detective Pikachu by davidvkimball, MetalLegacy with credit to ledgerewskie, RAWRzilla, Layell, bizzozeron, Aghanim, PizzaDog, Jigglypoof21 with credit to Smash 3 Team, the PMDT, Starwaffle, Akari_un, AdfroMan, Pantsface16, Kidneptune [edited by Yohan1044 and MarioDox]
+Model optimizations by Layell
+07 - Detective Pikachu by davidvkimball, MetalLegacy with credit to ledgerewskie, RAWRzilla, Layell, bizzozeron, Aghanim, PizzaDog, Jigglypoof21 with credit to Smash 3 Team, the PMDT, ART+, Akari_un, AdfroMan, Pantsface16, Kidneptune [edited by Yohan1044 and MarioDox]
 08 - Harmony Scarf Pikachu by davidvkimball with credit to Lilfut and the Smash 3C Team (Original Scarf Costume) [edited by Yohan1044 and MarioDox]
-09 - Lightbulb Pikachu by StarWaffle and KingJigglypuff [edited by Yohan1044]
+09 - Lightbulb Pikachu by ART+ and KingJigglypuff [edited by Yohan1044]
 10 - Let's Go Pikachu by MarioDox with credit to Ziella
-11 - May Pikachu by Kidneptune, Layell, with credit to StarWaffle
+11 - May Pikachu by Kidneptune, Layell, with credit to ART+
 12 - Fedora Pikachu by AlGeorgeRomo
 13 - Jukebox Pikachu by Layell, davidvkimball, MarioDox with credit to GentlemanPotato for the hat, and Hallow for the bowtie
-14 - Headphones Pikachu by StarWaffle
-AltR - Backpack Pikachu by StarWaffle, Nanobuds
+14 - Headphones Pikachu by ART+
+AltR - Backpack Pikachu by ART+, Nanobuds
 AltZ - Pikachu Libre by KTH, Taiko with credit to LJSTAR [edited by Yohan1044]
 
 
@@ -235,11 +276,11 @@ Pose by davidvkimball, model polish by tryptech, and Xenthos, rendered by CSProj
 21 - Red Mr. L by PMDT, optimizations by Snoe, revamp by SJ and tyleto
 22 - Blue Mr. L by PMDT, optimizations by Snoe, revamp by SJ and tyleto
 23 - White Mr. L by PMDT, optimizations by Snoe, revamp by SJ and tyleto
-30 - Casino Luigi 2.0 by Sub, Layell, Kazoomageddon, Snoe, credit to Ryztiq for fixing the lighting, KTH for the original model, Wumb0, Pyro; revamp by SJ, Xenthos, and StarWaffle
-31 - Red Casino Luigi 2.0 by Sub, Layell, Kazoomageddon, MetalLegacy, Snoe, credit to Ryztiq for fixing the lighting, KTH for the original model, Wumb0, Pyro, MetalLegacy; revamp by SJ, Xenthos, and StarWaffle
-32 - Blue Casino Luigi 2.0 by Sub, Layell, Kazoomageddon, MetalLegacy, Snoe, credit to Ryztiq for fixing the lighting, KTH for the original model, Wumb0, Pyro, MetalLegacy; revamp by SJ, Xenthos, and StarWaffle
-33 - Purple Casino Luigi 2.0 by Sub, Layell, Kazoomageddon, MetalLegacy, Snoe, credit to Ryztiq for fixing the lighting, KTH for the original model, Wumb0, Pyro, MetalLegacy; revamp by SJ, Xenthos, and StarWaffle
-AltR - Space Land Luigi V2 by Ubergruvin, Tyleto with credit to KorytheMaril, Mansta8, Kuro, Bent 00, Pyro, Draco
+30 - Casino Luigi 2.0 by Sub, Layell, Kazoomageddon, Snoe, credit to Ryztiq for fixing the lighting, KTH for the original model, Wumb0, Pyro; revamp by SJ, Xenthos, and ART+
+31 - Red Casino Luigi 2.0 by Sub, Layell, Kazoomageddon, MetalLegacy, Snoe, credit to Ryztiq for fixing the lighting, KTH for the original model, Wumb0, Pyro, MetalLegacy; revamp by SJ, Xenthos, and ART+
+32 - Blue Casino Luigi 2.0 by Sub, Layell, Kazoomageddon, MetalLegacy, Snoe, credit to Ryztiq for fixing the lighting, KTH for the original model, Wumb0, Pyro, MetalLegacy; revamp by SJ, Xenthos, and ART+
+33 - Purple Casino Luigi 2.0 by Sub, Layell, Kazoomageddon, MetalLegacy, Snoe, credit to Ryztiq for fixing the lighting, KTH for the original model, Wumb0, Pyro, MetalLegacy; revamp by SJ, Xenthos, and ART+
+AltR - Space Land Luigi V2 by Ubergruvin, tyleto with credit to KorytheMaril, Mansta8, Kuro, Bent 00, Pyro, Draco
 AltZ - Princess Peach Dress Luigi by AlGeorgeRomo, ShinF 
 
 
@@ -283,16 +324,17 @@ Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
 23 - Blue Dry Bowser Recolor by LnktheWolf, Nanobuds
 24 - Brown Dry Bowser by Dapperman
 AltR - Rookie Bowser by DarkStar
-AltZ - Dark Bowser (Brawl Style) by JoeTE with credit to Mewtwo2000 (for the hair metal material)
+AltZ - Dark Bowser Revamp by Dapperman, credit to JoeTE and Mewtwo2000
 
 
 PEACH
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
-06 - Black Dress Peach by mawwwk
+Model optimizations by tyleto and Layell
+06 - Black Dress Peach by KingJigglypuff
 07 - Yellow Peach by Moe
 08 - Retro Peach by Codex-9
-19 - Sunshine Peach by mawwwk, credit to the PMDT
-20 - Fire Peach by PMDT
+19 - Sunshine Peach by mawwwk with updates by the P+ Art team, credit to the PMDT
+20 - Fire Peach by PMDT with updates by the P+ Art team
 31 - Blue Team Dark Peach by TheShadowMysteryKing, TheDarkMysteryMan [with edits by davidvkimball, Yohan1044, and MetalLegacy]	
 32 - Green Team Dark Peach by TheShadowMysteryKing, TheDarkMysteryMan [with edits by davidvkimball, Yohan1044, and MetalLegacy]
 33 - Brown Shadow Queen Peach Recolor by Moe with credit to the PMDT
@@ -302,30 +344,32 @@ AltZ - Rosalina Peach by davidvkimball, with credit to LenSho for the model, and
 
 ZELDA
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
+Model optimizations by Layell
 06 - White Zelda by Moe
 07 - Hilda Zelda by Moe
 08 - Desert Gold Zelda by jetfantastic [additional edits by Layell]
-20 - OoT Zelda by PMDT
-21 - Red OoT Zelda recolor by LnktheWolf with credit to the PMDT
-22 - Green OoT Zelda recolor by LnktheWolf with credit to the PMDT
-23 - Blue OoT Zelda recolor by LnktheWolf with credit to the PMDT
-24 - Purple OoT Zelda recolor by Layell and Moe with credit to the PMDT
-25 - Gold OoT Zelda by Moe with credit to the PMDT
-AltR - Zelda (Hyrule Warriors) by iwantgames with credit to DSX8, Xenthos, Shy, Crazz, popthekirby, [additional edits by Layell and Snoe]
+20 - OoT Zelda by SJS, tyleto, Layell, the P+ Art Team, with credit to the PMDT for the original
+21 - Red OoT Zelda by SJS, tyleto, Layell, the P+ Art Team, with credit to the PMDT for the original
+22 - Green OoT Zelda by SJS, tyleto, Layell, the P+ Art Team, with credit to the PMDT for the original
+23 - Blue OoT Zelda by SJS, tyleto, Layell, the P+ Art Team, with credit to the PMDT for the original
+24 - Classic OoT Zelda by SJS, tyleto, Layell, the P+ Art Team, with credit to the PMDT for the original
+25 - Hilda OoT Zelda by SJS, tyleto, Layell, the P+ Art Team, with credit to the PMDT for the original
+AltR - Zelda (Hyrule Warriors) by iwantgames with credit to Xenthos, Shy, Crazz, popthekirby, [additional edits by Layell and Snoe]
 AltZ - Young Zelda by AlGeorgeRomo, Mach 7
 
 
 SHEIK
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
+Model optimizations by Layell
 06 - White Sheik by Moe
-07 - Lorulean Sheik by Moe
+07 - Impa Sheik by SJS
 08 - Desert Gold Sheik by jetfantastic
-20 - OoT Sheik by PMDT
-21 - Red OoT Sheik recolor by LnktheWolf with credit to the PMDT
-22 - Green OoT Sheik recolor by LnktheWolf with credit to the PMDT
-23 - Blue OoT Sheik recolor by LnktheWolf with credit to the PMDT
-24 - White OoT Sheik recolor by Moe with credit to the PMDT
-25 - Gold OoT Sheik by Moe, [additional edits by Layell]
+20 - OoT Sheik by SJS, Xenthos, tryptech, Fireball, tyleto, Layell, and the P+ Art Team
+21 - Red OoT Sheik by SJS, Xenthos, tryptech, Fireball, tyleto, Layell, and the P+ Art Team
+22 - Green OoT Sheik by SJS, Xenthos, tryptech, Fireball, tyleto, Layell, and the P+ Art Team
+23 - Blue OoT Sheik by SJS, Xenthos, tryptech, Fireball, tyleto, Layell, and the P+ Art Team
+24 - Classic OoT Sheik by SJS, Xenthos, tryptech, Fireball, tyleto, Layell, and the P+ Art Team
+25 - Lorule OoT Sheik by SJS, Xenthos, tryptech, Fireball, tyleto, Layell, and the P+ Art Team
 AltR - Sheik (Hyrule Warriors) by iwantgames, [additional edits by Layell]
 AltZ - Impa Sheik by AlGeorgeRomo, Mach 7
 
@@ -341,12 +385,13 @@ Pose by davidvkimball, model polish by tryptech, and Sub, rendered by CSProject 
 31 - Red Tundra Climbers by Ryztiq, Sub, Pyro, malistaticy, Layell, and MetalLegacy
 32 - Green Tundra Climbers by Ryztiq, Sub, Pyro, malistaticy, Layell, and MetalLegacy
 33 - Blue Tundra Climbers by Ryztiq, Sub, Pyro, malistaticy, Layell, and MetalLegacy
-AltR - Real Ice Climbers by StarWaffle
+AltR - Real Ice Climbers by ART+
 AltZ - Plaid Patterned Ice Climbers by Prim8 with credit to FroznHobo
 
 
 MARTH
 Pose by Kuro Kairaku, model polish by tryptech, rendered by CSProject Backroom
+Model optimizations by Snoe and Layell
 03 - Brawl Blue Marth (restored from Brawl)
 06 - Purple Marth by PMDT
 20 - Holy War Marth by PMDT with optimizations by Snoe
@@ -357,7 +402,7 @@ Pose by Kuro Kairaku, model polish by tryptech, rendered by CSProject Backroom
 31 - Scarlet Hooded Marth by bizzozeron and Layell with credit to KidNeptune101 for the original models [edited by MarioDox]
 32 - Emerald Hooded Marth by bizzozeron and Layell with credit to KidNeptune101 for the original models [edited by MarioDox]
 33 - Brown Hooded Marth by bizzozeron and Layell with credit to KidNeptune101 for the original models [edited by MarioDox]
-AltR - Shadow Dragon Marth by Shun_One, SatoshiKura, iwantgames with credit to Taiko, GBC, DSX8 and Snoe
+AltR - Shadow Dragon Marth by Layell with credit to Xenthos, VirtualBeef, Taiko, SatoshiKura, Tailsmiles249, Large Leader, Shun_One, Moblin, iwantgames, Nezha the Scout, Satoshi, ledgerewskie, Aghanim, GBC, DSX8
 AltZ - Prince Marth by AlGeorgeRomo, Mach 7 
 
 
@@ -388,16 +433,17 @@ Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
 24 - Purple Melee Falco by Moe
 25 - Pink Melee Falco by Layell, with credit to PMDT
 AltR - Assault Falco by RuKeN with credit to ASF1nk
-AltZ - Adventure Falco by Coolguy and Layell
+AltZ - Adventure Falco by Xenthos, bizzozeron, and MetalLegacy
 
 
 GANONDORF
-Pose by Kuro Kairaku, model polish by tryptech, rendered by CSProject Backroom
-20 - OoT Ganondorf by PMDT
-21 - Purple OoT Ganondorf by PMDT
-22 - Blue OoT Ganondorf by PMDT
-23 - Green OoT Ganondorf by PMDT
-24 - Red OoT Ganondorf by PMDT
+Poses and renders by tryptech
+20 - OoT Ganondorf by SJ, tryptech, Layell, and the P+ Art Development Team, credit to PMDT
+21 - Red OoT Ganondorf by SJ, tryptech, Layell, and the P+ Art Development Team, credit to PMDT
+22 - Green OoT Ganondorf by SJ, tryptech, Layell, and the P+ Art Development Team, credit to PMDT
+23 - Blue OoT Ganondorf by SJ, tryptech, Layell, and the P+ Art Development Team, credit to PMDT
+24 - Purple OoT Ganondorf by SJ, tryptech, Layell, and the P+ Art Development Team, credit to PMDT
+25 - Melee OoT Ganondorf by SJ, tryptech, Layell, and the P+ Art Development Team, credit to PMDT
 30 - Pig Ganon by Corshmell, Nanobuds with credit to KingJigglypuff, SOJ, PyotrLuzhin, Large Leader, Frisc0
 31 - Black Pig Ganon by Corshmell, Nanobuds with credit to KingJigglypuff, SOJ, PyotrLuzhin, Large Leader, Frisc0
 32 - Blue Pig Ganon by Corshmell, Nanobuds with credit to KingJigglypuff, SOJ, PyotrLuzhin, Large Leader, Frisc0
@@ -409,54 +455,55 @@ AltZ - Phantom Ganon by HowDoISpaceJam with credit to the PMDT, JoeTE, StupidMar
 
 META KNIGHT
 Pose by davidvkimball, model polish by tryptech, Spigel, and Layell, rendered by CSProject Backroom
-06 - Blade Knight colored Meta Knight by MetalLegacy
-07 - Parallel Meta Knight by Layell
-08 - SSB Ultimate Galacta-Knight alt by Sub
-09 - Dark Meta Knight by PMDT
-30 - Butterfly Meta Knight by PMDT
-31 - Green Butterfly Meta Knight Recolor by LnktheWolf with credit to the PMDT
-32 - Blue Butterfly Meta Knight Recolor by LnktheWolf with credit to the PMDT
-33 - Golden Butterfly Meta Knight by jetfantastic with credit to the PMDT
-34 - Violet Butterfly Meta Knight by Layell with credit to the PMDT
-AltR - Quickdraw Meta Knight by TʘCK [edited by EggTimer and MarioDox]
-AltZ - NES Meta Knight (Brawl Styled) by Mach 7 with credit to AlGeorgeRomo for the model
+08 - Galacta Meta Knight by SJS
+09 - Dark Meta Knight by SJS, tyleto, KingJigglypuff
+20 - Morpho Meta Knight by Project + Art team, SJS, tryptech, KingJigglypuff, with credit to the PMDT
+21 - Parallel Morpho Meta Knight by The Project + Art team, SJS, tryptech, KingJigglypuff, with credit to the PMDT
+22 - Green Morpho Meta Knight by The Project + Art team, SJS, tryptech, KingJigglypuff, with credit to the PMDT
+23 - Blue Morpho Meta Knight by The Project + Art team, SJS, tryptech, KingJigglypuff, with credit to the PMDT
+30 - Samurai Meta Knight by The Project + Art team, Dapperman, SJS and tyleto
+31 - Takamaru Samurai Meta Knight by The Project + Art team, Dapperman, SJS and tyleto
+32 - Green Samurai Meta Knight by The Project + Art team, Dapperman, SJS and tyleto
+33 - Gold Samurai Meta Knight by The Project + Art team, Dapperman, SJS and tyleto
+AltR - Galacta Knight by The Project + Art team, SJS, tyleto, and KingJigglypuff
+AltZ - NES Meta Knight by Dapperman
 
 
 PIT
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
-06 - Fruit Pit by Layell
-07 - Viridi Green Pit by Layell
-08 - Purple Pit by Layell
-09 - Centurion Pit by Layell
-20 - Retro Pit by PMDT
-21 - Dark Retro Pit by PMDT
-22 - Retro Palutena colored Pit by davidvkimball, credit to PMDT
-23 - Retro Cupid colored Pit by davidvkimball, credit to PMDT
-24 - Blue Retro Pit by MetalLegacy, credit to PMDT
+05 - Fruit Pit by Layell
+06 - Viridi Green Pit by Layell
+07 - Purple Pit by Layell
+08 - Centurion Pit by Layell
+20 - Classic Pit by SJS, KingJigglypuff, and the P+ Art Team, credit to PMDT
+21 - Red Classic Pit by SJS, KingJigglypuff, and the P+ Art Team, credit to PMDT
+22 - Green Classic Pit by SJS, KingJigglypuff, and the P+ Art Team, credit to PMDT
+23 - Blue Classic Pit by SJS, KingJigglypuff, and the P+ Art Team, credit to PMDT
+24 - Yellow Classic Pit by SJS, KingJigglypuff, and the P+ Art Team, credit to PMD
 AltR - Three Sacred Treasures Pit by tyleto, Wario358 with credit to KingDraco, Aurion
-AltZ - Eggplant Pit by Nefnoj, credit to PMDT
+AltZ - Eggplant Pit by Nefnoj, SJS, KingJigglypuff, and the P+ Art Team, credit to PMDT
 
 
 ZERO SUIT SAMUS
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
-00 - SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
-01 - Red SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
-02 - Green SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
-03 - Blue SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
-04 - Purple SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
-05 - Black SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
-20 - Super Metroid SJS ZSS by Layell, Shranux with credit to Program, DarkMysteryMan, Moe, PMDT, Windhunter, Ryztiq, jiang, Pik, davidvkimball, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin, Shranux, Snoe
-23 - White Ending SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin
-27 - Zero Mission Outfit ZSS by davidvkimball, MarioDox, Ca$inoWolf, AO fix by Shranux, with credit to Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin and snoe]
-30 - Fusion SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin
-31 - Rose Fusion SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin edits by MetalLegacy
-32 - Lime Fusion SJS ZSS Rebuild by Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin, edits by MetalLegacy
+00 - SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
+01 - Red SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
+02 - Green SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
+03 - Blue SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
+04 - Purple SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
+05 - Black SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin]
+20 - Super Metroid SJS ZSS by Layell, Shranux with credit to Program, DarkMysteryMan, Moe, PMDT, Windhunter, Ryztiq, jiang, Pik, davidvkimball, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin, Shranux, Snoe
+23 - White Ending SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin
+27 - Zero Mission Outfit ZSS by davidvkimball, MarioDox, Ca$inoWolf, AO fix by Shranux, with credit to Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall [optimized by moblin and snoe]
+30 - Fusion SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin
+31 - Rose Fusion SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin edits by MetalLegacy
+32 - Lime Fusion SJS ZSS Rebuild by Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, SJS, Nanobuds, Spex130, TOCK, Sandfall, Moblin, edits by MetalLegacy
 33 - Purple Fusion SJS ZSS recolor by SJS
 35 - Zero Suit Samus Bailey by TheDarkMysteryMan, Moblin with credit to the PMDT
-36 - Green Zero Suit Samus Bailey by Moe with credit to PMDT, Nanobuds, SJS, Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, Spex130, T?CK, Sandfall, davidvkimball, Moblin, Smash 3C for the recolours
-37 - Dark Blue Zero Suit Samus Bailey by mawwwk with credit to PMDT, Nanobuds, SJS, Ryztiq, jiang, Pik, StarWaffle, Albafika, KingJigglypuff, Spex130, T?CK, Sandfall, davidvkimball, Moblin
+36 - Green Zero Suit Samus Bailey by Moe with credit to PMDT, Nanobuds, SJS, Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, Spex130, T?CK, Sandfall, davidvkimball, Moblin, Smash 3C for the recolours
+37 - Dark Blue Zero Suit Samus Bailey by mawwwk with credit to PMDT, Nanobuds, SJS, Ryztiq, jiang, Pik, ART+, Albafika, KingJigglypuff, Spex130, T?CK, Sandfall, davidvkimball, Moblin
 AltR - Brawl Zero Suit Samus by Nintendo
-AltZ - Cadet Zero Suit Samus by Ryztiq, StarWaffle, SJS, Nanobuds, Spex130 [edits by Shranux]
+AltZ - Cadet Zero Suit Samus by Ryztiq, ART+, SJS, Nanobuds, Spex130 [edits by Shranux]
 
 
 OLIMAR / PIKMIN 
@@ -473,16 +520,20 @@ AltZ - The President (Pikmin 2) by Turb0k with credit to Nanobuds
 
 
 LUCAS
-Pose by davidvkimball, model polish by tryptech, Spigel, and Layell, rendered by CSProject Backroom
-20 - Commander Lucas by PMDT
-21 - Red Commander Lucas Recolor by BullockDS, credit to PMDT
-22 - Green Commander Lucas Recolor by BullockDS, credit to PMDT
-23 - Blue Commander Lucas Recolor by BullockDS, credit to PMDT
-24 - Claus Commander Lucas Recolor by Vinegar, Pik. credit to PMDT 
-30 - Smash 2 Lucas for PM by SubZero2, with credit to AlGeorgeRomo and the Smash 2 Team for the model
-31 - Red Smash 2 Lucas for PM by Layell, SubZero2, with credit to AlGeorgeRomo and the Smash 2 Team for the model
-32 - Green Smash 2 Lucas for PM by SubZero2, with credit to AlGeorgeRomo and the Smash 2 Team for the model
-33 - Blue Smash 2 Lucas for PM by Layell, SubZero2, with credit to AlGeorgeRomo and the Smash 2 Team for the model
+Pose by davidvkimball, model polish by tryptech, Spigel, SJS, and Layell, rendered by CSProject Backroom and Layell
+04 - Updated Claus Color by ART+
+20 - Updated Commander Lucas by SJ, credit to PMDT
+21 - Updated Red Commander Lucas by SJ, credit to PMDT
+22 - Updated Green Commander Lucas by SJ, credit to PMDT
+23 - Updated Blue Commander Lucas by SJ, credit to PMDT
+24 - Updated White Commander Lucas by SJ, credit to PMDT
+24 - Updated Claus Commander Lucas by SJ, credit to PMDT
+30 - EB64 Lucas by SJ, Xenthos, and tyle, credit to SubZero2, AlGeorgeRomo and the Smash 2 Team
+31 - Red EB64 Lucas by SJ, Xenthos, and tyle, credit to SubZero2, AlGeorgeRomo and the Smash 2 Team
+32 - Green EB64 Lucas by SJ, Xenthos, and tyle, credit to SubZero2, AlGeorgeRomo and the Smash 2 Team
+33 - Blue EB64 Lucas by SJ, Xenthos, and tyle, credit to SubZero2, AlGeorgeRomo and the Smash 2 Team
+34 - Purple EB64 Lucas by SJ, Xenthos, and tyle, credit to SubZero2, AlGeorgeRomo and the Smash 2 Team
+35 - Claus EB64 Lucas by SJ, Xenthos, and tyle, credit to SubZero2, AlGeorgeRomo and the Smash 2 Team
 AltR - Masked Man Lucas by Layell with credit to Pik, Ridge Troopa, Spex130, and Aghanim
 AltZ - Chimera Pajamas Lucas by AlGeorgeRomo, Mach 7 [edited by Layell]
 
@@ -492,13 +543,13 @@ Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
 08 - Emerald Diddy Kong by Layell
 09 - Sky Blue Diddy Kong by Layell, Moe
 10 - Black Diddy Kong by Moe
-20 - Hooded Diddy by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron
-21 - Red Hooded Diddy recolor by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
-22 - Green Hooded Diddy recolor by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
-23 - Yellow Hooded Diddy recolor by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
-24 - Black Hooded Diddy recolor by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
-AltR - Diddy Kong Jr. by StarWaffle, additional fixes by Layell
-AltZ - Striker Diddy by StarWaffle, additional fixes by Layell
+20 - Hooded Diddy Kong Revamp by ART+, SJ, and tyle, original by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
+21 - Red Hooded Diddy Revamp recolor by ART+, SJ, and tyle, original by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
+22 - Green Hooded Diddy Revamp recolor by ART+, SJ, and tyle, original by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
+23 - Black Hooded Diddy Revamp recolor by ART+, SJ, and tyle, original by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
+24 - Yellow Hooded Diddy Revamp recolor by ART+, SJ, and tyle, original by HyperLink, Vinegar, AlGeorgeRomo, bizzozeron, Layell
+AltR - Diddy Kong Jr. by ART+, additional fixes by Layell
+AltZ - Striker Diddy by ART+, additional fixes by Layell
 
 
 MEWTWO
@@ -546,7 +597,7 @@ Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
 23 - Green Shinobi Squirtle Recolor by MetalLegacy, with credit to LnktheWolf and the PMDT 
 24 - Koga Shinobi Squirtle by Layell, credit to the PMDT, and Codex-9 for the original version
 AltR - Scarf Squirtle by MarioDox with credit to davidvkimball, Lilfut, Smash 3C Team, CSPBR
-AltZ - Ninja Squirtle by StarWaffle [edited by Legacy TE devs]
+AltZ - Ninja Squirtle by ART+ [edited by Legacy TE devs]
 
 
 IVYSAUR / FUSHIGISOU
@@ -554,13 +605,13 @@ Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
 07 - Coral Pink Ivysaur by Layell
 08 - Bayleef Ivysaur by Layell
 09 - Tropius Ivysaur by Layell
-20 - Substitute Ivysaur by LnktheWolf, StarWaffle, Nanobuds, Moblin, Ryztiq
-21 - Orange Substitute Ivysaur by LnktheWolf, StarWaffle, Nanobuds, Moblin, Ryztiq
-22 - Dark Blue Substitute Ivysaur by LnktheWolf, StarWaffle, Nanobuds, Moblin, Ryztiq
-23 - Yellow Substitute Ivysaur by LnktheWolf, StarWaffle, Nanobuds, Moblin, Ryztiq
-24 - Pink Substitute Ivysaur by LnktheWolf, Nanobuds, Moblin, Ryztiq with credit to StarWaffle, additional edits by Layell
+20 - Substitute Ivysaur by LnktheWolf, ART+, Nanobuds, Moblin, Ryztiq
+21 - Orange Substitute Ivysaur by LnktheWolf, ART+, Nanobuds, Moblin, Ryztiq
+22 - Dark Blue Substitute Ivysaur by LnktheWolf, ART+, Nanobuds, Moblin, Ryztiq
+23 - Yellow Substitute Ivysaur by LnktheWolf, ART+, Nanobuds, Moblin, Ryztiq
+24 - Pink Substitute Ivysaur by LnktheWolf, Nanobuds, Moblin, Ryztiq with credit to ART+, additional edits by Layell
 AltR - Cactivy by MarioDox with credit to Nanobuds, Ike_Lawliet, @CynicalPlant
-AltZ - Vileplume Ivysaur by AlGeorgeRomo, Mach 7 [edited by Yohan1044: tether vine]
+AltZ - Saurceress Ivysaur by MetalLegacy, ART+, Ca$ino Wolf with credit to TOCK
 
 
 DEDEDE
@@ -569,37 +620,40 @@ Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
 08 - Sparky Dedede by Dapperman with credit to MetalLegacy
 09 - Parallel Prototype Dedede by Dapperman with credit to MetalLegacy
 10 - Dark Matter Dedede by Kazoomageddon
-20 - Shogun Dedede by PMDT
-21 - Green Shogun Dedede by PMDT
-22 - Blue Shogun Dedede by PMDT
-23 - Golden Shogun Dedede by LnktheWolf with credit to the PMDT
-24 - Black Shogun Dedede by Dapperman, Layell, with credit to the PMDT
+20 - Shogun Dedede by The Project+ Art team, SJ, Layell, and Motobug, credit to PMDT
+21 - Green Shogun Dedede by The Project+ Art team, SJ, Layell, and Motobug, credit to PMDT
+22 - Blue Shogun Dedede by The Project+ Art team, SJ, Layell, and Motobug, credit to PMDT
+23 - Yellow Shogun Dedede by The Project+ Art team, SJ, Layell, and Motobug, credit to PMDT
+24 - Black Shogun Dedede by The Project+ Art team, SJ, Layell, and Motobug, credit to Dapperman and PMDT
 AltR - Shadow Dedede by L K Boost, JoeTE, with fixes by Kirbeast and Layell
-AltZ - Masked Dedede by StarWaffle with credit to JoeTE
+AltZ - Kirby 64 Dedede by Ubergruvin and Dapperman
 
 
 LUCARIO
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
+Model optimizations by Layell
+06 - Shiny Lucario by SJS
 07 - Orange Lucario by Layell
 08 - Asparagus Green Lucario by Layell
 09 - Purple Lucario by KingJigglypuff
 10 - Brown Lucario by Layell 
 20 - Gi Lucario by the PMDT [edited by KingJigglypuff]
 21 - Black Gi Lucario by the PMDT [edited by KingJigglypuff] 
-22 - Dan Hibiki Gi Lucario by LnktheWolf with credit to the PMDT [edited by KingJigglypuff] 
-23 - Ken Gi Lucario by LnktheWolf with credit to the PMDT [edited by KingJigglypuff] 
-24 - Sean Gi Recolor by LnktheWolf, Layell with credit to the PMDT [edited by KingJigglypuff] 
+22 - Sean Gi Recolor by LnktheWolf, Layell with credit to the PMDT [edited by KingJigglypuff and the P+ Development Team] 
+23 - Ken Gi Lucario by LnktheWolf, SJS with credit to the PMDT [edited by KingJigglypuff and the P+ Development Team] 
+24 - Dan Gi Lucario by LnktheWolf with credit to the PMDT [edited by KingJigglypuff and the P+ Development Team] 
 AltR - Robo Lucario by Ryztiq [edited by MarioDox and Snoe]
-AltZ - Mega Lucario Model Overhaul by KingJigglypuff, Nanobuds, StarWaffle
+AltZ - Mega Lucario Model Overhaul by KingJigglypuff, Nanobuds, ART+
 
 
 IKE
 Pose by Xenthos, model polish by tryptech, and Layell, rendered by CSProject Backroom
-06 - Purple Ike by Sub, StarWaffle
+Model optimizations by Layell
+06 - Purple Ike by Sub, ART+
 20 - Armored Ike by PMDT
 21 - Red Armored Ike by PMDT
-23 - Green Armored Ike by PMDT
-24 - Black Armored Ike by PMDT
+22 - Green Armored Ike by PMDT
+23 - Black Armored Ike by PMDT
 30 - Greil Ike by AlGeorgeRomo, Mach 7 
 31 - Red Greil Ike by AlGeorgeRomo, Mach 7 
 32 - Green Greil Ike by AlGeorgeRomo, Mach 7, and Layell 
@@ -625,6 +679,7 @@ AltZ - GameCube ROB by AlGeorgeRomo [edited by Layell]
 
 JIGGLYPUFF / PURIN
 Pose by davidvkimball, model polish by tryptech, Spigel, and Layell, HD eyes by MetalLegacy, rendered by CSProject Backroom
+Model optimizations by Layell
 07 - Bow Tie by Ryztiq with credit to Nanobuds for the headband physics motionetc [edited by soopercool101]
 08 - Headband by Nanobuds, KingJigglypuff, TʘCK
 09 - Officer Jenny Puff by Ryztiq, HypnotizeScourge
@@ -638,13 +693,13 @@ AltZ - El Globo by TʘCK
 
 
 WARIO
-Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
-20 - Tycoon Wario by malistaticy, davidvkimball, Layell
-21 - Black Tycoon Wario by malistaticy, davidvkimball, MetalLegacy, Layell
-22 - Crimson Connoisseur Tycoon Wario recolor by mawwwk, with credit to malistaticy, davidvkimball, Layell
-23 - Leprechaun Tycoon Wario recolor by mawwwk, with credit to malistaticy, davidvkimball, Layell
-24 - Light Blue Tycoon Wario recolor by mawwwk, with credit to malistaticy, davidvkimball, Layell
-25 - Classic Scheme Tycoon Wario recolor by mawwwk, with credit to malistaticy, davidvkimball, Layell
+Pose by davidvkimball, model polish by tryptech and SJS, rendered by CSProject Backroom and SJS
+20 - Tycoon Wario V2 by  Moblin, Xenthos, ColonelBirdstrong, SJS, with credit to malistaticy, davidvkimball, Layell
+21 - Red Tycoon Wario V2 by  Moblin, Xenthos, ColonelBirdstrong, SJS, with credit to malistaticy, davidvkimball, Layell
+22 - Green Tycoon Wario V2 by  Moblin, Xenthos, ColonelBirdstrong, SJS, with credit to malistaticy, davidvkimball, Layell
+23 - Blue Tycoon Wario V2 by  Moblin, Xenthos, ColonelBirdstrong, SJS, with credit to malistaticy, davidvkimball, Layell
+24 - Black Tycoon Wario V2 by  Moblin, Xenthos, ColonelBirdstrong, SJS, with credit to malistaticy, davidvkimball, Layell
+25 - Yellow Tycoon Wario V2 by  Moblin, Xenthos, ColonelBirdstrong, SJS, with credit to malistaticy, davidvkimball, Layell
 AltR - Pith Hat Wario (over Biker slot) by Layell, bizzozeron, Aghanim
 AltZ - Adventure Wario by Angelglory [with edits by Moblin]
 
@@ -654,12 +709,12 @@ Pose by Nanobuds, model polish by tryptech, rendered by CSProject Backroom
 06 - Pink Roy by Layell, credit to PMDT
 07 - Purple SSB4 Roy by Moe, additional edits by Layell, credit to PMDT
 08 - White Roy by Layell, credit to PMDT
-20 - Awakening Roy by Nanobuds, Pik, TʘCK, KingJigglypuff, StarWaffle, Ryztiq, Snoe
-21 - Red Awakening Roy recolor by WorseDoughnut with credit to Nanobuds, Pik, TʘCK, KingJigglypuff, StarWaffle, Ryztiq, Snoe
-22 - Green Awakening Roy recolor by WorseDoughnut with credit to Nanobuds, Pik, TOCK, KingJigglypuff, StarWaffle, Ryztiq, Snoe
-23 - Blue Awakening Roy recolor by Moe, additional edits by Layell. with credit to Nanobuds, Pik, TOCK, KingJigglypuff, StarWaffle, Ryztiq, Snoe
-24 - Gold Awakening Roy recolor by WorseDoughnut with credit to Nanobuds, Pik, TOCK, KingJigglypuff, StarWaffle, Ryztiq, Snoe
-25 - Black Awakening Roy recolor by WorseDoughnut with credit to Nanobuds, Pik, TOCK, KingJigglypuff, StarWaffle, Ryztiq, Snoe
+20 - Awakening Roy by Nanobuds, Pik, TʘCK, KingJigglypuff, ART+, Ryztiq, Snoe
+21 - Red Awakening Roy recolor by WorseDoughnut with credit to Nanobuds, Pik, TʘCK, KingJigglypuff, ART+, Ryztiq, Snoe
+22 - Green Awakening Roy recolor by WorseDoughnut with credit to Nanobuds, Pik, TOCK, KingJigglypuff, ART+, Ryztiq, Snoe
+23 - Blue Awakening Roy recolor by Moe, additional edits by Layell. with credit to Nanobuds, Pik, TOCK, KingJigglypuff, ART+, Ryztiq, Snoe
+24 - Gold Awakening Roy recolor by WorseDoughnut with credit to Nanobuds, Pik, TOCK, KingJigglypuff, ART+, Ryztiq, Snoe
+25 - Black Awakening Roy recolor by WorseDoughnut with credit to Nanobuds, Pik, TOCK, KingJigglypuff, ART+, Ryztiq, Snoe
 AltR - Classic Roy with Brawl head by Layell, MarioDox, Moe, Nick with credit to ledgerewskie, Taiko, Tailsmiles249, Large Leader, Shun_One, Moblin, ?????, Satoshi, Aghanim, The Smash 3 Team, PMDT, jaystring
 AltZ - Beta Roy (Brawl Style) by Char, Moe with credit to AlGeorgeRomo
 Spy - Fixed clear model by soopercool101
@@ -667,21 +722,22 @@ Spy - Fixed clear model by soopercool101
 
 TOON LINK
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom and Xenthos 
-20 - Outset Toon Link by PMDT, new shadow model by Moblin and updates by SJS and StarWaffle
-21 - Red Outset Toon Link by PMDT, new shadow model by Moblin and updates by SJS and StarWaffle
-22 - Green Outset Toon Link by PMDT, new shadow model by Moblin and updates by SJS and StarWaffle
-23 - Purple Outset Toon Link by LnktheWolf, HyperLink with credit to the PMDT, new shadow model by Moblin and updates by SJS and StarWaffle
-24 - Black Outset Toon Link by LnktheWolf, HyperLink with credit to the PMDT, new shadow model by Moblin  and updates by SJS and StarWaffle
-30 - Linebeck Toon Link by EggTimer, WorseDoughnut, Moblin, Xenthos, legoj15, Shranux, davidvkimball, MarioDox, Layell, Sub, with credit to DemonBoy, the PMDT and updates by SJS and StarWaffle
-31 - Red Linebeck Toon Link by EggTimer, WorseDoughnut, Moblin, Xenthos, legoj15, Shranux, davidvkimball, MarioDox, Layell, Sub, with credit to DemonBoy, the PMDT and updates by SJS and StarWaffle
-32 - Green Linebeck Toon Link by EggTimer, WorseDoughnut, Moblin, Xenthos, legoj15, Shranux, davidvkimball, MarioDox, Layell, Sub, with credit to DemonBoy, the PMDT and updates by SJS and StarWaffle
-33 - Black Linebeck Toon Link by EggTimer, WorseDoughnut, Moblin, Xenthos, legoj15, Shranux, davidvkimball, MarioDox, Layell, Sub, with credit to DemonBoy, the PMDT and updates by SJS and StarWaffle
+20 - Outset Toon Link by PMDT, new shadow model by Moblin and updates by SJS and ART+
+21 - Red Outset Toon Link by PMDT, new shadow model by Moblin and updates by SJS and ART+
+22 - Green Outset Toon Link by PMDT, new shadow model by Moblin and updates by SJS and ART+
+23 - Purple Outset Toon Link by LnktheWolf, HyperLink with credit to the PMDT, new shadow model by Moblin and updates by SJS and ART+
+24 - Black Outset Toon Link by LnktheWolf, HyperLink with credit to the PMDT, new shadow model by Moblin  and updates by SJS and ART+
+30 - Linebeck Toon Link by EggTimer, WorseDoughnut, Moblin, Xenthos, legoj15, Shranux, davidvkimball, MarioDox, Layell, Sub, with credit to DemonBoy, the PMDT and updates by SJS and ART+
+31 - Red Linebeck Toon Link by EggTimer, WorseDoughnut, Moblin, Xenthos, legoj15, Shranux, davidvkimball, MarioDox, Layell, Sub, with credit to DemonBoy, the PMDT and updates by SJS and ART+
+32 - Green Linebeck Toon Link by EggTimer, WorseDoughnut, Moblin, Xenthos, legoj15, Shranux, davidvkimball, MarioDox, Layell, Sub, with credit to DemonBoy, the PMDT and updates by SJS and ART+
+33 - Black Linebeck Toon Link by EggTimer, WorseDoughnut, Moblin, Xenthos, legoj15, Shranux, davidvkimball, MarioDox, Layell, Sub, with credit to DemonBoy, the PMDT and updates by SJS and ART+
 AltR - Minish Cap Toon Link by TʘCK with credit to Mewtwo2000 and Pik for the sword model found in Project M, (Four Sword) Wonder793 with credit to Kitsu for the textures and Smash John for the revamped textures, (Mirror Shield) BBreon with credit to KTH, (compiled costume) everyone who contributed on the three separate models, with credit to Vinegar for the compiled version and recolors
 AltZ - Conductor Toon Link by SJS, DemonBoy with credit to the PMDT
 
 
 WOLF
 Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
+Model optimizations by Snoe and Layell
 20 - Pirate Wolf by PMDT
 21 - Red Pirate Wolf by PMDT
 22 - Green Pirate Wolf by PMDT
@@ -697,6 +753,7 @@ AltZ - Smash 2 Wolf for PM by SubZero2, Moblin, KTH with credit to AlGeorgeRomo 
 
 SNAKE
 Pose and model polish by tryptech and Spigel, rendered by CSProject Backroom
+Model optimizations by Layell, Xenthos, and SJS
 20 - Big Boss by PMDT
 21 - Red Big Boss recolor by ledgerewskie, Codex-9, Taiko with credit to the PMDT 
 22 - Blue Big Boss recolor by ledgerewskie, Codex-9, Taiko with credit to the PMDT 
@@ -724,7 +781,7 @@ Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
 32 - Racing Suit Sonic (blue) by AlGeorgeRomo, Mach 7, MetalLegacy [with edits by Xenthos]
 33 - Racing Suit Sonic (black) by AlGeorgeRomo, Mach 7, MetalLegacy [trails by mawwwk]
 AltR - Werehog Sonic by Wyld
-AltZ - Smash 2 Sonic for PM by Pnut, Layell with credit to AlGeorgeRomo and the Smash 2 Team for the model
+AltZ - Brawlified Smash 2 v2.0 beta Sonic with Light Speed alt and Facial Expressions by MetalLegacy, Xenthos with credit to Smash 2 dev team, Shy, VirtualBeef, Nanobuds, RedipsTheCooler, Cahalan, additional optimizations by Layell
 
 
 WARIO MAN 
@@ -736,10 +793,10 @@ Pose by MetalLegacy, model polish by MetalLegacy, rendered by CSProject Backroom
 04 - Biker Wario Man Ver. 1.5 by j0ker1212
 05 - Biker Wario Man Ver. 1.5 by j0ker1212
 20 - Shirtless Wario Man by Scout, davidvkimball
-21 - Shirtless Wario Man Grey by Scout, davidvkimball
-22 - Shirtless Wario Man Red by Scout, davidvkimball, ChucklesDemKnuckles
-23 - Shirtless Wario Man Green by Scout, davidvkimball, ChucklesDemKnuckles
-24 - Shirtless Wario Man Blue by Scout, davidvkimball, ChucklesDemKnuckles
+21 - Shirtless Wario Man Red by Scout, davidvkimball
+22 - Shirtless Wario Man Green by Scout, davidvkimball, ChucklesDemKnuckles
+23 - Shirtless Wario Man Blue by Scout, davidvkimball, ChucklesDemKnuckles
+24 - Shirtless Wario Man Grey by Scout, davidvkimball, ChucklesDemKnuckles
 25 - Shirtless Wario Man Yellow by Scout, davidvkimball, ChucklesDemKnuckles [with edits by Layell]
 AltR - Classic Vampire Wario by Ubergruvin, ChucklesDemKnuckles with credit to EggTimer for the initial cowl model, Layell for improving the cowl model
 AltZ - Ninja Wario: WarioMANX by WarioManX
@@ -756,24 +813,25 @@ Pose by davidvkimball, model polish by tryptech, rendered by CSProject Backroom
 23 - Blue Giga Dry Bowser Recolor by LnktheWolf, with credit to PMDT
 24 - Brown Giga Dry Bowser by Dapperman, MetalLegacy, with credit to PMDT
 AltR - Rookie Giga Bowser by davidvkimball
-AltZ - Dark Giga Bowser by PAVGN 
+AltZ - Dark Giga Bowser by Dapperman, credit to PAVGN 
 
 KNUCKLES
 Pose done by Mach 7, based on the pose made by the PMDT
-00-02, 05-06 Knuckles by ghost_user47, StarWaffle, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug
-03 - Knuckles Gold Recolor by Motobug
-04 - Knuckles Cyan Recolor by Motobug
-07 - Knuckles Classic Recolor by sunsette, Motobug
-08 - Tribal Knuckles by ghost_user47, StarWaffle, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug
-09 - Espio Knuckles  by ghost_user47, StarWaffle, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug
-10 - Vector Knuckles by ghost_user47, StarWaffle, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug
-11 - Charmy Knuckles by ghost_user47, StarWaffle, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug 
+Model optimizations by Layell
+00-02, 05-06 Knuckles by ghost_user47, ART+, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug
+03 - Knuckles Sandopolis Recolor by Motobug and Chuckles
+04 - Knuckles Hydrocity Recolor by Motobug and Chuckles
+07 - Knuckles Classic Recolor by Motobug and sunsette
+08 - Tribal Knuckles by ghost_user47, ART+, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug
+09 - Espio Knuckles  by ghost_user47, ART+, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug
+10 - Vector Knuckles by ghost_user47, ART+, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug
+11 - Charmy Knuckles by ghost_user47, ART+, Mach7, Tock, Ishmael205, Spex120, Eternal_Yoshi, The RealHeroOfWinds, DukeItOut and Motobug 
 20 - JSR Knuckles by Nanobuds, HeroTechne; revamp by SJ
 21 - JSR Knuckles Yo-Yo Recolor by Motobug; revamp by SJ
 22 - JSR Knuckles Tab Recolor by Motobug; revamp by SJ
 23 - JSR Knuckles DJ Professor K Recolor by DukeItOut, Motobug; revamp by SJ
-AltR - SA2 Gear Knuckles by StarWaffle
-AltZ - Treasure Hunter Knuckles by SJS, StarWaffle, and tryptech
+AltR - SA2 Gear Knuckles by ART+
+AltZ - Treasure Hunter Knuckles by SJS, ART+, and tryptech
 
 ########################################
 Stages
@@ -790,7 +848,7 @@ Crate/Barrel normalization by Motobug, HyperFlame, KingJigglypuff and DukeItOut
 BATTLEFIELD
 Base - Battlefield by PMDT with lighting fixes by DukeItOut and Mawwwk
 L - Battlefield (Melee) by the PMDT, with texture fixes by sporksparks and DukeItOut
-R - Lunar Battlefield by Scout, Puzzled, DukeItOut, MarioDox, mawwwk
+R - Lunar Battlefield by Nezha the Scout, Kapedani, GRAND AZEL, Puzzled, soopercool101, Layell, and DukeItOut
 Z - Torn Sky Battlefield by Dranakar, Scout, WorseDoughnut, MarioDox, davidvkimball, soopercool101
 Y - Battlefield (N64) by Mewtwo2000, Yohan1044, mawwwk
 
@@ -805,9 +863,9 @@ R - Delfino's Secret Plaza by davidvkimball, WorseDoughnut, MarioDox with credit
 Z - Toy Time Galaxy by Nezha the Scout, Taiko, iwantgames with credit to LegacyWolf, Peardian, SpaceCats, ThatStruggleThough, PMDT for camera, lighting changes by DukeItOut, MarioDox
 
 LUIGI'S MANSION
+Base - Luigi's Mansion '23 by Motobug, ilikepizza107, Yorch and mawwwk with credit to WorseDoughnut, Edwguard Flows, MetalLegacy, tyleto and Survivian
 L - King Boo's Illusion by Scout, soopercool101, Cahalan, DukeItOut
-R - Luigi's Secret by WorseDoughnut with credit to Edwguard Flows for the original omega variant. 
-Z - Ghostly Galaxy by MarioDox with credit to mawwwk
+R - Deck Dry Bones '23 by Motobug, mawwwk, and Yorch with credit to Electropolitan 
 
 METAL CAVERN [MUSHROOMY KINGDOM] 
 Base - Metal Cavern Symmetrical by the P+DT with upgrades by DukeItOut and Ryztiq
@@ -819,47 +877,46 @@ BOWSER'S CASTLE [MARIO CIRCUIT]
 Single player mode fixes for all alts by soopercool101
 Base - Texture optimizations by Cahalan.
 L - Texture optimizations by Cahalan.
-R - NES Bowser's Castle by WorseDoughnut, davidvkimball, Dranakar with credit to Xenozoa425, Mewtwo2000, GotHunch, LlamaJuice for some of the stage's assets
+R - NES Bowser's Castle by WorseDoughnut, davidvkimball, Dranakar with credit to Xenozoa425, Mewtwo2000, GotHunch, LlamaJuice for some of the stage's assets, optimizations by Layell
 Z - World Bowser Legal v2 by Nezha the Scout, soopercool101, Snoe with credit to Nick, Pyro, ThatTrueStruggle, Carter, Electropolitan, Soopercool, Sub, FancyEX, UberGruvin, Car, DemKnuckles, Dapperman, Peardian, 
 		LegacyTE for their Base stage, Legacy XP, PMDT
 
 KONGO JUNGLE [75M]
 Base - Ryztiq, DukeItOut with credit to MarioDox, soopercool101 for hazards and EdwguardFlows and PMDT; remake by Yorch
-L    - Hornet Hole by Bad Box Art Mega Man, DSX8, Aafyre with collision changes by DukeItOut
-R    - Hornet Hole Zone by Dranakar, davidvkimball, Scout, Yohan1044, mawwwk with credit to DSX8 for the comb models
+L    - Hornet Hole by Bad Box Art Mega Man, Aafyre with collision changes by DukeItOut
+R    - Hornet Hole Zone by Dranakar, davidvkimball, Scout, Yohan1044, mawwwk
 Z    - Sunset Shore V2 [DKC:R] by Kuro, Ryztiq, soopercool101, Dranakar with credit to Scout, HyperLink, Drazerg, TheCoolGuy
 
 RUMBLE FALLS 
 L - 75M Jungle by davidvkimball, soopercool101, DukeItOut, Yohan1044, MarioDox with credit to Mewtwo2000 and the PMDT for the original stage. 
-R - Rumble Ware by MarioDox with credit to mnnaz05, Dranakar, Nezha the Scout, Ryztiq, davidvkimball, Puzzled, PMDT
-Z - Construction Site by MarioDox with credit to DSX8, davidvkimball
+R - Rumble Ware by MarioDox with credit to mnnaz05, Dranakar, Nezha the Scout, Ryztiq, davidvkimball, Puzzled, PMDT, optimizations by Layell
+Z - Construction Site by MarioDox with credit to davidvkimball, optimizations by Layell
 
-PIRATE SHIP
-L - Ganon's Tower by Scout, DSX8, LegacyWolf with credit to NotZac, RARWRzilla22, mawwwk, Cynapse and Kurukato, Modding Workshop, Smash3c, Smash3, Brawl Vault Vigilantes and KCMM's Discord, brstms: fireluigi12, genandnic, GalaxyManX9, Muggshotter
-R - Ancient Castle Ware	by Electropolitan with credit to iwantgames, DukeItOut, Mewtwo2000, Akeno/Archer, Super Smash Bros., Legend of Jesse, Bluebreon, 
-										xxWutzMercyxx, Dranakar and DSX8
-Z - Molgera's Castle by WorseDoughnut with credit to Ryztiq, LlamaJuice, Scout, soopercool101
+TEMPLE OF TIME
+Base - Twilight Princess Temple of Time by Yorch, GRAND AZEL, mawwwk, Link Tahuterasu Spirit, Skilar the Creative Caveman, SJ, nnebf, Kirbeast, DukeItOut, and Motobug
+L - Bridge of Eldin with platforms by Yorch with credit to Edwguard Flows
+R - OoT Temple of Time by The Project+ Art team, GRAND AZEL, Motobug, Kapedani, SJ, and Yorch with credit to Dranakar, davidvkimball, and Yohan1044
 
 HYRULE CASTLE
-L - Ganon's Castle (OoT 3D) by DukeItOut, ALM5252 with credit to MidnightXS and Mewtwo2000
-R - Hyrule Castle Ware by DukeItOut, MarioDox with credit to Dranakar, davidvkimball, WorseDoughnut, Yohan1044, Kirbeast, Puzzled, DukeItOut, mawwwk with credit to the PMDT
-Z - Great Bay by Ryan, Mewtwo2000, DSX8 with fixes by Nezha, Eon and MarioDox 
+L - Ganon's Castle (OoT 3D) by DukeItOut, ALM5252 with credit to MidnightXS and Mewtwo2000, optimizations by Layell
+R - Hyrule Castle Ware by DukeItOut, MarioDox with credit to Dranakar, davidvkimball, WorseDoughnut, Yohan1044, Kirbeast, Puzzled, DukeItOut, mawwwk with credit to the PMDT, optimizations by Layell
+Z - Kakariko Village by Yorch
 
 NORFAIR
 L - Planet Zebes: Landing Site by MarioDox with credit to PMDT
 R - Norfair Lab by TEITO, DukeItOut, WorseDoughnut, MarioDox with credit to the PMDT
 Z - Crateria by Nezha the Scout with credit to PMDT
 
-FRIGATE ORPHEON
-L - Phendrana by DukeItOut with credit to Akiro, Johnlcb, mawwwk & rihuganon
-R - RidleyLand by Yohan1044, Scout, Dranakar, DukeItOut
-Z - Frigate Orpheon (stuck upsidedown) by soopercool101, DukeItOut with credit to PMDT
+FRIGATE HUSK
+Base - Frigate Husk by The Project+ Art team, Yorch, GRAND AZEL, SJ, mawwwk, and Motobug
+L - Phendrana by DukeItOut with credit to Akiro, Johnlcb, mawwwk & rihuganon, optimizations by Layell
+R - Drowned Frigate by Yorch, The Project+ Art team, and Motobug
 
-YOSHI'S ISLAND (BRAWL)
+YOSHI'S ISLAND
+Base - Yoshi's Island '23 by Motobug and mawwwk, with credit to MarioDox
 L - Yoshi's New Island by Ebola16, secretchaos1, ALM5252, Wingedkoopa67, mawwwk
-R - Yoshi's New Island Inc. Retweak by Nezha the Scout, Dranakar, MarioDox with credit to davidvkimball, Llama Juice, Wingedkoopa67, 
-		ALM5252, TheUltimateKoopa
-Z - Yoshi's Island Flat Night by davidvkimball and DukeItOut, with credit to soopercool101, PyotrLuzhin for the original stage
+R - Yoshi's New Island '23 by Motobug; original WL retweak by Nezha the Scout, Dranakar, MarioDox with credit to davidvkimball, Llama Juice, Wingedkoopa67, ALM5252, TheUltimateKoopa
+Z - Yoshi's Island PM by the PMDT
 
 HALBERD 
 L - Halberd: X (Complete) by Xerom with credit to mew2ds, Ike_Lawliet, Snoopy, Nah, mawwwk with credit to _Data_Drain_
@@ -871,9 +928,9 @@ R - Lylat Destination by davidvkimball with credit to Yohan1044, Dranakar for th
 Z - Flatlat Cruise by WorseDoughnut, soopercool101 with credit to Syvkal & SuperGuzzi (for the Calm Lylat base)
 
 SAFFRON CITY [POKEMON STADIUM 2]
-L - Poké Amie Stadium by MarioDox with credit to Hallow, AlGeorgeRomo, soopercool101, LTE Dev Team, PMDT
-R - Saffron Siege by mawwwk, MarioDox, DukeItOut, Dranakar, davidvkimball, Scout with credit to Yohan1044, Ryztiq and the PMDT. 
-Z - Magnet Train V2 by DukeItOut, davidvkimball, soopercool101 with credit to Skeleton for the original stage and fixes by mawwwk
+L - Poké Amie Stadium by MarioDox with credit to Hallow, AlGeorgeRomo, soopercool101, LTE Dev Team, PMDT, optimizations by Layell
+R - Saffron Siege by mawwwk, MarioDox, DukeItOut, Dranakar, davidvkimball, Scout with credit to Yohan1044, Ryztiq and the PMDT, optimizations by Layell
+Z - Magnet Train V2 by DukeItOut, davidvkimball, soopercool101 with credit to Skeleton for the original stage and fixes by mawwwk, optimizations by Layell
 
 SPEAR PILLAR 
 L - Mewtwo's Lab Destination by Dranakar, davidvkimball, Yohan1044 with credit to mawwwk, Blazerrr, Muhsoce, mariokart64n, wilttilt and flamegoop for the background textures.
@@ -881,25 +938,24 @@ R - Speartlefield by MarioDox, E-scope12 with credit to SmashBroski Tybis for ca
 Z - Ultra Space by Edwguard Flows
 
 PORT TOWN: AERO DIVE
-L - Melee Mute City by Mewtwo2000, DSX8, DukeItOut, Alonzo
+L - Melee Mute City by Mewtwo2000, DukeItOut, Alonzo
 R - Death Race Stadium by davidvkimball, DukeItOut, WorseDoughnut, mawwwk [right platform shader fix by Kirbeast]
 Z - Big Blue Speedway by davidvkimball with credit to mawwwk
 
 INFINITE GLACIER
 Base  - Infinite Glacier by the PMDT, always set in water by DukeItOut with fixes by malistaticy
 R     - Glacier of Dreams by MarioDox, soopercool101
-Z     - Icicle Mountain port by the Smash 2 dev team
+Z     - Icicle Mountain port by the Smash 2 dev team, optimizations by Layell
 
 FLAT ZONE 2
-L - Flat Zone (Melee) by davidvkimball, Scout with credit to DSX8 for the original import. 
+L - Flat Zone (Melee) by davidvkimball, Scout, optimizations by Layell
 R - Flat Destination by davidvkimball, MarioDox, and Yohan1044 with credit to the PMDT for the stage upon which it's based. 
 Z - Flat Zone Stadium by MarioDox, Yohan1044
 
 CASTLE SIEGE
-Base - Castle Siege (P+) by DukeItOut, MarioDox, mawwwk and Sandfall
-L    - Tower of Guidance - Rebirth 1 (Fire Emblem: Radiant Dawn) V3 by DukeItOut and StarWaffle with credit to
-		Albafika, SJS, Dragonrage, DSX8, mariokart64n, BlackJax96, Mewtwo2000
-R    - Castlefield by davidvkimball, Dranakar, DukeItOut, Layell
+L - Tower of Guidance - Rebirth 1 (Fire Emblem: Radiant Dawn) V3 by DukeItOut and ART+ with credit to Albafika, SJS, Dragonrage, mariokart64n, BlackJax96, Mewtwo2000
+R - Castle Siege ToT by DukeItOut, MarioDox, mawwwk and Sandfall
+Z - Castlefield by davidvkimball, Dranakar, DukeItOut, Layell
 
 WARIO LAND [WARIOWARE INC.]
 L - Wario's Castle by MarioDox, soopercool101 with credit to HeroTechne, AlGeorgeRomo, Smash 2 Dev Team
@@ -908,14 +964,14 @@ Z - Waluigi Stadium Ware by mawwwk, David V Kimball, Yohan1044
 
 DISTANT PLANET 
 R - Distant Cave Secret by davidvkimball, WorseDoughnut, Dranakar, MarioDox, mawwwk
-Z - Subspace Jungle Planet by Yohan1044, davidvkimball, mawwwk with credit to the PMDT for the stage upon which its based
+Z - Subspace Jungle Planet by Yohan1044, davidvkimball, mawwwk with credit to the PMDT for the stage upon which its based, optimizations by Layell
 
 SKYWORLD
 R - Skyfield by MarioDox, Yohan1044, DukeItOut with credit to ImNotJavin for the recolor, ClipArtPanda for the cross and the PMDT for the stage upon which it's based.
-Z - Underworld by Yohan1044 with credit to davidvkimball, WorseDoughnut, and the PMDT for the stage upon which its based.
+Z - Underworld v2 by nnebf
 
 FOUNTAIN OF DREAMS [MARIO BROS.]
-L - Sectonia's Gem by Scout, WorseDoughnut, Dranakar, Moblin, Ryztiq
+L - Sectonia's Gem by Scout, WorseDoughnut, Dranakar, Moblin, Ryztiq, optimizations by Layell
 R - Crystal Cave of Dreams by Moblin, Dranakar, Scout, WorseDoughnut, with fixes by DukeItOut and mawwwk
 
 FOURSIDE [NEW PORK CITY]
@@ -933,38 +989,40 @@ R - Shadow Moses Stadium by MarioDox, davidvkimball with credit to Olimario1892,
 Z - ShadowFair by WorseDoughnut, davidvkimball, DukeItOut, mawwwk with credit to the PMDT for the stage upon which it's based.
 
 GREEN HILL ZONE
-Base  - Green Hill Zone by the PMDT, with texture fixes by DukeItOut and mawwwk, shadow fixes by mawwwk and WorseDoughnut, and redirect improvements by soopercool101, optimization by Snoe
-R     - Marble Hill Zone by davidvkimball, WorseDoughnut, TheGag96, Yohan1044, DukeItOut, Layell, mawwwk, Kirbeast, soopercool101 with credit to Szasz, Katakiri, pharoahfawcett, and the PMDT
+Base  - Green Hill Zone Revamp by The Project+ Art team, nnebf, Kirbeast, GRAND AZEL, mawwwk, and tyleto, credit to the PMDT
+R     - Green Hill Zone PM by the PMDT, with texture fixes by DukeItOut and mawwwk, shadow fixes by mawwwk and WorseDoughnut, and redirect improvements by soopercool101, optimization by Snoe
+L     - Marble Hill Zone by davidvkimball, WorseDoughnut, TheGag96, Yohan1044, DukeItOut, Layell, mawwwk, Kirbeast, soopercool101 with credit to Szasz, Katakiri, pharoahfawcett, and the PMDT
 Z     - Radical Highway Zone by nnebf, snoe with credit to PMDT
+X     - Green Hill Zone Brawl, boundary updates by PMDT, additional updates by Kirbeast, GRAND AZEL, tyleto, and Layell
 
 PICTOCHAT
 Base stage displays "Zero Suit Samus" using module edit by DukeItOut. 
 L - Mario Paint REDUX by MarioDox with credit to Nezha the Scout, AlGeorgeRomo
-R - PictoChat Siege by Motobug, Puzzled, davidvkimball, MarioDox, mawwwk with credit to WorseDoughnut, soopercool101, and the PMDT
-Z - Pictochat Zone by davidvkimball, Yohan1044, MarioDox, mawwwk with credit to the PMDT for the stage upon which it's based.
+R - PictoChat of Time by ART+, Motobug, Yorch, Kapedani, Puzzled, davidvkimball, MarioDox, mawwwk with credit to WorseDoughnut, soopercool101
+Z - Pictochat Zone by Yorch, Motobug, Kapedani, davidvkimball, Yohan1044, mawwwk, and MarioDox with credit to the PMDT for the stage upon which it's based.
 
 HANENBOW
 R - Fountainbow by davidvkimball, WorseDoughnut, Yohan1044 with credit to Mewtwo2000 and the PMDT
 Z - Hanenbow Destination by Layell with credit to davidvkimball, jlclpepe, and Sandfall
 
 TEMPLE
-R - Temple of Time Ware by Dranakar, davidvkimball, Yohan1044 with credit to DSX8
+R - Hyrule Courtyard's Mansion by Motobug with credit to Dranakar, davidvkimball, Nezha, WorseDoughnut, Yohan1044, CutterKirby64, Black Boo, SmashHackers, Snoopy
 Z - Skyloftville V2 by Dranakar, Scout, davidvkimball, DukeItOut, soopercool101
 
 YOSHI'S STORY
-R - Yoshi's Sanctuary 64 by WorseDoughnut, Scout with credit to HyperL!nk, Mewtwo2000
-Z - Yoshi's Cookie by MarioDox
+R - Yoshi's Sanctuary 64 by WorseDoughnut, Scout with credit to HyperL!nk, Mewtwo2000, optimizations by Layell
+Z - Yoshi's Cookie by MarioDox, optimizations by Layell
 
 JUNGLE JAPES
-L - Kongo Jungle Melee Upgrades + Barrel Hazard by MarioDox, Wario358 with credit to Dr., Elliot.
-R - KongoWare by Dranakar, Scout, Ryztiq, davidvkimball, Puzzled 
-Z - Kongo Island by Ubergruvin, MarioDox with credit to WorseDoughnut, Dranakar, davidvkimball, DukeItOut, MarioDox with credit to the PMDT 
+L - Kongo Jungle Melee Upgrades + Barrel Hazard by MarioDox, Wario358 with credit to Dr., Elliot, optimizations by Layell
+R - KongoWare by Dranakar, Scout, Ryztiq, davidvkimball, Puzzled, optimizations by Layell
+Z - Kongo Island by Ubergruvin, MarioDox with credit to WorseDoughnut, Dranakar, davidvkimball, DukeItOut, MarioDox with credit to the PMDT, optimizations by Layell
 		for the stage upon which it's based, and the Smash 2 Team for the Kongo Jungle BG. 
 
 ONETT
 L - Hazardless Onett by davidvkimball, soopercool101, WorseDoughnut
 R - Onettville by davidvkimball, WorseDoughnut, soopercool101, DukeItOut, mawwwk with credit to the PMDT for the stage parameter data, collisions, etc. 
-Z - Neutral Onett by soopercool101 with credit to Ryztiq
+Z - Neutral Onett by soopercool101 with credit to Ryztiq, optimizations by Layell
 
 DREAM LAND
 L - Winter Dreamland by Kirbeast with credit to Ryztiq, AZPM, t_Místico_t
@@ -979,27 +1037,27 @@ Z - Piranha Plant Heights by MarioDox with credit to Hallow, Peardian, PMDT
 
 CORNERIA
 L   - Sector Z - Star Fox 64 3D-styled by Allav866, Mewtwo2000, Mawwwk
-R   - Fountain of Sauria by davidvkimball, MarioDox with credit to Edwguard Flows. 
+R   - Fountain of Sauria v2 by Yorch, credit to CrashWaffleCat, davidvkimball, MarioDox, and Edwguard Flows 
 Z   - Sector Z Ware by soopercool101, davidvkimball 
 L+R - Venom port by MarioDox, fixes by Cahalan
 
 BIG BLUE
 L - Big Blue Speedway by davidvkimball
 R - Big Blueville by Dranakar, davidvkimball with credit to WorseDoughnut, DukeItOut, Yohan1044, Ca$inoWolf and mawwwk
-Z - Falcon Flyer by davidvkimball, WorseDoughnut, Yohan1044, soopercool101, mawwwk with credit to Mewtwo2000, Ryztiq, Hope4NeWDaY
+Z - Falcon Flyer by davidvkimball, WorseDoughnut, Yohan1044, soopercool101, mawwwk with credit to Mewtwo2000, Ryztiq, Hope4NeWDaY, optimizations by Layell
 
 BRINSTAR
 Base - Planet Zebes 64 Remake by Yorch
 L - Brinstar Depths by Mewtwo2000 and the Smash 2 dev team
 R - Brinstarfield by davidvkimball, Scout, Yohan1044, mawwwk and soopercool101 with credit to Edwguard Flows, LenSho, Ca$ino Wolf, and the PMDT.
-Z - Brinstar Depths FD 
+Z - RidleyLand by Yohan1044, Scout, Dranakar, DukeItOut
 
 POKEMON STADIUM 2
-Base - Pokemon Stadium 2 by the PMDT, with credit to Mewtwo2000 for shadows and background fixes [optimization and lighting edits by mawwwk, right platform shader fix by Kirbeast]
-L    - Ultra Ball Stadium by Wyld and Mawwwk with credit to t_Mistico_t and Ryztiq
+Base - Pokemon Stadium 2 by the PMDT, with credit to Mewtwo2000 for shadows and background fixes [optimization and lighting edits by mawwwk, Layell, right platform shader fix by Kirbeast]
+L    - Ultra Ball Stadium by Wyld and Mawwwk with credit to t_Mistico_t and Ryztiq, optimizations by Layell
 R    - Radiant Stadium vN (Light) by Nezha the Scout, soopercool101, Layell, Dranakar with credit to Hallow, ZugZug, MarioDox, mawwwk
 Z    - Abandoned Stadium by Kirbeast with credit to Bushwookie, Yohan1044, Nezha, Soopercool101, LazyRed, Lensho, and Mewtwo2000, E-scope12, 
-			and RandomTBush for the Darkrai Sun & Moon Model
+			and RandomTBush for the Darkrai Sun & Moon Model, optimizations by Layell
 
 TRAINING ROOM
 Base - Pillar Training Room by mawwwk and soopercool101 with credit to the PMDT, optimizations by DukeItOut and KingJigglypuff
@@ -1012,30 +1070,32 @@ MUSHROOM KINGDOM
 Base - Mushroom Kingdom 64 Upgrades + Plant by MarioDox with credit to Mewtwo2000, DukeItOut
 L    - Mushroomy Kingdom with Stamina Wraparound fixes by MarioDox
 L+R  - Mushroomy Underground with Stamina Wraparound fixes by MarioDox
-R    - Mushroom Mix GHZ by Electropolitan with credit to Rayved, Legacy Wolf, StupidMarioFan1, MarioDox, LenSho, PMDT
+R    - Mushroomy Kingdom Metal Cavern by Yorch
 Z    - Mushroom Kingdom II Improvements by MarioDox with credit to AlGeorgeRomo, Smash 2 Dev Team
 Y	 - Mushroom Kingdom Melee by the Smash 2 dev team
 
 MARIO CIRCUIT
 L - Mario Circuit Light by Cahalan, CaliburZx, MarioDox
-R - Mario Circuit Secret by DukeItOut, StarWaffle with credit to PMDT
+R - Mario Circuit Secret by DukeItOut, ART+ with credit to PMDT
 Z - Rainbow Road by DukeItOut, MarioDox, Mawwwk
 
 DINOSAUR LAND [YOSHI'S ISLAND (MELEE)]
-L - SMW Bowser's Castle by davidvkimball, DukeItOut, MarioDox, soopercool101 with credit to StarWaffle for most of the models and stage assets, Scout, LlamaJuice and the PMDT for the lava model, fire enemies, Thwomp models, and Dry Bones model. 
+L - SMW Bowser's Castle by davidvkimball, DukeItOut, MarioDox, soopercool101 with credit to ART+ for most of the models and stage assets, Scout, LlamaJuice and the PMDT for the lava model, fire enemies, Thwomp models, and Dry Bones model. 
 R - Yoshi's Island (Melee) Zone by Puzzled, Ryztiq, Dranakar with credit to DukeItOut, davidvkimball, and the PMDT.
-Z - HC: Yoshi's Island Melee by MarioDox with credit to PMDT
+Z - Cheese Bridge by Peardian, Kapadani, and GRAND AZEL
 
 BELL TOWER
 Base - Bell Tower by LenSho
 L    - Whirl Island by Dranakar, Yohan1044, WorseDoughnut, davidvkimball, with credit to Lensho
-R    - Ho-Oh Stadium 2 by Yohan1044 with credit to Scout, davidvkimball, LazyRed, Mewtwo2000, Mawwwk and LenSho for the original stage [right platform shader fix by Kirbeast]
-Z    - Mt. Pyre by LenSho with credit to mawwwk
+R    - Ho-Oh Stadium 2 by Yohan1044 with credit to Scout, davidvkimball, LazyRed, Mewtwo2000, Mawwwk and LenSho for the original stage [right platform shader fix by Kirbeast] optimizations by Layell
+Z    - Sprout Tower by Puffy, mawwwk with credit to LenSho, Skeleton
 
 CLOCK TOWN
 Base - Clock Town by davidvkimball, Scout, Dranakar, DukeItOut, mawwwk, Layell with credit to KTH for the Clock Town import, Lunoz for the Skull Kid model import, and the PMDT for the Mewtwo animations used for Skull Kid and SSF2 for the stage concept
-L    - Bridge of Eldin: X V2 Night by Electropolitan with credit to Xerom for X Layout, Edwguard Flows omega main platform, soopercool101 merging the two
+L    - Majora's Room by Electropolitan with credit to DSX8, LlamaJuice, Mewtwo2000, Ryztiq, soopercool101
 R    - Clock Town by davidvkimball, Scout, Dranakar, DukeItOut, mawwwk, Layell with credit to KTH for the Clock Town import, Lunoz for the Skull Kid model import, and the PMDT for the Mewtwo animations used for Skull Kid
+Z - Great Bay by Ryan, Mewtwo2000 with fixes by Nezha, Eon and MarioDox
+ZY - Great Bay (no swimming) by Ryan, Mewtwo2000 with fixes by Nezha, Eon and MarioDox
 
 WARIOWARE, INC
 Base  - WarioWare Inc. with Turbo Mode rewards by DukeItOut
@@ -1047,11 +1107,11 @@ GOLDEN TEMPLE
 Base  - Golden Temple by Dranakar, Kuro, MarioDox, DukeItOut, mawwwk
 L     - Temple Tempest v2 by Nezha the Scout, DukeItOut, malistaticy, BustedSoda with credit to Sonic Konga, Malistatic
 R     - Bananaville by Dranakar, Scout, davidvkimball, DukeItOut, soopercool101, mawwwk
-Z     - Jungle Hijynx (back section) by DukeItOut, H!perLink, WorseDoughnut, DSX8
+Z     - Jungle Hijynx (back section) by DukeItOut, H!perLink, WorseDoughnut
 
 OIL DRUM ALLEY
 Base  - Oil Drum Alley by Nezha the Scout, BustedSoda with credit to Mattress87, Tonberry2k, MarioDox, SooperCool, Umbravivens, Peardian, Russmars2, FancyEX, mawwwk
-L     - The Flying Krock by DukeItOut, davidvkimball, Yohan1044, Scout, ,awwwk with credit to Peardian for the models, thecoolguyXJ9 for the import, and BullockDS for the K. Rool Heads 
+L     - The Flying Krock by DukeItOut, davidvkimball, Yohan1044, Scout, mawwwk with credit to Peardian for the models, thecoolguyXJ9 for the import, and BullockDS for the K. Rool Heads, optimizations by Layell
 R     - Fear Factory WW by Mariodox, Nezha the Scout, BustedSoda with credit to BustedSoda, Malistaticy, MarioDox, SooperCool, Russmars2, Mattress87, 
 			Tonberry2k, TheUltimateKoopa, Umbravivens, Peardian, mawwwk, Legacy Team
 Z     - Fear Factory RF	by Nezha the Scout, BustedSoda with credit to BustedSoda, Malistaticy, MarioDox, SooperCool, Russmars2, Mattress87, 
@@ -1063,36 +1123,34 @@ L     - Cooki Country Siege by DukeItOut, MarioDox, Mawwwk with credit to Nezha 
 R     - Cookie Country of Dreams by Layell, Ryztiq, Dranakar, Yohan1044, with credit to Angelglory, Scout, Codex-9, Arko Games, Mewtwo2000 for the original stage and import
 Z     - Candy Constellation by Skelton
 
-METROID LAB
-Base  - Metroid Lab by Ryztiq
-L     - Tallon Canyon by Skeleton, Yohan, David V Kimball, DukeItOut
-R     - Metroid Lab Secret by TEITO with credit to Ryztiq
-Z     - Metroid Lab X by DukeItOut
+CERES SPACE COLONY
+Base  - Ceres Space Colony by nnebf, credit to Ryztiq
+L     - Tallon Canyon by Skeleton, Yohan, David V Kimball, DukeItOut, optimizations by Layell
+R     - Ceres Space Colony Husk by Motobug and nnebf
+Z     - Ceres Space Colony X by DukeItOut and nnebf, optimizations by Layell
 
 VENUS LIGHTHOUSE
-Base - Venus Lighthouse by LlamaJuice, Mewtwo2000 with credit to MewTwo2000, DSX8, Syvkal, Segtendo, Eternal Yoshi, Shin F., Ryztiq
-L    - Mercury Lighthouse by Sandfall with credit to LlamaJuice, mawwwk and mckayr12
-R    - Venus Lighthouse WW Electropolitan with credit to LlamaJuice, Mewtwo2000, DSX8, Syvkal, Segtendo,
-		Eternal Yoshi, Shin F., Ryztiq, PMDT
-Z    - Mercury Lighthouse WW by Electropolitan with credit to LlamaJuice, Mewtwo2000, mawwwk, mckayr12, DSX8, Syvkal, Segtendo, Eternal Yoshi, 
-		Shin F., Ryztiq, PMDT
+Base - Venus Lighthouse by LlamaJuice, Mewtwo2000, Grand Azel with credit to MewTwo2000, Syvkal, Segtendo, Eternal Yoshi, Shin F., Ryztiq
+L    - Mercury Lighthouse by Sandfall, Grand Azel with credit to LlamaJuice, mawwwk and mckayr12
+R    - Venus Lighthouse WW by nnebf, Electropolitan, and Grand Azel with credit to LlamaJuice, Mewtwo2000, Syvkal, Segtendo, Eternal Yoshi, Shin F., Ryztiq, PMDT
+Z    - Mercury Lighthouse WW by nnebf, Electropolitan, and Grand Azel with credit to LlamaJuice, Mewtwo2000, mawwwk, mckayr12, Syvkal, Segtendo, Eternal Yoshi, Shin F., Ryztiq, PMDT
 		
 SKY SANCTUARY
-Base - Sky Sanctuary by Noserus
-L    - Pumpkin Hill Zone (Retextured Main Platform) by Prim8 and DukeItOut with credit to ᆘ유 | 유유, PMDT
-R    - Night Sky Sanctuary Zone by jetfantastic, Nezha the Scout with credit to Nezha, SOJ and Noserus
-Z    - Sky Sanctuary Zone by MarioDox with credit to Noserus, former PMDT
+Base - Sky Sanctuary Zone by nnebf, GRAND AZEL, and Yorch, credit to Burrotis/SoN1c2001 for the Death Egg render and Noserus for the original stage 
+L    - Pumpkin Hill Zone (Retextured Main Platform) by Prim8 and DukeItOut with credit to ᆘ유 | 유유, PMDT, optimizations by Layell
+R    - Chaos Angel by Nezha, Layell, Kirbeast, and GRAND AZEL
+Z    - Sky Sanctuary Husk by Yorch, nnebf, and GRAND AZEL 
 
 DEAD LINE
 Base - Dead Line v2 by Nezha the Scout with credit to Segtendo, DukeitOut, Pyro, N!ck, Snoe
 L    - Chemical Plant Zone Revamp v1.1 (for Project M) by Puzzled, KTH, Nezha the Scout with credit to PegasusKnt, Mewtwo2000, LegacyWolf, TheBen, 
 		TheUltimateKoopa, and the Smash 2 Team
 R    - Dead Line Zone v2 by Nezha the Scout with credit to Segtendo, DukeitOut, Pyro, N!ck, Snoe
-Z    - Eggman Zone by MarioDox with credit to LenSho, PMDT
+Z    - Space Colony ARK: Crazy Gadget (SSZ 1:1) by Crashknight0 with credit to DSX8, MarioDox, GrandAzelf, davidvkimball, WorseDoughnut, Yohan1044, soopercool101, mawwwk, Mewtwo2000, Ryztiq, Hope4NeWDaY, PMDT
 
 DRACULA'S CASTLE
 Base - Dracula's Castle by the PMDT with credit to mawwwk
-L    - Clock Tower by Edwguard Flows with credit to mawwwk
+L    - Clock Tower by Edwguard Flows with credit to mawwwk, optimizations by Layell 
 R    - Dracula's Castle Secret by davidvkimball, WorseDoughnut with credit to Edwguard Flows, mawwwk for the Dracula's Castle base stage and the PMDT for the original Dracula's Castle stage. 
 Z    - Abbey Ruins by Edwguard Flows with credit to mawwwk
 
@@ -1100,11 +1158,11 @@ SUBSPACE
 Base - Subspace Emissary Final Version by Mr. AI | Sluigi123 with credit to Lakitwo, mawwwk and Mewtwo2000
 L    - Ruined Siege by Layell, davidvkimball, mawwwk
 R    - Subspace Battlefield [ProjectM3.6] by t_Místico_t with credit to sporksparks, nikeru, mawwwk, -SQueen- and rihuganon
-Z    - SSE Forest by PMDT with optimizations by mawwwk
+Z    - SSE Forest by PMDT with optimizations by mawwwk and Layell
 
 RAINBOW CRUISE
 L - Bob-Omb Battlefield by Nezha the Scout, Flambo237, MarioDox, Puzzled, Survivian, Electropolitan with credit to Flambo, KingJigglypuff, Kirbeast, Layell, CBM Discord server
-R - Rainbow Cruiseware by MarioDox with credit to GBC, DSX8, Nezha the Scout, PMDT
+R - Rainbow Cruiseware by MarioDox with credit to GBC, Nezha the Scout, PMDT
 Z - Mushroom Gorge by MarioDox
 Y - Dr. Mario's Office by ALM5252, TroyAnthony
 
@@ -1112,6 +1170,11 @@ POKE FLOATS
 Port done by Soopercool101 and the Smash 2 dev team
 L - Poke Floats 2 by Eternal Yoshi with credit to Mewtwo2000
 R - Floats Stadium by MarioDox with credit to BullockDS, coolguy, AlGeorgeRomo, soopercool101, LTE Dev Team, PMDT
+
+PIRATE SHIP
+L - Ganon's Tower by LegacyWolf with credit to NotZac, RARWRzilla22, mawwwk, Cynapse and Kurukato, Modding Workshop, Smash3c, Smash3, Brawl Vault Vigilantes and KCMM's Discord, brstms: fireluigi12, genandnic, GalaxyManX9, Muggshotter
+R - Ancient Castle Ware	by Electropolitan with credit to iwantgames, DukeItOut, Mewtwo2000, Akeno/Archer, Super Smash Bros., Legend of Jesse, Bluebreon, xxWutzMercyxx, and Dranakar
+Z - Molgera's Castle by WorseDoughnut with credit to Ryztiq, LlamaJuice, Scout, soopercool101
 
 RESULTS SCREEN
 Project+ Result Screen by Motobug, denz with credit to the PMDT
@@ -1123,7 +1186,7 @@ Config Training Room by soopercool101 with credit to the PMDT
 Menus/UI/HUD
 ########################################
 
-Original CSS by StarWaffle, Motobug, Ryztiq, modified by davidvkimball, denz, Yohan1044, mawwwk, and Kirbeast
+Original CSS by ART+: Motobug, Ryztiq, modified by davidvkimball, denz, Yohan1044, mawwwk, and Kirbeast
 New SSS previews, titles and images by Motobug and Bird
 Wide Preview Stage Selection Screen by Yohan1044 with custom preview images by davidvkimball, Puzzled, mawwwk
 Full size Random Stage Select previews by mawwwk, Motobug

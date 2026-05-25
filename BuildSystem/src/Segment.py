@@ -69,6 +69,8 @@ class Segment2:
             prevEndAddress = s.address + s.size
 
     def canInsert(self, section: Section):
+        # print(f'>>> SELF: {self}')
+        # print(f'>>> SECTION: {section}')
         return section.address >= self.startAddress and section.address + section.size <= self.endAddress
 
     def currentEnd(self):
