@@ -171,15 +171,19 @@ namespace Match {
 
 namespace FrameAdvance {
 
-    bool isRollback = false;
     // how many game logic frames we should simulate this frame
     int framesToAdvance = 1;
     int getFramesToAdvance() { return framesToAdvance; }
+    bool IsResimFrame() {
+        return framesToAdvance > 1;
+    }
 
     // sets the number of frames of game logic to run every frame
-    void TriggerFastForwardState(u8 numFramesToFF) {
+    void TriggerFastForwardState(int numFramesToFF) {
+        OSReport("trigger fastforward %i\n", numFramesToFF);
         if (framesToAdvance == 1 && numFramesToFF > 0) {
             framesToAdvance = numFramesToFF;
+            OSReport("Bumping framesToAdvance %i\n", framesToAdvance);
         }
     }
     void StallOneFrame() { 
@@ -263,8 +267,9 @@ namespace FrameAdvance {
     void ProcessGameSimulationFrame(FrameData* inputs) {
         _OSDisableInterrupts();
         u32 gameLogicFrame = getCurrentFrame();
+        OSReport("sim frame %u isRollback: %i\n", gameLogicFrame, IsResimFrame());
         // if we are currently resimulating
-        if (isRollback) {
+        if (IsResimFrame()) {
             if (!pastFrameDatas.empty()) {
                 //OSReport("Finding inputs for resim frame %u\n", gameLogicFrame);
                 FindInputsForResimFrame(gameLogicFrame, inputs);
@@ -284,10 +289,12 @@ namespace FrameAdvance {
             free(overrideInputs);
             overrideInputs = nullptr;
         }
+#ifdef NETPLAY_IMPL
         if (inputs->playerFrameDatas[0].frame != gameLogicFrame || inputs->playerFrameDatas[1].frame != gameLogicFrame) {
             OSReport("Game frame != injected inputs frame! %u %u  frame: %u\n", inputs->playerFrameDatas[0].frame, inputs->playerFrameDatas[1].frame, gameLogicFrame);
             //printFrameData(*inputs);
         }
+#endif
         _OSEnableInterrupts();
     }
 
@@ -441,8 +448,6 @@ namespace FrameLogic {
         EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo)).Send();
         // trigger fast forward (resimulation)
         FrameAdvance::TriggerFastForwardState(numFramesToResimulate);
-        // mark current state as rolling back/resim-ing
-        FrameAdvance::isRollback = true;
     }
 
     // takes in a RollbackInfo struct, and whether or not we should switch the endianness of the struct members
@@ -634,10 +639,6 @@ namespace FrameLogic {
 
         if (Netplay::IsInMatch()) {
             _OSDisableInterrupts();
-            // reset flag to be used later
-            FrameAdvance::isRollback = false;
-
-
             // lol
             DEFAULT_MT_RAND->seed = 0x496ffd00;
 
@@ -687,17 +688,20 @@ namespace FrameLogic {
                 const int numFramesToRollback = MAX_ROLLBACK_FRAMES;
 
                 if (shouldRollback && currentFrame > 250) {
-                    FrameAdvance::isRollback = true;
                     RollbackInfo rollbackInfo;
                     rollbackInfo.beginFrame = getCurrentFrame() - numFramesToRollback;
                     rollbackInfo.endFrame = getCurrentFrame();
-                    OSReport("numframestorollback %i  beginFrame: %u    endFrame: %u\n", numFramesToRollback, rollbackInfo.beginFrame, rollbackInfo.endFrame);
                     rollbackInfo.hasPreserveBlocks = false;
                     rollbackInfo.pastFrameDataPopulated = true;
+                    OSReport("numframestorollback %i  beginFrame: %u    endFrame: %u\n", numFramesToRollback, rollbackInfo.beginFrame, rollbackInfo.endFrame);
                     EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, &rollbackInfo, sizeof(RollbackInfo));
-                    if (stateReloadPckt.Send()) {
-                        FrameAdvance::TriggerFastForwardState(numFramesToRollback  +1);
+                    { stateReloadPckt.Send(); 
+                        // +1 so we can advance one ahead of where we are, which isn't how normal rollback netplay works but for debugging it's what we want
+                        int numFramesToResim = getNumFramesToResim(&rollbackInfo) + 1;
+                        OSReport("num frames to resim %i\n", numFramesToResim);
+                        FrameAdvance::TriggerFastForwardState(numFramesToResim);
                     }
+                    OSReport("post-rollback game frame %i\n", getCurrentFrame());
                 }
                 
                 
@@ -774,7 +778,7 @@ namespace FrameLogic {
     )");
     vector<char*> names = {};
     extern "C" bool ShouldSkipGfTaskProcess(u32* gfTask, u32 task_type) {
-        if (FrameAdvance::isRollback) { // if we're resimulating, disable certain tasks that don't need to run on resim frames.
+        if (FrameAdvance::IsResimFrame()) { // if we're resimulating, disable certain tasks that don't need to run on resim frames.
             char* taskName = (char*)(*gfTask); // 0x0 offset of gfTask* is the task name
             //OSReport("Processing task %s\n", taskName);
             for (int i = 0; i < NUM_NON_RESIM_TASKS; i++) {
