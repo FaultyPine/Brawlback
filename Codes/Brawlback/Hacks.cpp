@@ -17,6 +17,25 @@ extern "C" void cameraFFBypass() {
 }
 
 
+// TODO: skip effects processing during resim frames
+// lbz	r0, 0x00ED (r30)
+#if 0
+INJECTION(EffectSystemRollbackSkip, 0x8001773c, R"(
+    SAVE_REGS
+    bl shouldSkipEffectSystem
+    cmpwi r3, 0
+    beq RUN_EFFECT_SYSTEM
+    li r0, 0
+    stb r0, 0x00ED (r30)
+    RUN_EFFECT_SYSTEM:
+    RESTORE_REGS
+
+    lbz	r0, 0x00ED (r30)
+)");
+extern "C" bool shouldSkipEffectSystem() {
+    return FrameAdvance::IsResimFrame();
+}
+#endif
 
 
 // ~~~~~~~~~ RUMBLE ~~~~~~~~~~~~~~~
