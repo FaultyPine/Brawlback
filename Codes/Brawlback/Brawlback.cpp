@@ -180,10 +180,8 @@ namespace FrameAdvance {
 
     // sets the number of frames of game logic to run every frame
     void TriggerFastForwardState(int numFramesToFF) {
-        OSReport("trigger fastforward %i\n", numFramesToFF);
         if (framesToAdvance == 1 && numFramesToFF > 0) {
             framesToAdvance = numFramesToFF;
-            OSReport("Bumping framesToAdvance %i\n", framesToAdvance);
         }
     }
     void StallOneFrame() { 
@@ -289,6 +287,17 @@ namespace FrameAdvance {
             free(overrideInputs);
             overrideInputs = nullptr;
         }
+#ifndef NETPLAY_IMPL
+        // mainly for offline test mode. No valid overridden inputs = fall back to just using the regular current inputs
+        else {
+            u8 numPlayers = Netplay::getGameSettings()->numPlayers;
+            for (int i = 0; i < numPlayers; i++) {
+                inputs->playerFrameDatas[i].pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[i]);
+                inputs->playerFrameDatas[i].frame = gameLogicFrame;
+                inputs->playerFrameDatas[i].playerIdx = i;
+            }
+        }
+#endif
 #ifdef NETPLAY_IMPL
         if (inputs->playerFrameDatas[0].frame != gameLogicFrame || inputs->playerFrameDatas[1].frame != gameLogicFrame) {
             OSReport("Game frame != injected inputs frame! %u %u  frame: %u\n", inputs->playerFrameDatas[0].frame, inputs->playerFrameDatas[1].frame, gameLogicFrame);
@@ -382,11 +391,13 @@ namespace FrameLogic {
         // +1 to get back to the frame we were on before. 
         // If we started predicting on frame 100, and ended on frame 102, we should rollback to frame 100, 
         // then resim 100, 101, and 102 (3 frames). 102-100+1 = 3
-        int numFramesToResim = ((int)rbInfo->endFrame - (int)rbInfo->beginFrame) + 1;
+        int numFramesToResim = (int)rbInfo->endFrame - (int)rbInfo->beginFrame;
         if (numFramesToResim <= 0 || numFramesToResim > MAX_ROLLBACK_FRAMES) {
             OSReport("Invalid num frames to resim! %i\n", numFramesToResim);
+            ASSERT(false);
             return 0;
         }
+        numFramesToResim += 1;
         return numFramesToResim;
     }
 
@@ -444,10 +455,11 @@ namespace FrameLogic {
             OSReport("ExecuteRollback called, but rollbackinfo pastFrameDataPopulated was false!\n");
         }
 
-        // do the actual rollback (load state)
-        EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo)).Send();
-        // trigger fast forward (resimulation)
+        // trigger/"queue up" fast forward (resimulation)
         FrameAdvance::TriggerFastForwardState(numFramesToResimulate);
+        // do the actual rollback (load state)
+        EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, rollbackInfo, sizeof(RollbackInfo));
+        stateReloadPckt.Send();
     }
 
     // takes in a RollbackInfo struct, and whether or not we should switch the endianness of the struct members
@@ -531,11 +543,10 @@ namespace FrameLogic {
     void ReadFrameResponse() {
         // game (us, right here) specifies how much memory to read in from emulator.
         
-        u8* cmd_byte_read = (u8*)malloc(1);
+        u8 cmd_byte_read[1];
         // read in one byte from emulator to see how to deal with the rest of the exi buffer
         readEXI(cmd_byte_read, 1, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
         u8 cmd_byte = cmd_byte_read[0];
-        free(cmd_byte_read);
 
         u32 read_data_size = 0;
 
@@ -639,7 +650,7 @@ namespace FrameLogic {
 
         if (Netplay::IsInMatch()) {
             _OSDisableInterrupts();
-            // lol
+            // TEMP
             DEFAULT_MT_RAND->seed = 0x496ffd00;
 
             u32 currentFrame = getCurrentFrame();
@@ -751,13 +762,11 @@ namespace FrameLogic {
     }
 
     // very end of main game loop, after all game logic and graphics calls
-    SIMPLE_INJECTION(endMainLoop, 0x800174fc, "lwz r3, 0x100(r23)") {
-        
-    }
+    //SIMPLE_INJECTION(endMainLoop, 0x800174fc, "lwz r3, 0x100(r23)") {}
 
 
 
-
+    #if 0
     // resim optimization
     // gfTask names listed in the array below
     // will not be run during resimulation frames
@@ -790,6 +799,7 @@ namespace FrameLogic {
         }
         return false;
     }
+    #endif
     
 
 

@@ -1,6 +1,6 @@
 #include "Brawlback.h"
 
-
+#if 0
 INJECTION("cameraRollbackBypass3", 0x8009fee4, R"(
     rlwinm. r0, r0, 0x1c, 0x1f, 0x1f
     bl cameraFFBypass
@@ -15,6 +15,7 @@ extern "C" void cameraFFBypass() {
         )");
     }
 }
+#endif
 
 
 // TODO: skip effects processing during resim frames
@@ -39,7 +40,7 @@ extern "C" bool shouldSkipEffectSystem() {
 
 
 // ~~~~~~~~~ RUMBLE ~~~~~~~~~~~~~~~
-
+#if 0
 // updateGame/[gfPadSystem]
 INJECTION("PadRumbleInterpretNop", 0x8002a520, "nop");
 
@@ -55,3 +56,4 @@ INJECTION("PadRumbleRemoveIDNop", 0x800484cc, "nop");
 
 // setRumble/[IpHuman]
 INJECTION("lbSetRumbleNop", 0x80048430, "nop");
+#endif
