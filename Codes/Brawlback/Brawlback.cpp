@@ -92,12 +92,6 @@ void InjectBrawlbackPadToGame(const BrawlbackPad& pad, u8 playerIdx) {
     InjectBrawlbackPadToPadStatus(gamePad, pad);
 }
 
-void InjectFrameDataToPadStatusArray(FrameData* fd, gfPadGamecube* pad_statuses) {
-    for (int i = 0; i < Netplay::getGameSettings()->numPlayers; i++) {
-        InjectBrawlbackPadToPadStatus(&pad_statuses[i], fd->playerFrameDatas[i].pad);
-    }
-}
-
 // fill gamesettings struct with game info
 void fillOutGameSettings(GameSettings* settings) {
     settings->randomSeed = DEFAULT_MT_RAND->seed;
@@ -234,18 +228,6 @@ namespace FrameAdvance {
 
     // array of inputs for each player to get injected
     PlayerFrameData* overrideInputs = nullptr;
-
-    // playerFrameDatas should have numPlayers # of framedatas
-    void InjectInputsForAllPlayers(PlayerFrameData* playerFrameDatas) {
-        OSReport("Injecting inputs for frame %u\n", playerFrameDatas->frame);
-        for (int i = 0; i < Netplay::getGameSettings()->numPlayers; i++) {
-            PlayerFrameData* playerFrameData = &playerFrameDatas[i];
-            if (i != playerFrameData->playerIdx) {
-                OSReport("incorrect (?) playerIdx in playerframedata! frame %u pIdx %u\n", playerFrameData->frame, (unsigned int)playerFrameData->playerIdx);
-            }
-            InjectBrawlbackPadToGame(playerFrameData->pad, playerFrameData->playerIdx);
-        }
-    }
 
     // for keeping track of the past few framedatas
     vector<FrameData*> pastFrameDatas = {};
