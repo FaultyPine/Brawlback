@@ -27,7 +27,7 @@
 // ------------------------------------
 
 // make sure this is the same as the one in BrawlbackUtility.cpp on dolphin side
-#define MAX_ROLLBACK_FRAMES 6
+#define MAX_ROLLBACK_FRAMES 7
 
 #define MAX_REMOTE_PLAYERS 3
 #define MAX_NUM_PLAYERS 4

@@ -315,7 +315,14 @@ namespace FrameAdvance {
         _OSDisableInterrupts();
         if (Netplay::IsInMatch()) {
             ProcessGameSimulationFrame(&currentFrameData);
+            EXIPacket(CMD_GAMESIM_UPDATE).Send();
         }
+        _OSEnableInterrupts();
+    }
+    
+    SIMPLE_INJECTION(endOfGameProc, 0x800177cc, "addi sp, sp, 32") {
+        _OSDisableInterrupts();
+        EXIPacket(CMD_GAMESIM_UPDATE_END).Send();
         _OSEnableInterrupts();
     }
 
