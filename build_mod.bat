@@ -18,6 +18,9 @@ echo ====================================
 echo Building mod files...
 echo ====================================
 
+mkdir "SDCard/Project+/codes"
+mkdir "SDCard/vBrawl/codes"
+
 %cmakebuild%
 IF %ERRORLEVEL% NEQ 0 (echo Error:%ERRORLEVEL% && exit /b)
 %pymovefiles% 
