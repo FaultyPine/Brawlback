@@ -40,10 +40,9 @@ extern "C" bool shouldSkipEffectSystem() {
 
 
 // ~~~~~~~~~ RUMBLE ~~~~~~~~~~~~~~~
-#if 0
+
 // updateGame/[gfPadSystem]
 INJECTION("PadRumbleInterpretNop", 0x8002a520, "nop");
-
 
 // removeRumbleMask/[IpHuman]
 INJECTION("PadRumbleRemoveMaskNop", 0x80048500, "nop");
@@ -56,4 +55,3 @@ INJECTION("PadRumbleRemoveIDNop", 0x800484cc, "nop");
 
 // setRumble/[IpHuman]
 INJECTION("lbSetRumbleNop", 0x80048430, "nop");
-#endif

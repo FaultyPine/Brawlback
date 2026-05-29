@@ -176,6 +176,8 @@ struct RollbackInfo {
 void fillOutGameSettings(GameSettings* settings);
 void MergeGameSettingsIntoGame(GameSettings* settings);
 
+void RegisterHeapRegionExclusion(void* startAddress, u32 size);
+
 namespace FrameLogic {
     void SaveState(u32 frame);
 }

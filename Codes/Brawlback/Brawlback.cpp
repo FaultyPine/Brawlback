@@ -1,11 +1,28 @@
 #include "Brawlback.h"
 #include "Netplay.h"
 #include "GmGlobalModeMelee.h"
-
+#include "Memory.h"
 
 
 STARTUP(startupNotif) {
     OSReport("~~~~~~~~~~~~~~~~~~~~~~~~ Brawlback ~~~~~~~~~~~~~~~~~~~~~~~~\n");
+    // make sure we don't include our own heap in rollbacks
+    // generally, the heap will always be in the same spot, 
+    // but during development I change the size of our codes and other emu-side stuff so registering this dynamically is safer
+    void* mainHeapStart = mainHeap->heapStart;
+    void* mainHeapEnd = mainHeap->heapEnd;
+    u64 mainHeapSize = (u64)mainHeapEnd - (u64)mainHeapStart;
+    
+}
+
+void RegisterHeapRegionExclusion(void* startAddress, u32 size)
+{
+    u8 buf[sizeof(u8) + sizeof(startAddress) + sizeof(size)];
+    u8* bufptr = (u8*)buf;
+    buf[0] = CMD_REGISTER_EXCLUDE_REGION;
+    *((void**)(bufptr + sizeof(u8))) = startAddress;
+    *(bufptr + sizeof(startAddress)) = size;
+    writeEXI(buf, sizeof(buf), EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
 }
 
 u32 getCurrentFrame() {
@@ -695,31 +712,30 @@ namespace FrameLogic {
                 // if rollbacks are enabled, but not netplay, track past inputs for resim
                 FrameAdvance::pastFrameDatas.push(tmp_fd);
 
-                bool shouldRollback = currentFrame % 60 == 0; 
+                static u32 lastRollbackEndFrame = 0;
+                // arbitrary point we should do a rollback, just to stress test it
+                bool shouldRollback = currentFrame % (MAX_ROLLBACK_FRAMES * 2) == 0
+                                      && currentFrame != lastRollbackEndFrame;
                 const int numFramesToRollback = MAX_ROLLBACK_FRAMES;
 
                 if (shouldRollback && currentFrame > 250) {
+                    lastRollbackEndFrame = currentFrame;
                     RollbackInfo rollbackInfo;
                     rollbackInfo.beginFrame = getCurrentFrame() - numFramesToRollback;
                     rollbackInfo.endFrame = getCurrentFrame();
                     rollbackInfo.hasPreserveBlocks = false;
                     rollbackInfo.pastFrameDataPopulated = true;
-                    OSReport("numframestorollback %i  beginFrame: %u    endFrame: %u\n", numFramesToRollback, rollbackInfo.beginFrame, rollbackInfo.endFrame);
+                    // +1 so we can advance one ahead of where we are, which isn't how normal rollback netplay works but for debugging it's what we want
+                    int numFramesToResim = getNumFramesToResim(&rollbackInfo);
+                    OSReport("numframestorollback %i  beginFrame: %u endFrame: %u numFramesToResim %u\n", numFramesToRollback, rollbackInfo.beginFrame, rollbackInfo.endFrame, numFramesToResim);
+                    FrameAdvance::TriggerFastForwardState(numFramesToResim);
                     EXIPacket stateReloadPckt = EXIPacket(EXICommand::CMD_LOAD_SAVESTATE, &rollbackInfo, sizeof(RollbackInfo));
-                    { stateReloadPckt.Send(); 
-                        // +1 so we can advance one ahead of where we are, which isn't how normal rollback netplay works but for debugging it's what we want
-                        int numFramesToResim = getNumFramesToResim(&rollbackInfo) + 1;
-                        OSReport("num frames to resim %i\n", numFramesToResim);
-                        FrameAdvance::TriggerFastForwardState(numFramesToResim);
-                    }
-                    OSReport("post-rollback game frame %i\n", getCurrentFrame());
+                    stateReloadPckt.Send(); 
+                    OSReport("framesToAdvance after loadstate %u  addr = %p\n", FrameAdvance::framesToAdvance, &FrameAdvance::framesToAdvance);
                 }
                 
-                
-                #endif
-            #endif
-
-
+                #endif // ROLLBACK_IMPL
+            #endif // NETPLAY_IMPL
             _OSEnableInterrupts();
         }
         else { // not in a match
