@@ -18,24 +18,48 @@ extern "C" void cameraFFBypass() {
 #endif
 
 
-// TODO: skip effects processing during resim frames
-// lbz	r0, 0x00ED (r30)
-#if 0
-INJECTION(EffectSystemRollbackSkip, 0x8001773c, R"(
+// Skip nw4r effect system update during resim frames.
+// field106_0xed bit 0 gates three things: effect system, gfSlowManager, gfTaskScheduler.
+// We clear bit 0 only in r0 (register), NOT in memory, so only the effect system
+// check is skipped while the two subsequent lbz reloads see the real field value.
+#if 1
+INJECTION("EffectSystemRollbackSkip", 0x8001773c, R"(
     SAVE_REGS
-    bl shouldSkipEffectSystem
+    bl shouldSkipUnnecessarySystems
     cmpwi r3, 0
-    beq RUN_EFFECT_SYSTEM
-    li r0, 0
-    stb r0, 0x00ED (r30)
-    RUN_EFFECT_SYSTEM:
+    beq NOT_RESIM
     RESTORE_REGS
-
-    lbz	r0, 0x00ED (r30)
+    lbz r0, 0x00ED (r30)
+    rlwinm r0, r0, 0, 0, 0x1e
+    b EFFECT_CHECK_DONE
+    NOT_RESIM:
+    RESTORE_REGS
+    lbz r0, 0x00ED (r30)
+    EFFECT_CHECK_DONE:
 )");
-extern "C" bool shouldSkipEffectSystem() {
+extern "C" bool shouldSkipUnnecessarySystems() {
     return FrameAdvance::IsResimFrame();
 }
+#endif
+
+
+// Skip ph2ndaryWorld (cloth/hair secondary physics) during resim frames.
+// ph2ndaryMain gates all work on controller->field_0x20 (the enable flag) via
+// lbz r0,0x20(r29) / cmpwi r0,0 / beq <end>
+#if 1
+INJECTION("Ph2ndaryWorldRollbackSkip", 0x8008b450, R"(
+    SAVE_REGS
+    bl shouldSkipUnnecessarySystems
+    cmpwi r3, 0
+    beq NOT_RESIM_PH2
+    RESTORE_REGS
+    li r0, 0
+    b PH2NDARY_DONE
+    NOT_RESIM_PH2:
+    RESTORE_REGS
+    lbz r0, 0x20 (r29)
+    PH2NDARY_DONE:
+)");
 #endif
 
 

@@ -183,6 +183,7 @@ namespace FrameLogic {
 }
 namespace FrameAdvance {
     int getFramesToAdvance();
+    bool IsResimFrame();
 }
 
 #endif
