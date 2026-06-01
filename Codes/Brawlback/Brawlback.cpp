@@ -647,6 +647,7 @@ namespace FrameLogic {
     // called at the beginning of the game logic in a frame
     // a this point, inputs are populated for this frame
     // but the game logic that operates on those inputs has not yet happened
+    // NOTE: this does NOT get called during resim, only at the very beginning of a "full" frame
     void BeginFrame() {
         
         // this is the start of all our logic for each frame. Because EXI writes/reads are synchronous,
