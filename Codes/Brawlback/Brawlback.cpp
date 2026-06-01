@@ -203,7 +203,6 @@ namespace FrameAdvance {
 
     void ResetFrameAdvance() { 
         if (framesToAdvance != 1) {
-            //OSReport("Resetting frameadvance to normal\n");
             framesToAdvance = 1;
         }
     }
@@ -260,7 +259,7 @@ namespace FrameAdvance {
         }
     }
 
-    // should be called on every simulated frame. Handles injecting inputs (and saving state for resimulated frames) 
+    // should be called on every simulated frame (including resim frames). Handles injecting inputs (and saving state for resimulated frames) 
     void ProcessGameSimulationFrame(FrameData* inputs) {
         _OSDisableInterrupts();
         u32 gameLogicFrame = getCurrentFrame();
