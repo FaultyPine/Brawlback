@@ -22,7 +22,7 @@ extern "C" void cameraFFBypass() {
 // field106_0xed bit 0 gates three things: effect system, gfSlowManager, gfTaskScheduler.
 // We clear bit 0 only in r0 (register), NOT in memory, so only the effect system
 // check is skipped while the two subsequent lbz reloads see the real field value.
-#if 1
+#if 0
 INJECTION("EffectSystemRollbackSkip", 0x8001773c, R"(
     SAVE_REGS
     bl shouldSkipUnnecessarySystems
@@ -46,7 +46,7 @@ extern "C" bool shouldSkipUnnecessarySystems() {
 // Skip ph2ndaryWorld (cloth/hair secondary physics) during resim frames.
 // ph2ndaryMain gates all work on controller->field_0x20 (the enable flag) via
 // lbz r0,0x20(r29) / cmpwi r0,0 / beq <end>
-#if 1
+#if 0
 INJECTION("Ph2ndaryWorldRollbackSkip", 0x8008b450, R"(
     SAVE_REGS
     bl shouldSkipUnnecessarySystems

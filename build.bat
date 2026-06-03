@@ -5,6 +5,13 @@ cls && color
 
 pushd "%~dp0"
 
+:: Kill any running Dolphin instances so build artifacts aren't locked
+tasklist /FI "IMAGENAME eq Dolphin.exe" 2>nul | find /I "Dolphin.exe" >nul
+if not errorlevel 1 (
+    echo Killing running Dolphin.exe processes...
+    taskkill /F /IM Dolphin.exe >nul 2>&1
+)
+
 call "get_settings.bat"
 
 if [%1]==[] (
