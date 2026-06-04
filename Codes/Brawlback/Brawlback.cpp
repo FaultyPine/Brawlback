@@ -207,6 +207,7 @@ namespace FrameAdvance {
         }
     }
 
+#ifndef BRAWLBACK_USE_GEKKONET
     // og instruction: cmplw r19, r24
     // # of frames to simulate is stored in r24
 
@@ -223,6 +224,7 @@ namespace FrameAdvance {
             : "r" (framesToAdvance)
         );
     }
+#endif // !BRAWLBACK_USE_GEKKONET
 
 
     // array of inputs for each player to get injected
@@ -306,6 +308,7 @@ namespace FrameAdvance {
     }
 
 
+#ifndef BRAWLBACK_USE_GEKKONET
     // before inputs are updated, we copy our inputs from the emulator into currentFrameData so that
     // we can inject them into the game when it uses them (see getGamePadStatus hook below)
     FrameData currentFrameData;
@@ -318,13 +321,6 @@ namespace FrameAdvance {
         }
         _OSEnableInterrupts();
     }
-    
-    SIMPLE_INJECTION(endOfGameProc, 0x800177cc, "addi sp, sp, 32") {
-        _OSDisableInterrupts();
-        EXIPacket(CMD_GAMESIM_UPDATE_END).Send();
-        _OSEnableInterrupts();
-    }
-
 
     // beginning of getGamePadStatus/[gfPadSystem]
     // which is called 4 times (for each player) to convert their raw inputs into "processed" inputs
@@ -340,6 +336,13 @@ namespace FrameAdvance {
         if (Netplay::IsInMatch()) {
             InjectBrawlbackPadToPadStatus(dst, currentFrameData.playerFrameDatas[port].pad);
         }
+        _OSEnableInterrupts();
+    }
+#endif // !BRAWLBACK_USE_GEKKONET
+
+    SIMPLE_INJECTION(endOfGameProc, 0x800177cc, "addi sp, sp, 32") {
+        _OSDisableInterrupts();
+        EXIPacket(CMD_GAMESIM_UPDATE_END).Send();
         _OSEnableInterrupts();
     }
 
@@ -745,7 +748,9 @@ namespace FrameLogic {
 
     //SIMPLE_INJECTION(beginFrame, 0x80017344, "li r25, 0x0") { BeginFrame(); } // just before gameProc loop
     //SIMPLE_INJECTION(beginFrame, 0x800171b4, "li r25, 0x1") { BeginFrame(); } // top of full game loop
+#ifndef BRAWLBACK_USE_GEKKONET
     SIMPLE_INJECTION(beginFrame, 0x80147394, "li r0, 0x1") { BeginFrame(); } // inside beginFrameLogic()
+#endif
     
     //SIMPLE_INJECTION(pauseCheckHook, 0x800171d8, "rlwinm. r0, r3, 0x1c, 0x1f, 0x1f") { BeginFrame(); }
 

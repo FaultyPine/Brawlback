@@ -23,6 +23,11 @@
 //  toggles for netplay logic and rollback logic
 #define NETPLAY_IMPL
 #define ROLLBACK_IMPL
+
+// Toggle: use GekkoNet-based rollback (dolphin-driven) instead of original brawlback.
+// When defined, dolphin calls gameProc directly and injects inputs via SI override.
+// Must match the same define on the dolphin side (EXIBrawlback_GekkoNet.h).
+#define BRAWLBACK_USE_GEKKONET
 // ^ if you disable rollbacks, make sure to also disable the ROLLBACK_IMPL flag in BrawlbackUtility.cpp on the dolphin side
 // ------------------------------------
 
@@ -175,6 +180,8 @@ struct RollbackInfo {
 
 void fillOutGameSettings(GameSettings* settings);
 void MergeGameSettingsIntoGame(GameSettings* settings);
+
+BrawlbackPad GamePadToBrawlbackPad(const gfPadGamecube* pad);
 
 void RegisterHeapRegionExclusion(void* startAddress, u32 size);
 

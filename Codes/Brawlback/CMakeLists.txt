@@ -1,8 +1,9 @@
 cmake_minimum_required (VERSION 3.15)
 
 
-add_code(BRAWLBACK 
+add_code(BRAWLBACK
     Brawlback.cpp
+    BrawlbackGekkoNet.cpp
     EXIPacket.cpp
     Utility/Utility.cpp
     Utility/TestingUtils.cpp
