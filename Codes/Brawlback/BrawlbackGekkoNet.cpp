@@ -41,21 +41,11 @@ SIMPLE_INJECTION(gkkBeginFrame, 0x80147394, "li r0, 0x1")
     _OSEnableInterrupts();
 }
 
-    INJECTION("handleFrameAdvanceHook", 0x800173a4, R"(
-        bl dothinghehe # load framesToAdvance variable into r24
-        cmplw r19, r24 # r24 is the number of times gameProc will be called (# of frames to simualate)
-    )");
-    extern "C" void dothinghehe() {
-        if (!Netplay::IsInMatch()) return; // if we don't need to do anything special, let the game use it's own frame advance
-        asm("li r24, 0");
-        // asm("mr r24, %0"
-        //     :
-        //     : "r" (0)
-        // );
-    }
-
-// Game's gameProc loop count is always 0 — dolphin calls gameProc directly.
-// INJECTION("gkkFrameAdvanceHook", 0x800173a4, R"(
-//     li r24, 0
-//     cmplw r19, r24
-// )");
+INJECTION("handleFrameAdvanceHook", 0x800173a4, R"(
+    bl stubGameProcWhenInMatch
+    cmplw r19, r24 # r24 is the number of times gameProc will be called (# of frames to simualate)
+)");
+extern "C" void stubGameProcWhenInMatch() {
+    if (!Netplay::IsInMatch()) return; // if we don't need to do anything special, let the game use it's own frame advance
+    asm("li r24, 0");
+}
