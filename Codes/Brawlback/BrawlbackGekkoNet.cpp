@@ -1,51 +1,9 @@
 //
-// Brawlback GekkoNet game-side hooks.
-// Minimal: one hook at frame start (DMAWrite only), one hook to zero the gameProc loop count.
-// Dolphin handles everything: GekkoNet session, rollback, input injection, gameProc calling.
+// GekkoNet mode is dolphin-driven.
+//
+// Game-side still uses the existing matchmaking/setup EXI calls, but there are no
+// per-frame or frame-advance hooks here. Dolphin hooks mainLoopSub directly and
+// owns the gameProc loop.
 //
 
 #include "Brawlback.h"
-#include "Netplay.h"
-#include "GmGlobalModeMelee.h"
-
-#define GKK_CMD_FRAME 20
-
-#pragma pack(push, 1)
-struct GKKFramePayload
-{
-    u32 frame;
-    BrawlbackPad pad;
-};
-#pragma pack(pop)
-
-// Per-frame hook inside beginFrameLogic().
-// Sends frame + local pad to dolphin. Dolphin does ALL the work:
-// GekkoNet, rollback (LoadFrame), input injection, gameProc calling, frame pacing.
-SIMPLE_INJECTION(gkkBeginFrame, 0x80147394, "li r0, 0x1")
-{
-    if (!Netplay::IsInMatch())
-        return;
-
-    _OSDisableInterrupts();
-
-    DEFAULT_MT_RAND->seed = 0x496ffd00;
-
-    u32 currentFrame = getCurrentFrame();
-
-    GKKFramePayload payload;
-    payload.frame = currentFrame;
-    payload.pad = GamePadToBrawlbackPad(&PAD_SYSTEM->pads[Netplay::localPlayerIdx]);
-
-    EXIPacket(GKK_CMD_FRAME, &payload, sizeof(payload)).Send();
-
-    _OSEnableInterrupts();
-}
-
-INJECTION("handleFrameAdvanceHook", 0x800173a4, R"(
-    bl stubGameProcWhenInMatch
-    cmplw r19, r24 # r24 is the number of times gameProc will be called (# of frames to simualate)
-)");
-extern "C" void stubGameProcWhenInMatch() {
-    if (!Netplay::IsInMatch()) return; // if we don't need to do anything special, let the game use it's own frame advance
-    asm("li r24, 0");
-}

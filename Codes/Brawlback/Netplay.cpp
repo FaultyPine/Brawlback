@@ -70,6 +70,9 @@ namespace Netplay {
     }
 
     void EndMatch() {
+#ifdef BRAWLBACK_USE_GEKKONET
+        EXIPacket(EXICommand::CMD_END_MATCH).Send();
+#endif
         localPlayerIdx = localPlayerIdxInvalid;
         gameSettings = GameSettings();
         GMMelee::ResetMatchChoicesPopulated();
