@@ -48,7 +48,7 @@ namespace Netplay {
             OSReport("SETUP PLAYERS GAMESIDE\n");
             GameSettings* gameSettingsFromOpponent = (GameSettings*)data;
             FixGameSettingsEndianness(gameSettingsFromOpponent);
-            //MergeGameSettingsIntoGame(gameSettingsFromOpponent);
+            MergeGameSettingsIntoGame(gameSettingsFromOpponent);
             matched = true;
         }
         else {
