@@ -27,18 +27,12 @@ namespace Netplay {
 
         OSReport("Starting match gameside\n");
         // send our populated game settings to the emu
-        EXIPacket startMatchPckt = EXIPacket(EXICommand::CMD_START_MATCH, &gameSettings, sizeof(GameSettings));
-        startMatchPckt.Send();
-
-        // start emu netplay thread so it can start trying to find an opponent
-        EXIPacket findOpponentPckt = EXIPacket(EXICommand::CMD_FIND_OPPONENT);
-        findOpponentPckt.Send();
+        EXIPacket(EXICommand::CMD_START_MATCH, &gameSettings, sizeof(GameSettings)).Send();
 
         // Temporary. Atm, this just stalls main thread while we do our mm/connecting
         // in the future, when netmenu stuff is implemented, the organization of StartMatching and CheckIsMatched
         // will make more sense
         while (!CheckIsMatched()) {}
-
     }
 
     
@@ -46,26 +40,20 @@ namespace Netplay {
         bool matched = false;
         u8 cmd_byte = EXICommand::CMD_UNKNOWN;
         size_t read_size = sizeof(GameSettings) + 1;
-        u8* read_data = (u8*)malloc(read_size); // cmd byte + game settings
-
-        // stall until we get game settings from opponent, then load those in and continue to boot up the match
-        //while (cmd_byte != EXICommand::CMD_SETUP_PLAYERS) {
-            readEXI(read_data, read_size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
-            cmd_byte = read_data[0];
-            u8* data = &read_data[1];
-
-            if (cmd_byte == EXICommand::CMD_SETUP_PLAYERS) {
-                OSReport("SETUP PLAYERS GAMESIDE\n");
-                GameSettings* gameSettingsFromOpponent = (GameSettings*)data;
-                FixGameSettingsEndianness(gameSettingsFromOpponent);
-                MergeGameSettingsIntoGame(gameSettingsFromOpponent);
-                matched = true;
-            }
-            else {
-                //OSReport("Reading for setupplayers, didn't get it...\n");
-            }
-        //}
-        free(read_data);
+        u8 read_data[sizeof(GameSettings) + 1];
+        readEXI(read_data, read_size, EXIChannel::slotB, EXIDevice::device0, EXIFrequency::EXI_32MHz);
+        cmd_byte = read_data[0];
+        u8* data = &read_data[1];
+        if (cmd_byte == EXICommand::CMD_SETUP_PLAYERS) {
+            OSReport("SETUP PLAYERS GAMESIDE\n");
+            GameSettings* gameSettingsFromOpponent = (GameSettings*)data;
+            FixGameSettingsEndianness(gameSettingsFromOpponent);
+            //MergeGameSettingsIntoGame(gameSettingsFromOpponent);
+            matched = true;
+        }
+        else {
+            OSReport("Reading for setupplayers, didn't get it... cmdbyte = %c\n", cmd_byte);
+        }
         return matched;
     }
 
