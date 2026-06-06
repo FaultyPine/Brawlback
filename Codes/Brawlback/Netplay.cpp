@@ -47,7 +47,9 @@ namespace Netplay {
         if (cmd_byte == EXICommand::CMD_SETUP_PLAYERS) {
             OSReport("SETUP PLAYERS GAMESIDE\n");
             GameSettings* gameSettingsFromOpponent = (GameSettings*)data;
+#ifndef BRAWLBACK_USE_GEKKONET
             FixGameSettingsEndianness(gameSettingsFromOpponent);
+#endif
             MergeGameSettingsIntoGame(gameSettingsFromOpponent);
             matched = true;
         }
